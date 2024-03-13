@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { ReactTabulator } from 'react-tabulator'
 import 'react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
 import { addSemesterWeekNumber, addWeekNumber } from './utils'
+import MultipleSelectCheckmarks from './MultipleSelectCheckmarks'
 
 const defaultColumns = [
     {
@@ -71,6 +72,7 @@ export default function Table({ defaultData }) {
 
     return (
         <div>
+            <MultipleSelectCheckmarks defaultColumns={defaultColumns} setColumns={setColumns} />
             <ReactTabulator
                 data={dataWithWeekAndSemesterNumber}
                 columns={columns}
