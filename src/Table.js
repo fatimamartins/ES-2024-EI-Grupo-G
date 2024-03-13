@@ -3,6 +3,7 @@ import { ReactTabulator } from 'react-tabulator'
 import 'react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
 import { addSemesterWeekNumber, addWeekNumber, sortWeekDays, sortDate } from './utils'
 import MultipleSelectCheckmarks from './MultipleSelectCheckmarks'
+import { Button, Stack } from '@mui/material'
 
 const defaultColumns = [
     {
@@ -108,11 +109,13 @@ const defaultColumns = [
 export default function Table({ defaultData }) {
     const dataWithWeekAndSemesterNumber = addSemesterWeekNumber(addWeekNumber(defaultData))
     const [columns, setColumns] = useState(defaultColumns)
+    const tableRef = React.useRef(null)
 
     return (
         <div>
             <MultipleSelectCheckmarks defaultColumns={defaultColumns} setColumns={setColumns} />
             <ReactTabulator
+                onRef={(r) => (tableRef.current = r.current)}
                 data={dataWithWeekAndSemesterNumber}
                 columns={columns}
                 options={{
@@ -124,6 +127,22 @@ export default function Table({ defaultData }) {
                     layout: 'fitColumns',
                 }}
             />
+            <Stack direction={'row'} mt={2} mb={5} justifyContent={'flex-end'}>
+                <Button
+                    variant="text"
+                    id="download-csv"
+                    onClick={() => tableRef?.current.download('csv', 'horario.csv', { delimiter: ';', bom: true })}
+                >
+                    Download CSV
+                </Button>
+                <Button
+                    variant="text"
+                    id="download-json"
+                    onClick={() => tableRef?.current.download('json', 'horario.json')}
+                >
+                    Download JSON
+                </Button>
+            </Stack>
         </div>
     )
 }
