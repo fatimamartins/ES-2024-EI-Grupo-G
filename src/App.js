@@ -14,11 +14,11 @@ function App() {
         <Container>
             <h1>Aplicação de suporte à gestão de horários</h1>
             <h3>Horário</h3>
-            <CsvReader setData={setHorario} />
+            <CsvReader setData={setHorario} id="1" />
             <RemoteFile setData={setHorario} />
             <ScheduleTable defaultData={horario} />
             <h3>Salas</h3>
-            <CsvReader setData={setSalas} />
+            <CsvReader setData={setSalas} id="2" />
             <RemoteFile setData={setSalas} />
             <RoomsTable defaultData={salas} />
         </Container>
