@@ -1,9 +1,9 @@
 import React from 'react'
 import CSVReader from 'react-csv-reader'
 
-export default function CsvReader({ setHorario }) {
+export default function CsvReader({ setData }) {
     const handleFileLoaded = (data, fileInfo) => {
-        setHorario(data)
+        setData(data)
     }
 
     return (

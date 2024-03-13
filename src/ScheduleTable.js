@@ -106,7 +106,7 @@ const defaultColumns = [
 
 //https://github.com/ngduc/react-tabulator/blob/master/src/ReactTabulatorExample.tsx#L83
 //neste link tem um exemplo de como fazer o download de um arquivo csv e como editar uma celula
-export default function Table({ defaultData }) {
+export default function ScheduleTable({ defaultData }) {
     const dataWithWeekAndSemesterNumber = addSemesterWeekNumber(addWeekNumber(defaultData))
     const [columns, setColumns] = useState(defaultColumns)
     const tableRef = React.useRef(null)

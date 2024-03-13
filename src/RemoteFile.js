@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import Papa from 'papaparse'
 import { Button, Input, Stack } from '@mui/material'
 
-export default function RemoteFile({ setHorario }) {
+export default function RemoteFile({ setData }) {
     const [fileName, setFileName] = useState('')
 
     const handleFileChange = (event) => {
@@ -18,7 +18,7 @@ export default function RemoteFile({ setHorario }) {
             }
             const csvText = await response.text()
             const result = Papa.parse(csvText, { header: true })
-            setHorario(result.data)
+            setData(result.data)
         } catch (error) {
             console.error('Error fetching CSV:', error)
         }
