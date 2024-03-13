@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { ReactTabulator } from 'react-tabulator'
 import 'react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
+import { addSemesterWeekNumber, addWeekNumber } from './utils'
 
 const defaultColumns = [
     {
@@ -65,12 +66,13 @@ const defaultColumns = [
 //https://github.com/ngduc/react-tabulator/blob/master/src/ReactTabulatorExample.tsx#L83
 //neste link tem um exemplo de como fazer o download de um arquivo csv e como editar uma celula
 export default function Table({ defaultData }) {
+    const dataWithWeekAndSemesterNumber = addSemesterWeekNumber(addWeekNumber(defaultData))
     const [columns, setColumns] = useState(defaultColumns)
 
     return (
         <div>
             <ReactTabulator
-                data={defaultData}
+                data={dataWithWeekAndSemesterNumber}
                 columns={columns}
                 options={{
                     pagination: 'local',
