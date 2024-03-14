@@ -1,10 +1,19 @@
-import React, { useState } from 'react'
-import { ReactTabulator } from 'react-tabulator'
+/**
+ * @file This is a component for a table using react-tabulator.
+ */
 
+/** @module react */
+import React, { useState } from 'react'
+/** @module react-tabulator */
+import { ReactTabulator } from 'react-tabulator'
 import { addSemesterWeekNumber, addWeekNumber, sortWeekDays } from './utils'
 import MultipleSelectCheckmarks from './MultipleSelectCheckmarks'
+/** @module @mui/material */
 import { Button, Stack } from '@mui/material'
 
+/**
+ * @constant {Object[]} defaultColumns - The default columns for the table.
+ */
 const defaultColumns = [
     {
         title: 'Curso',
@@ -142,6 +151,18 @@ const defaultColumns = [
     },
 ]
 
+//https://github.com/ngduc/react-tabulator/blob/master/src/ReactTabulatorExample.tsx#L83
+//neste link tem um exemplo de como fazer o download de um arquivo csv e como editar uma celula
+/**
+ * This is the ScheduleTable component of the application.
+ * It displays a table of schedules with various properties.
+ *
+ * @function
+ * @name ScheduleTable
+ * @param {Object} props - The properties passed to the component.
+ * @param {Object[]} props.data - The data to display in the table.
+ * @returns {JSX.Element} The rendered ScheduleTable component.
+ */
 export default function ScheduleTable({ defaultData }) {
     const dataWithWeekAndSemesterNumber = addSemesterWeekNumber(addWeekNumber(defaultData))
     const [columns, setColumns] = useState(defaultColumns)
