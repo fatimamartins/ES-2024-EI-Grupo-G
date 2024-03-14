@@ -28,18 +28,17 @@ import '@fontsource/roboto/500.css'
 import '@fontsource/roboto/700.css'
 
 /**
- * Create a root DOM node for the React application and render the App component into it.
+ * This is the entry point for the React application.
+ * It renders the App component into the root element.
  */
-const root = ReactDOM.createRoot(document.getElementById('root'))
-root.render(
+ReactDOM.render(
     <React.StrictMode>
         <App />
-    </React.StrictMode>
+    </React.StrictMode>,
+    document.getElementById('root')
 )
 
-/**
- * Call reportWebVitals function to measure performance in the app.
- * Pass a function to log results (for example: reportWebVitals(console.log))
- * or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
- */
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals()

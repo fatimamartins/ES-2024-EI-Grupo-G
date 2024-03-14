@@ -1,5 +1,5 @@
 /**
- * @file This is a component for handling remote CSV file.
+ * @file This is the RemoteFile component of the application.
  */
 
 /** @module react */
@@ -10,9 +10,14 @@ import Papa from 'papaparse'
 import { Button, Input, Stack } from '@mui/material'
 
 /**
- * A React component that handles remote CSV file.
- * @param {Object} props - The properties passed to this component.
- * @param {Function} props.setHorario - The function to set the horario state.
+ * This is the RemoteFile component of the application.
+ * It manages the fetching of remote CSV files and passes the data to the parent component.
+ *
+ * @function
+ * @name RemoteFile
+ * @param {Object} props - The properties passed to the component.
+ * @param {Function} props.setData - The function to call with the data from the CSV file.
+ * @returns {JSX.Element} The rendered RemoteFile component.
  */
 export default function RemoteFile({ setData }) {
     /**

@@ -8,16 +8,21 @@ import './App.css'
 import React, { useState } from 'react'
 /** @module @mui/material */
 import { Container } from '@mui/material'
+/** @module ScheduleTable */
 import ScheduleTable from './ScheduleTable'
+/** @module CsvReader */
 import CsvReader from './CsvReader'
 /** @module RemoteFile */
 import RemoteFile from './RemoteFile'
+/** @module RoomsTable */
 import RoomsTable from './RoomsTable'
 
 /**
  * This is the main App component of the application.
  * It manages the state of the 'horario' and renders the CsvReader, RemoteFile, and Table components.
  *
+ * @function
+ * @name App
  * @returns {JSX.Element} The rendered App component.
  */
 export default function App() {

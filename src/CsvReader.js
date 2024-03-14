@@ -1,18 +1,27 @@
-import CSVReader from 'react-csv-reader'
+/**
+ * @file This is the CsvReader component of the application.
+ */
+
+/** @module react */
 import React from 'react'
+/** @module react-csv-reader */
+import CSVReader from 'react-csv-reader'
 
 /**
- * CsvReader component that allows the user to upload a CSV file.
- * The data from the file is then passed to the setHorario function.
+ * This is the CsvReader component of the application.
+ * It manages the loading of CSV files and passes the data to the parent component.
  *
+ * @function
+ * @name CsvReader
  * @param {Object} props - The properties passed to the component.
- * @param {Function} props.setHorario - The function to be called with the data from the CSV file.
- * @returns {JSX.Element} The rendered CSVReader component.
+ * @param {Function} props.setData - The function to call with the data from the CSV file.
+ * @param {string} props.id - The id of the input element.
+ * @returns {JSX.Element} The rendered CsvReader component.
  */
 export default function CsvReader({ setData, id }) {
     /**
-     * Handles the event when a file is loaded.
-     * It calls the setHorario function with the data from the file.
+     * This function is called when a file is loaded.
+     * It calls the setData function with the data from the file.
      *
      * @param {Object[]} data - The data from the CSV file.
      * @param {Object} fileInfo - Information about the loaded file.
@@ -35,8 +44,6 @@ export default function CsvReader({ setData, id }) {
                 skipEmptyLines: true,
             }}
             label="Escolher ficheiro"
-            cssLabelClass="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary css-sghohy-MuiButtonBase-root-MuiButton-root"
-            inputStyle={{ marginLeft: '-83px' }}
         />
     )
 }
