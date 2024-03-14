@@ -74,15 +74,24 @@ const defaultColumns = [
         hozAlign: 'left',
         headerFilter: true,
         visible: true,
-        editor: 'input',
+        editor: 'time',
+        editorParams: {
+            format: 'HH:mm:ss',
+        },
     },
     {
         title: 'Hora fim da aula',
         field: 'Hora fim da aula',
         hozAlign: 'left',
-        headerFilter: true,
         visible: true,
-        editor: 'input',
+        editor: 'time',
+        editorParams: {
+            format: 'HH:mm:ss',
+        },
+        headerFilter: true,
+        headerFilterParams: {
+            format: 'HH:mm:ss',
+        },
     },
     {
         title: 'Data da aula',
@@ -91,9 +100,13 @@ const defaultColumns = [
         sorter: function (a, b) {
             return sortDate(a, b)
         },
-        headerFilter: true,
         visible: true,
-        editor: 'input',
+        editor: 'date',
+        editorParams: {
+            format: 'dd/MM/yyyy',
+        },
+        headerFilter: true,
+        headerFilterParams: { format: 'dd/MM/yyyy' },
     },
     {
         title: 'Características da sala pedida para a aula',
@@ -121,7 +134,6 @@ const defaultColumns = [
         headerFilter: true,
         visible: true,
         editor: 'number',
-        editorParams: { min: 1, max: 52 },
     },
     {
         title: 'Semana do semestre',
@@ -131,7 +143,6 @@ const defaultColumns = [
         headerFilter: true,
         visible: true,
         editor: 'number',
-        editorParams: { min: 1, max: 34 },
     },
 ]
 
