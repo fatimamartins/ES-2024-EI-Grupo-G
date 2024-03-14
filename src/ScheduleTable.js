@@ -11,7 +11,7 @@ const defaultColumns = [
         field: 'Curso',
         hozAlign: 'left',
         sorter: 'string',
-        // editor: 'input',
+        editor: 'input',
         headerFilter: true,
         visible: true,
     },
@@ -20,11 +20,28 @@ const defaultColumns = [
         field: 'Unidade Curricular',
         hozAlign: 'left',
         sorter: 'string',
+        editor: 'input',
         headerFilter: true,
         visible: true,
     },
-    { title: 'Turno', field: 'Turno', hozAlign: 'left', sorter: 'string', headerFilter: true, visible: true },
-    { title: 'Turma', field: 'Turma', hozAlign: 'left', sorter: 'string', headerFilter: true, visible: true },
+    {
+        title: 'Turno',
+        field: 'Turno',
+        hozAlign: 'left',
+        sorter: 'string',
+        headerFilter: true,
+        visible: true,
+        editor: 'input',
+    },
+    {
+        title: 'Turma',
+        field: 'Turma',
+        hozAlign: 'left',
+        sorter: 'string',
+        headerFilter: true,
+        visible: true,
+        editor: 'input',
+    },
     {
         title: 'Inscritos no turno',
         field: 'Inscritos no turno',
@@ -32,6 +49,7 @@ const defaultColumns = [
         sorter: 'number',
         headerFilter: true,
         visible: true,
+        editor: 'number',
     },
     {
         title: 'Dia da semana',
@@ -45,6 +63,10 @@ const defaultColumns = [
             values: { Seg: 'Seg', Ter: 'Ter', Qua: 'Qua', Qui: 'Qui', Sex: 'Sex', Sáb: 'Sáb' },
         },
         visible: true,
+        editor: 'list',
+        editorParams: {
+            values: { Seg: 'Seg', Ter: 'Ter', Qua: 'Qua', Qui: 'Qui', Sex: 'Sex', Sáb: 'Sáb' },
+        },
     },
     {
         title: 'Hora início da aula',
@@ -52,6 +74,7 @@ const defaultColumns = [
         hozAlign: 'left',
         headerFilter: true,
         visible: true,
+        editor: 'input',
     },
     {
         title: 'Hora fim da aula',
@@ -59,6 +82,7 @@ const defaultColumns = [
         hozAlign: 'left',
         headerFilter: true,
         visible: true,
+        editor: 'input',
     },
     {
         title: 'Data da aula',
@@ -69,6 +93,7 @@ const defaultColumns = [
         },
         headerFilter: true,
         visible: true,
+        editor: 'input',
     },
     {
         title: 'Características da sala pedida para a aula',
@@ -77,6 +102,7 @@ const defaultColumns = [
         sorter: 'string',
         headerFilter: true,
         visible: true,
+        editor: 'input',
     },
     {
         title: 'Sala atribuída à aula',
@@ -85,6 +111,7 @@ const defaultColumns = [
         sorter: 'string',
         headerFilter: true,
         visible: true,
+        editor: 'input',
     },
     {
         title: 'Semana do ano',
@@ -93,6 +120,8 @@ const defaultColumns = [
         sorter: 'number',
         headerFilter: true,
         visible: true,
+        editor: 'number',
+        editorParams: { min: 1, max: 52 },
     },
     {
         title: 'Semana do semestre',
@@ -101,6 +130,8 @@ const defaultColumns = [
         sorter: 'number',
         headerFilter: true,
         visible: true,
+        editor: 'number',
+        editorParams: { min: 1, max: 34 },
     },
 ]
 
