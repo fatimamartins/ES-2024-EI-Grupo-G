@@ -1,6 +1,5 @@
 import React from 'react'
 import { ReactTabulator } from 'react-tabulator'
-import 'react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
 
 const defaultColumns = [
     {

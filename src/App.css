@@ -36,3 +36,41 @@
         transform: rotate(360deg);
     }
 }
+
+.tabulator-edit-list {
+    position: absolute;
+    display: inline-block;
+    box-sizing: border-box;
+    max-height: 200px;
+    background-color: #fff;
+    border: 1px solid #aaa;
+    font-size: 14px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    z-index: 10000;
+    cursor: pointer;
+}
+
+.tabulator-edit-list .tabulator-edit-list-item {
+    padding: 4px;
+    color: #333;
+}
+
+.tabulator-edit-list .tabulator-edit-list-item.active {
+    color: #fff;
+    background: rgb(25, 118, 210);
+}
+
+.tabulator-edit-list .tabulator-edit-list-item.active.focused {
+    outline: 1px solid rgb(25, 118, 210);
+}
+
+.tabulator-edit-list .tabulator-edit-list-item.focused {
+    outline: 1px solid rgb(25, 118, 210);
+}
+
+.tabulator-edit-list .tabulator-edit-list-item:hover {
+    cursor: pointer;
+    color: #fff;
+    background: rgb(25, 118, 210);
+}

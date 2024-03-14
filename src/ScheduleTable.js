@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { ReactTabulator } from 'react-tabulator'
-import 'react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
-import { addSemesterWeekNumber, addWeekNumber, sortWeekDays, sortDate } from './utils'
+
+import { addSemesterWeekNumber, addWeekNumber, sortWeekDays } from './utils'
 import MultipleSelectCheckmarks from './MultipleSelectCheckmarks'
 import { Button, Stack } from '@mui/material'
 
@@ -58,21 +58,23 @@ const defaultColumns = [
         sorter: function (a, b) {
             return sortWeekDays(a, b)
         },
-        headerFilter: 'list',
+        headerFilter: true,
         headerFilterParams: {
             values: { Seg: 'Seg', Ter: 'Ter', Qua: 'Qua', Qui: 'Qui', Sex: 'Sex', Sáb: 'Sáb' },
+            clearable: true,
         },
         visible: true,
         editor: 'list',
         editorParams: {
             values: { Seg: 'Seg', Ter: 'Ter', Qua: 'Qua', Qui: 'Qui', Sex: 'Sex', Sáb: 'Sáb' },
+            clearable: true,
         },
     },
     {
         title: 'Hora início da aula',
         field: 'Hora início da aula',
         hozAlign: 'left',
-        headerFilter: true,
+        headerFilter: 'input',
         visible: true,
         editor: 'time',
         editorParams: {
@@ -88,25 +90,19 @@ const defaultColumns = [
         editorParams: {
             format: 'HH:mm:ss',
         },
-        headerFilter: true,
-        headerFilterParams: {
-            format: 'HH:mm:ss',
-        },
+        headerFilter: 'input',
     },
     {
         title: 'Data da aula',
         field: 'Data da aula',
         hozAlign: 'left',
-        sorter: function (a, b) {
-            return sortDate(a, b)
-        },
+        sorter: 'date',
         visible: true,
         editor: 'date',
         editorParams: {
             format: 'dd/MM/yyyy',
         },
-        headerFilter: true,
-        headerFilterParams: { format: 'dd/MM/yyyy' },
+        headerFilter: 'input',
     },
     {
         title: 'Características da sala pedida para a aula',
@@ -146,8 +142,6 @@ const defaultColumns = [
     },
 ]
 
-//https://github.com/ngduc/react-tabulator/blob/master/src/ReactTabulatorExample.tsx#L83
-//neste link tem um exemplo de como fazer o download de um arquivo csv e como editar uma celula
 export default function ScheduleTable({ defaultData }) {
     const dataWithWeekAndSemesterNumber = addSemesterWeekNumber(addWeekNumber(defaultData))
     const [columns, setColumns] = useState(defaultColumns)

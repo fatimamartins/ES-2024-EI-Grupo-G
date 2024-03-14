@@ -5,6 +5,13 @@ import ScheduleTable from './ScheduleTable'
 import CsvReader from './CsvReader'
 import RemoteFile from './RemoteFile'
 import RoomsTable from './RoomsTable'
+import 'react-tabulator/lib/css/tabulator.min.css'
+import 'react-tabulator/lib/styles.css'
+// import 'react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
+// import 'react-tabulator/css/semantic-ui/tabulator_semantic-ui.css'
+import 'react-tabulator/css/tabulator_bootstrap3.css'
+// import 'react-tabulator/css/tabulator_semanticui.css'
+// import 'react-tabulator/css/tabulator_simple.css'
 
 function App() {
     const [horario, setHorario] = useState([])
