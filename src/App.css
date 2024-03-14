@@ -52,13 +52,13 @@
 }
 
 .tabulator-edit-list .tabulator-edit-list-item {
-    padding: 4px;
+    padding: 8px;
     color: #333;
 }
 
 .tabulator-edit-list .tabulator-edit-list-item.active {
-    color: #fff;
-    background: rgb(25, 118, 210);
+    color: #333;
+    background: #eef4fd;
 }
 
 .tabulator-edit-list .tabulator-edit-list-item.active.focused {
@@ -71,6 +71,6 @@
 
 .tabulator-edit-list .tabulator-edit-list-item:hover {
     cursor: pointer;
-    color: #fff;
-    background: rgb(25, 118, 210);
+    color: #333;
+    background: #d5e5f7;
 }
