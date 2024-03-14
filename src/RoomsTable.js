@@ -5,30 +5,30 @@ import 'react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
 const defaultColumns = [
     {
         title: 'Edifício',
-        field: 'Edif_cio',
+        field: 'Edif�cio',
         hozAlign: 'left',
     },
     {
         title: 'Nome sala',
-        field: 'Nome_sala',
+        field: 'Nome sala',
         hozAlign: 'left',
         sorter: 'string',
     },
     {
         title: 'Capacidade Normal',
-        field: 'Capacidade_Normal',
+        field: 'Capacidade Normal',
         hozAlign: 'left',
         sorter: 'string',
     },
     {
         title: 'Capacidade Exame',
-        field: 'Capacidade_Exame',
+        field: 'Capacidade Exame',
         hozAlign: 'left',
         sorter: 'string',
     },
     {
         title: 'Nº características',
-        field: 'N__caracter_sticas',
+        field: 'N� caracter�sticas',
         hozAlign: 'left',
     },
 ]
