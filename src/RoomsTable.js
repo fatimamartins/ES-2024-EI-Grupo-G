@@ -1,7 +1,17 @@
+/**
+ * @file This is the RoomsTable component of the application.
+ */
+
+/** @module react */
 import React from 'react'
+/** @module react-tabulator */
 import { ReactTabulator } from 'react-tabulator'
+/** @module react-tabulator/css/bootstrap/tabulator_bootstrap.min.css */
 import 'react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
 
+/**
+ * @constant {Object[]} defaultColumns - The default columns for the table.
+ */
 const defaultColumns = [
     {
         title: 'Edifício',
@@ -33,6 +43,16 @@ const defaultColumns = [
     },
 ]
 
+/**
+ * This is the RoomsTable component of the application.
+ * It displays a table of rooms with various properties.
+ *
+ * @function
+ * @name RoomsTable
+ * @param {Object} props - The properties passed to the component.
+ * @param {Object[]} props.data - The data to display in the table.
+ * @returns {JSX.Element} The rendered RoomsTable component.
+ */
 export default function RoomsTable({ defaultData }) {
     return (
         <div>
