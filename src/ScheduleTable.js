@@ -3,7 +3,7 @@
  */
 
 /** @module react */
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 /** @module react-tabulator */
 import { ReactTabulator } from 'react-tabulator'
 import { addSemesterWeekNumber, addWeekNumber, sortWeekDays } from './utils'
@@ -14,24 +14,36 @@ import { Button, Stack } from '@mui/material'
 /**
  * @constant {Object[]} defaultColumns - The default columns for the table.
  */
-const defaultColumns = [
+const defaultColumns = (salas, defaultData) => [
     {
         title: 'Curso',
         field: 'Curso',
         hozAlign: 'left',
         sorter: 'string',
-        editor: 'input',
         headerFilter: true,
         visible: true,
+        editor: 'list',
+        editorParams:
+            defaultData && defaultData.length > 0
+                ? {
+                      values: [...new Set(defaultData.map((defaultData) => defaultData['Curso']))],
+                  }
+                : undefined,
     },
     {
         title: 'Unidade Curricular',
         field: 'Unidade Curricular',
         hozAlign: 'left',
         sorter: 'string',
-        editor: 'input',
         headerFilter: true,
         visible: true,
+        editor: 'list',
+        editorParams:
+            defaultData && defaultData.length > 0
+                ? {
+                      values: [...new Set(defaultData.map((defaultData) => defaultData['Unidade Curricular']))],
+                  }
+                : undefined,
     },
     {
         title: 'Turno',
@@ -40,7 +52,13 @@ const defaultColumns = [
         sorter: 'string',
         headerFilter: true,
         visible: true,
-        editor: 'input',
+        editor: 'list',
+        editorParams:
+            defaultData && defaultData.length > 0
+                ? {
+                      values: [...new Set(defaultData.map((defaultData) => defaultData['Turno']))],
+                  }
+                : undefined,
     },
     {
         title: 'Turma',
@@ -49,7 +67,13 @@ const defaultColumns = [
         sorter: 'string',
         headerFilter: true,
         visible: true,
-        editor: 'input',
+        editor: 'list',
+        editorParams:
+            defaultData && defaultData.length > 0
+                ? {
+                      values: [...new Set(defaultData.map((defaultData) => defaultData['Turma']))],
+                  }
+                : undefined,
     },
     {
         title: 'Inscritos no turno',
@@ -59,6 +83,9 @@ const defaultColumns = [
         headerFilter: true,
         visible: true,
         editor: 'number',
+        editorParams: {
+            min: 0,
+        },
     },
     {
         title: 'Dia da semana',
@@ -120,7 +147,13 @@ const defaultColumns = [
         sorter: 'string',
         headerFilter: true,
         visible: true,
-        editor: 'input',
+        editor: salas && salas.length > 0 ? 'list' : undefined,
+        editorParams:
+            salas && salas.length > 0
+                ? {
+                      values: [...Object.keys(salas[0]).slice(5), 'Não necessita de sala'],
+                  }
+                : undefined,
     },
     {
         title: 'Sala atribuída à aula',
@@ -129,7 +162,13 @@ const defaultColumns = [
         sorter: 'string',
         headerFilter: true,
         visible: true,
-        editor: 'input',
+        editor: salas && salas.length > 0 ? 'list' : undefined,
+        editorParams:
+            salas && salas.length > 0
+                ? {
+                      values: [...new Set(salas.map((sala) => sala['Nome sala']))],
+                  }
+                : undefined,
     },
     {
         title: 'Semana do ano',
@@ -163,10 +202,14 @@ const defaultColumns = [
  * @param {Object[]} props.data - The data to display in the table.
  * @returns {JSX.Element} The rendered ScheduleTable component.
  */
-export default function ScheduleTable({ defaultData }) {
+export default function ScheduleTable({ defaultData, salas }) {
     const dataWithWeekAndSemesterNumber = addSemesterWeekNumber(addWeekNumber(defaultData))
-    const [columns, setColumns] = useState(defaultColumns)
+    const [columns, setColumns] = useState(defaultColumns(salas, defaultData))
     const tableRef = React.useRef(null)
+
+    useEffect(() => {
+        setColumns(defaultColumns(salas, defaultData))
+    }, [salas, defaultData])
 
     return (
         <div>
