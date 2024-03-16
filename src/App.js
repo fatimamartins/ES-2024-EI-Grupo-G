@@ -38,6 +38,10 @@ export default function App() {
      * @type {Object[]}
      */
     const [horario, setHorario] = useState([])
+    /**
+     * salas - The state for the salas data.
+     * @type {Object[]}
+     */
     const [salas, setSalas] = useState([])
 
     return (
@@ -46,7 +50,7 @@ export default function App() {
             <h3>Horário</h3>
             <CsvReader setData={setHorario} id="1" />
             <RemoteFile setData={setHorario} />
-            <ScheduleTable defaultData={horario} />
+            <ScheduleTable defaultData={horario} salas={salas} />
             <h3>Salas</h3>
             <CsvReader setData={setSalas} id="2" />
             <RemoteFile setData={setSalas} />
