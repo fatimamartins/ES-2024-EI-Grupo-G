@@ -14,7 +14,7 @@ import { Button, Stack } from '@mui/material'
 /**
  * @constant {Object[]} defaultColumns - The default columns for the table.
  */
-const defaultColumns = (salas, defaultData) => [
+const defaultColumns = (salas) => [
     {
         title: 'Curso',
         field: 'Curso',
@@ -23,12 +23,10 @@ const defaultColumns = (salas, defaultData) => [
         headerFilter: true,
         visible: true,
         editor: 'list',
-        editorParams:
-            defaultData && defaultData.length > 0
-                ? {
-                      values: [...new Set(defaultData.map((defaultData) => defaultData['Curso']))],
-                  }
-                : undefined,
+        editorParams: {
+            valuesLookup: true,
+            valuesLookupField: 'Curso',
+        },
     },
     {
         title: 'Unidade Curricular',
@@ -38,12 +36,10 @@ const defaultColumns = (salas, defaultData) => [
         headerFilter: true,
         visible: true,
         editor: 'list',
-        editorParams:
-            defaultData && defaultData.length > 0
-                ? {
-                      values: [...new Set(defaultData.map((defaultData) => defaultData['Unidade Curricular']))],
-                  }
-                : undefined,
+        editorParams: {
+            valuesLookup: true,
+            valuesLookupField: 'Unidade Curricular',
+        },
     },
     {
         title: 'Turno',
@@ -53,12 +49,10 @@ const defaultColumns = (salas, defaultData) => [
         headerFilter: true,
         visible: true,
         editor: 'list',
-        editorParams:
-            defaultData && defaultData.length > 0
-                ? {
-                      values: [...new Set(defaultData.map((defaultData) => defaultData['Turno']))],
-                  }
-                : undefined,
+        editorParams: {
+            valuesLookup: true,
+            valuesLookupField: 'Turno',
+        },
     },
     {
         title: 'Turma',
@@ -68,12 +62,10 @@ const defaultColumns = (salas, defaultData) => [
         headerFilter: true,
         visible: true,
         editor: 'list',
-        editorParams:
-            defaultData && defaultData.length > 0
-                ? {
-                      values: [...new Set(defaultData.map((defaultData) => defaultData['Turma']))],
-                  }
-                : undefined,
+        editorParams: {
+            valuesLookup: true,
+            valuesLookupField: 'Turma',
+        },
     },
     {
         title: 'Inscritos no turno',
@@ -204,12 +196,12 @@ const defaultColumns = (salas, defaultData) => [
  */
 export default function ScheduleTable({ defaultData, salas }) {
     const dataWithWeekAndSemesterNumber = addSemesterWeekNumber(addWeekNumber(defaultData))
-    const [columns, setColumns] = useState(defaultColumns(salas, defaultData))
+    const [columns, setColumns] = useState(defaultColumns(salas))
     const tableRef = React.useRef(null)
 
     useEffect(() => {
-        setColumns(defaultColumns(salas, defaultData))
-    }, [salas, defaultData])
+        setColumns(defaultColumns(salas))
+    }, [salas])
 
     return (
         <div>
