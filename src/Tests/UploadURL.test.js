@@ -29,32 +29,11 @@ describe('RemoteFile component', () => {
         )
     })
 
-    /*test('handles file upload', async () => {
-        const mockData = [
-            {
-                Curso: 'Engenharia de Software',
-                'Unidade Curricular': 'Programação',
-                Turno: 'Manhã',
-                Turma: 'A',
-                'Inscritos no turno': 30,
-                'Dia da semana': 'Seg',
-                'Hora início da aula': '08:00:00',
-                'Hora fim da aula': '10:00:00',
-                'Data da aula': '01/03/2024',
-                'Características da sala pedida para a aula': 'Laboratório de Informática',
-                'Sala atribuída à aula': 'Sala 101',
-                'Semana do ano': 9,
-                'Semana do semestre': 3,
-            },
-        ]
+    test('handles file upload error', async () => {
+        global.fetch = jest.fn().mockResolvedValue({ ok: false })
 
-        global.fetch = jest.fn().mockResolvedValue({
-            ok: true,
-            text: () => Promise.resolve('Name,Age\nJohn,30\nJane,25\n'),
-        })
-
-        const setDataMock = jest.fn()
-        const { getByPlaceholderText, getByText } = render(<RemoteFile setData={setDataMock} />)
+        console.error = jest.fn()
+        const { getByPlaceholderText, getByText } = render(<RemoteFile />)
         const input = getByPlaceholderText('CSV File URL')
         const button = getByText('Upload')
 
@@ -69,67 +48,41 @@ describe('RemoteFile component', () => {
             expect(global.fetch).toHaveBeenCalledWith(
                 'https://raw.githubusercontent.com/fatimamartins/ES-2024-EI-Grupo-G/main/public/HorarioDeExemplo.csv'
             )
-            expect(setDataMock).toHaveBeenCalledWith(mockData)
-        })
-    })
-
-    test('handles file upload', async () => {
-        // Mock data
-        const mockData = [
-            {
-                Curso: 'Engenharia de Software',
-                'Unidade Curricular': 'Programação',
-                Turno: 'Manhã',
-                Turma: 'A',
-                'Inscritos no turno': 30,
-                'Dia da semana': 'Seg',
-                'Hora início da aula': '08:00:00',
-                'Hora fim da aula': '10:00:00',
-                'Data da aula': '01/03/2024',
-                'Características da sala pedida para a aula': 'Laboratório de Informática',
-                'Sala atribuída à aula': 'Sala 101',
-                'Semana do ano': 9,
-                'Semana do semestre': 3,
-            },
-            // Adicione mais objetos conforme necessário para representar mais linhas de dados
-        ]
-
-        // Simulando a função setData
-        const setDataMock = jest.fn()
-
-        // Renderizando o componente
-        const { getByPlaceholderText, getByText } = render(<RemoteFile setData={setDataMock} />)
-        const input = getByPlaceholderText('CSV File URL')
-        const button = getByText('Upload')
-
-        // Simulando a mudança e o clique no botão de upload
-        fireEvent.change(input, {
-            target: {
-                value: 'https://raw.githubusercontent.com/fatimamartins/ES-2024-EI-Grupo-G/main/public/HorarioDeExemplo.csv',
-            },
-        })
-        fireEvent.click(button)
-
-        // Esperando pela chamada de fetch e setData
-        await waitFor(() => {
-            expect(setDataMock).toHaveBeenCalledWith(mockData)
-        })
-    })
-
-    test('handles file upload error', async () => {
-        global.fetch = jest.fn().mockResolvedValue({ ok: false })
-
-        console.error = jest.fn()
-        const { getByPlaceholderText, getByText } = render(<RemoteFile />)
-        const input = getByPlaceholderText('CSV File URL')
-        const button = getByText('Upload')
-
-        fireEvent.change(input, { target: { value: 'https://example.com/nonexistent.csv' } })
-        fireEvent.click(button)
-
-        await waitFor(() => {
-            expect(global.fetch).toHaveBeenCalledWith('https://example.com/nonexistent.csv')
             expect(console.error).toHaveBeenCalledWith('Error fetching CSV:', expect.any(Error))
         })
-    })*/
+    })
+
+    it('logs error if file fetch fails', async () => {
+        global.fetch = jest.fn().mockResolvedValueOnce({ ok: false })
+        console.error = jest.fn()
+        const { getByPlaceholderText, getByText } = render(<RemoteFile setData={() => {}} />)
+        const input = getByPlaceholderText('CSV File URL')
+        const button = getByText('Upload')
+
+        fireEvent.change(input, { target: { value: 'example.csv' } })
+        fireEvent.click(button)
+
+        await waitFor(() => expect(console.error).toHaveBeenCalled())
+    })
+
+    it('updates fileName state when input changes', () => {
+        const { getByPlaceholderText } = render(<RemoteFile setData={() => {}} />)
+        const input = getByPlaceholderText('CSV File URL')
+
+        fireEvent.change(input, { target: { value: 'example.csv' } })
+
+        expect(input).toHaveValue('example.csv')
+    })
+
+    it('calls fetch with the correct file URL', async () => {
+        global.fetch = jest.fn().mockResolvedValueOnce({ ok: true, text: jest.fn() })
+        const { getByPlaceholderText, getByText } = render(<RemoteFile setData={() => {}} />)
+        const input = getByPlaceholderText('CSV File URL')
+        const button = getByText('Upload')
+
+        fireEvent.change(input, { target: { value: 'https://example.com/file.csv' } })
+        fireEvent.click(button)
+
+        await waitFor(() => expect(global.fetch).toHaveBeenCalledWith('https://example.com/file.csv'))
+    })
 })
