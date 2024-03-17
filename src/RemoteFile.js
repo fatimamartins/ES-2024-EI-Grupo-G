@@ -53,7 +53,7 @@ export default function RemoteFile({ setData }) {
     }
 
     return (
-        <Stack direction={'row'} mt={4}>
+        <Stack direction={'row'} ml={8}>
             <Input type="text" value={fileName} onChange={handleFileChange} placeholder="CSV File URL" />
             <Button variant="contained" onClick={handleFileUpload}>
                 Upload

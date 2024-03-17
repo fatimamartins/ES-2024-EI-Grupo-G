@@ -7,7 +7,7 @@ import './App.css'
 /** @module react */
 import React, { useState } from 'react'
 /** @module @mui/material */
-import { Container } from '@mui/material'
+import { Container, Stack } from '@mui/material'
 /** @module ScheduleTable */
 import ScheduleTable from './ScheduleTable'
 /** @module CsvReader */
@@ -47,13 +47,19 @@ export default function App() {
     return (
         <Container>
             <h1>Aplicação de suporte à gestão de horários</h1>
-            <h3>Horário</h3>
-            <CsvReader setData={setHorario} id="1" />
-            <RemoteFile setData={setHorario} />
+            <h2>Horário</h2>
+            <Stack direction="row" alignItems="center" mt={6} mb={2}>
+                <CsvReader setData={setHorario} id="1" />
+                <h4>OU</h4>
+                <RemoteFile setData={setHorario} />
+            </Stack>
             <ScheduleTable defaultData={horario} salas={salas} />
-            <h3>Salas</h3>
-            <CsvReader setData={setSalas} id="2" />
-            <RemoteFile setData={setSalas} />
+            <h2>Salas</h2>
+            <Stack direction="row" alignItems="center" mt={4} mb={4}>
+                <CsvReader setData={setSalas} id="2" />
+                <h4>OU</h4>
+                <RemoteFile setData={setSalas} />
+            </Stack>
             <RoomsTable defaultData={salas} />
         </Container>
     )
