@@ -40,24 +40,20 @@ describe('addSemesterWeekNumber', () => {
     // Adicione mais testes conforme necessário para cobrir outros casos de uso
 })
 
-describe('parseDate', () => {
-    it('converte corretamente a string de data para um objeto Date', () => {
-        const dateString = '01/01/2024'
-        const expectedDate = new Date(2024, 0, 1) // Mês é zero-based
-
-        const result = parseDate(dateString)
-        expect(result).toEqual(expectedDate)
-    })
-
-    it('lida corretamente com a string de data vazia', () => {
-        const dateString = ''
-        const result = parseDate(dateString)
-        expect(result).toBeUndefined()
-    })
-
-    // Adicione mais testes conforme necessário para cobrir outros casos de uso
+test('parseDate should return a valid Date object', () => {
+    const dateString = '10/05/2022'
+    const expectedDate = new Date(2022, 4, 10)
+    expect(parseDate(dateString)).toEqual(expectedDate)
 })
 
+test('parseDate should return null if no dateString is provided', () => {
+    expect(parseDate()).toBeNull()
+})
+
+test('parseDate should return null if an invalid dateString is provided', () => {
+    const dateString = '2022-05-10'
+    expect(parseDate(dateString)).toBeNull()
+})
 describe('sortDate', () => {
     it('classifica corretamente as datas', () => {
         const date1 = '01/01/2024'
