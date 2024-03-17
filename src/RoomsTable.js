@@ -202,7 +202,9 @@ export default function RoomsTable({ defaultData }) {
         } else {
             const previousFilter = tabulatorFilter[tabulatorFilter.length - 1] // get last element
             const newFilterArr = tabulatorFilter.slice(0, -1) // remove last element
-            setTabulatorFilter([...newFilterArr, [previousFilter, newFilter]])
+            Array.isArray(previousFilter)
+                ? setTabulatorFilter([...newFilterArr, [...previousFilter, newFilter]])
+                : setTabulatorFilter([...newFilterArr, [previousFilter, newFilter]])
         }
     }
 
@@ -216,11 +218,11 @@ export default function RoomsTable({ defaultData }) {
         setTabulatorFilter([])
     }
 
-    const deleteFilter = (filter) => {
+    const deleteFilter = (indexToRemove) => {
         if (filters.length === 1) {
             clear()
         } else {
-            const newFilters = filters.filter((f) => f.field !== filter.field)
+            const newFilters = [...filters.slice(0, indexToRemove), ...filters.slice(indexToRemove + 1)]
             setFilters(newFilters)
             let tabulatorNewFilter = []
             newFilters.forEach((f) => {
@@ -236,7 +238,9 @@ export default function RoomsTable({ defaultData }) {
                 } else {
                     const previousFilter = tabulatorNewFilter[tabulatorNewFilter.length - 1] // get last element
                     const newFilterArr = tabulatorNewFilter.slice(0, -1) // remove last element
-                    tabulatorNewFilter = [...newFilterArr, [previousFilter, newFilter]]
+                    Array.isArray(previousFilter)
+                        ? (tabulatorNewFilter = [...newFilterArr, [...previousFilter, newFilter]])
+                        : (tabulatorNewFilter = [...newFilterArr, [previousFilter, newFilter]])
                 }
             })
             setTabulatorFilter(tabulatorNewFilter)
@@ -336,27 +340,34 @@ export default function RoomsTable({ defaultData }) {
             </Stack>
             {filters && filters.length > 0 && (
                 <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2 }}>
-                    <Button
-                        key={filters[0].field}
-                        variant="outlined"
-                        endIcon={<Cancel />}
-                        onClick={(e) => deleteFilter(filters[0])}
-                    >
-                        {filters[0].title}: {filters[0].value}
-                    </Button>
-                    {filters.slice(1).map((filter) => (
-                        <Stack direction="row" alignItems="center" key={filter.field}>
-                            {filter.logic ? filter.logic : ''}
-                            <Button
-                                variant="outlined"
-                                endIcon={<Cancel />}
-                                onClick={(e) => deleteFilter(filter)}
-                                sx={{ ml: 1 }}
-                            >
-                                {filter.title}: {filter.value}
-                            </Button>
-                        </Stack>
-                    ))}
+                    {filters.map((filter, index) => {
+                        if (index === 0) {
+                            return (
+                                <Button
+                                    key={index}
+                                    variant="outlined"
+                                    endIcon={<Cancel />}
+                                    onClick={(e) => deleteFilter(index)}
+                                >
+                                    {filters[0].title}: {filters[0].value}
+                                </Button>
+                            )
+                        } else {
+                            return (
+                                <Stack direction="row" alignItems="center" key={index}>
+                                    {filter.logic ? filter.logic : ''}
+                                    <Button
+                                        variant="outlined"
+                                        endIcon={<Cancel />}
+                                        onClick={(e) => deleteFilter(index)}
+                                        sx={{ ml: 1 }}
+                                    >
+                                        {filter.title}: {filter.value}
+                                    </Button>
+                                </Stack>
+                            )
+                        }
+                    })}
                 </Stack>
             )}
             <ReactTabulator
