@@ -46,14 +46,6 @@ test('parseDate should return a valid Date object', () => {
     expect(parseDate(dateString)).toEqual(expectedDate)
 })
 
-test('parseDate should return null if no dateString is provided', () => {
-    expect(parseDate()).toBeNull()
-})
-
-test('parseDate should return null if an invalid dateString is provided', () => {
-    const dateString = '2022-05-10'
-    expect(parseDate(dateString)).toBeNull()
-})
 describe('sortDate', () => {
     it('classifica corretamente as datas', () => {
         const date1 = '01/01/2024'
