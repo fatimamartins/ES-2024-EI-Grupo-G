@@ -72,7 +72,7 @@ const defaultColumns = [
         field: 'Laborat�rio de Arquitectura de Computadores II',
         visible: false,
     },
-    { title: 'Laboratório de Bases de Engenharia', field: 'Laborat�rio de Bases de Engenharia', visible: true },
+    { title: 'Laboratório de Bases de Engenharia', field: 'Laborat�rio de Bases de Engenharia', visible: false },
     { title: 'Laboratório de Electrónica', field: 'Laborat�rio de Electr�ica', visible: false },
     { title: 'Laboratório de Informática', field: 'Laborat�rio de Inform�tica', visible: false },
     { title: 'Laboratório de Jornalismo', field: 'Laborat�rio de Jornalismo', visible: false },
@@ -141,6 +141,8 @@ const defaultRoomTypes = [
     { title: 'Átrio', field: '�trio' },
 ]
 
+const defaultTypeOfFilterComparison = ['=', '!=', 'like', 'starts', 'ends', '<', '>', '<=', '>=']
+
 /**
  * This is the RoomsTable component of the application.
  * It displays a table of rooms with various properties.
@@ -156,11 +158,16 @@ export default function RoomsTable({ defaultData }) {
     const [selectedField, setSelectedField] = React.useState('')
     const [value, setValue] = React.useState('')
     const [logicOperator, setLogicOperator] = React.useState('AND')
+    const [type, setType] = React.useState('=') //type of filter comparison. Example: =, <, >, <=, >=, !=  like starts ends
     const [filters, setFilters] = React.useState([])
     const [tabulatorFilter, setTabulatorFilter] = React.useState([])
 
     const handleFieldChange = (event) => {
         setSelectedField(event.target.value)
+    }
+
+    const handleTypeChange = (event) => {
+        setType(event.target.value)
     }
 
     const addFilter = () => {
@@ -171,22 +178,68 @@ export default function RoomsTable({ defaultData }) {
                 field: selectedField,
                 value: value,
                 logic: logicOperator,
+                type: type,
             },
         ])
-        setSelectedField('')
-        setValue('')
-
+        // if selectedField is 'Tipo de sala' then field is equal to value (room type) and value is equal to 'X'
         const newFilter =
             selectedField === 'Tipo de sala'
                 ? { field: value, type: '=', value: 'X' }
-                : { field: selectedField, type: '=', value: value }
+                : { field: selectedField, type: type, value: value }
 
+        updateTabulatorFilter(newFilter) // update tabulator filter
+        setSelectedField('') // reset all states
+        setValue('')
+        setType('=')
+    }
+
+    const updateTabulatorFilter = (newFilter) => {
         if (logicOperator === 'AND') {
             setTabulatorFilter([...tabulatorFilter, newFilter])
+        } else if (logicOperator === 'OR' && tabulatorFilter.length === 0) {
+            // if logic operator is OR and there are no filters
+            setTabulatorFilter([newFilter])
         } else {
             const previousFilter = tabulatorFilter[tabulatorFilter.length - 1] // get last element
             const newFilterArr = tabulatorFilter.slice(0, -1) // remove last element
             setTabulatorFilter([...newFilterArr, [previousFilter, newFilter]])
+        }
+    }
+
+    const clear = () => {
+        tableRef?.current.clearFilter()
+        setFilters([]) // clear all filters
+        setLogicOperator('AND')
+        setType('=')
+        setValue('')
+        setSelectedField('')
+        setTabulatorFilter([])
+    }
+
+    const deleteFilter = (filter) => {
+        if (filters.length === 1) {
+            clear()
+        } else {
+            const newFilters = filters.filter((f) => f.field !== filter.field)
+            setFilters(newFilters)
+            let tabulatorNewFilter = []
+            newFilters.forEach((f) => {
+                const newFilter =
+                    f.title === 'Tipo de sala'
+                        ? { field: f.value, type: '=', value: 'X' }
+                        : { field: f.field, type: f.type, value: f.value }
+                if (f.logic === 'AND') {
+                    tabulatorNewFilter = [...tabulatorNewFilter, newFilter]
+                } else if (f.logic === 'OR' && tabulatorNewFilter.length === 0) {
+                    // if logic operator is OR and there are no filters
+                    tabulatorNewFilter = [newFilter]
+                } else {
+                    const previousFilter = tabulatorNewFilter[tabulatorNewFilter.length - 1] // get last element
+                    const newFilterArr = tabulatorNewFilter.slice(0, -1) // remove last element
+                    tabulatorNewFilter = [...newFilterArr, [previousFilter, newFilter]]
+                }
+            })
+            setTabulatorFilter(tabulatorNewFilter)
         }
     }
 
@@ -195,17 +248,6 @@ export default function RoomsTable({ defaultData }) {
             tableRef?.current.setFilter(tabulatorFilter)
         }
     }, [tabulatorFilter])
-
-    const clear = () => {
-        tableRef?.current.clearFilter()
-        setFilters([])
-    }
-
-    const deleteFilter = (filter) => {
-        const newFilters = filters.filter((f) => f.field !== filter.field)
-        setFilters(newFilters)
-        tableRef?.current.removeFilter(filter.field, '=', filter.value)
-    }
 
     return (
         <div>
@@ -220,10 +262,10 @@ export default function RoomsTable({ defaultData }) {
             </Stack>
             <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2, mb: 2 }}>
                 <FormControl sx={{ width: 350 }}>
-                    <InputLabel id="simple-select-label">Campo a filtrar</InputLabel>
+                    <InputLabel id="simple-select-label1">Campo a filtrar</InputLabel>
                     <Select
-                        labelId="simple-select-label"
-                        id="simple-select"
+                        labelId="simple-select-label1"
+                        id="simple-select1"
                         value={selectedField}
                         label="Campo a filtrar"
                         onChange={handleFieldChange}
@@ -237,7 +279,25 @@ export default function RoomsTable({ defaultData }) {
                         })}
                     </Select>
                 </FormControl>
-                {selectedField !== 'Tipo de sala' && (
+                <FormControl sx={{ width: 100 }}>
+                    <InputLabel id="simple-select-label2">Tipo</InputLabel>
+                    <Select
+                        labelId="simple-select-label2"
+                        id="simple-select2"
+                        value={type}
+                        label="Tipo"
+                        onChange={handleTypeChange}
+                    >
+                        {defaultTypeOfFilterComparison.map((t, index) => {
+                            return (
+                                <MenuItem key={index} value={t}>
+                                    {t}
+                                </MenuItem>
+                            )
+                        })}
+                    </Select>
+                </FormControl>
+                {selectedField !== 'Tipo de sala' ? (
                     <TextField
                         sx={{ ml: 1, width: 350 }}
                         id="outlined-basic"
@@ -248,8 +308,7 @@ export default function RoomsTable({ defaultData }) {
                             setValue(event.target.value)
                         }}
                     />
-                )}
-                {selectedField && selectedField === 'Tipo de sala' && (
+                ) : (
                     <FormControl sx={{ ml: 1, width: 350 }}>
                         <Select
                             sx={{ height: 65 }}
