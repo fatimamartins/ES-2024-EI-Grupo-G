@@ -67,6 +67,27 @@ export function parseDate(dateString) {
 }
 
 /**
+ * Parses a string representation of an hour into a numerical representation.
+ *
+ * @function
+ * @name parseHour
+ * @param {string} hourString - A string representing an hour in the format 'HH:MM:SS'.
+ * @returns {number|null} The time value of the parsed hour in milliseconds since the Unix Epoch, or null if the input is not a string.
+ */
+export function parseHour(hourString) {
+    if (hourString) {
+        const parts = hourString.split(':')
+        const hour = parseInt(parts[0], 10)
+        const minute = parseInt(parts[1], 10)
+        const second = parts[2] ? parseInt(parts[2], 10) : 0
+        const date = new Date()
+        date.setHours(hour, minute, second)
+        return date.getTime()
+    }
+    return null
+}
+
+/**
  * Compares two date strings and returns a number indicating their sort order.
  *
  * @function
@@ -96,4 +117,28 @@ export function sortDate(a, b) {
 export function sortWeekDays(a, b) {
     const weekDays = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']
     return weekDays.indexOf(a) - weekDays.indexOf(b)
+}
+
+/**
+ * Checks if a room is available at a specific date and hour based on the provided schedule data.
+ *
+ * @function
+ * @name validateRoomAvailability
+ * @param {string} room - The room to check availability for.
+ * @param {Date} date - The date to check availability for.
+ * @param {Object} hour - The hour to check availability for, with hour, minute, and second components.
+ * @param {Object[]} horario - The schedule data to check against.
+ * @returns {boolean} `true` if the room is available, `false` otherwise.
+ */
+export function validateRoomAvailability(room, date, hour, horario) {
+    const roomData = horario.filter(
+        (horario) =>
+            horario['Sala atribuída à aula'] === room &&
+            parseDate(horario['Data da aula']) === date &&
+            !(
+                parseHour(horario['Hora início da aula']) <= parseHour(hour) &&
+                parseHour(horario['Hora fim da aula']) >= parseHour(hour)
+            )
+    )
+    return roomData.length > 0
 }
