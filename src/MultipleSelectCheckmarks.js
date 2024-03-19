@@ -57,7 +57,7 @@ const colName = [
  * @name MultipleSelectCheckmarks
  * @returns {JSX.Element} The rendered MultipleSelectCheckmarks component.
  */
-export default function MultipleSelectCheckmarks({ defaultColumns, setColumns }) {
+export default function MultipleSelectCheckmarks({ defaultColumns, salas, setColumns }) {
     const [selectedColumns, setSelectedColumns] = useState(colName)
 
     const handleChange = (event) => {
@@ -66,7 +66,7 @@ export default function MultipleSelectCheckmarks({ defaultColumns, setColumns })
         } = event
         setSelectedColumns(typeof value === 'string' ? value.split(',') : value)
 
-        const newValue = defaultColumns.map((col) => {
+        const newValue = defaultColumns(salas).map((col) => {
             return { ...col, visible: value.includes(col.title) }
         })
         setColumns(newValue)
