@@ -43,4 +43,4 @@ npm-debug.log*
 *.iml
 
 # Jest coverage files
-coverage/
+.coverage/
