@@ -205,7 +205,7 @@ export default function ScheduleTable({ defaultData, salas }) {
 
     return (
         <div>
-            <MultipleSelectCheckmarks defaultColumns={defaultColumns} setColumns={setColumns} />
+            <MultipleSelectCheckmarks defaultColumns={defaultColumns} salas={salas} setColumns={setColumns} />
             <ReactTabulator
                 onRef={(r) => (tableRef.current = r.current)}
                 data={dataWithWeekAndSemesterNumber}
