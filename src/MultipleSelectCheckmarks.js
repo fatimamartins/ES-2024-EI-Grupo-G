@@ -57,32 +57,42 @@ const colName = [
  * @name MultipleSelectCheckmarks
  * @returns {JSX.Element} The rendered MultipleSelectCheckmarks component.
  */
-export default function MultipleSelectCheckmarks({ defaultColumns, salas, setColumns }) {
-    const [selectedColumns, setSelectedColumns] = useState(colName)
+export default function MultipleSelectCheckmarks({ tableRef }) {
+    const [selectedColumns, setSelectedColumns] = useState(colName) //the default value is all columns because all columns are visible by default
+    console.log('🚀 ~ MultipleSelectCheckmarks ~ selectedColumns:', selectedColumns)
 
     const handleChange = (event) => {
         const {
             target: { value },
         } = event
-        setSelectedColumns(typeof value === 'string' ? value.split(',') : value)
-
-        const newValue = defaultColumns(salas).map((col) => {
-            return { ...col, visible: value.includes(col.title) }
+        console.log('🚀 ~ handleChange ~ value:', value)
+        colName.forEach((col) => {
+            if (
+                //if selectedColumns doesn't have the column it means it has not visible.
+                //if the value has the column it means it should be visible now
+                (value.includes(col) && !selectedColumns.includes(col)) ||
+                //if selectedColumns has the column it means it has visible
+                //if the value doesn't have the column it means it should be hidden now
+                (!value.includes(col) && selectedColumns.includes(col))
+            ) {
+                return tableRef.current.toggleColumn(col)
+            }
         })
-        setColumns(newValue)
+        setSelectedColumns(value)
     }
 
     return (
         <Stack direction={'row'} mb={1} justifyContent="flex-end">
             <FormControl sx={{ width: 350 }}>
-                <InputLabel id="multiple-checkbox-label">Colunas</InputLabel>
+                <InputLabel id="multiple-checkbox-label">Colunas visíveis</InputLabel>
                 <Select
                     labelId="multiple-checkbox-label"
                     id="multiple-checkbox"
                     multiple
                     value={selectedColumns}
                     onChange={handleChange}
-                    input={<OutlinedInput label="Colunas" />}
+                    label="Colunas visíveis"
+                    // input={<OutlinedInput label="Colunas" />}
                     renderValue={(selected) => selected.join(', ')}
                     MenuProps={MenuProps}
                 >

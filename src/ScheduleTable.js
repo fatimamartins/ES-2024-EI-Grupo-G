@@ -3,24 +3,24 @@
  */
 
 /** @module react */
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 /** @module react-tabulator */
 import { ReactTabulator } from 'react-tabulator'
 import { addSemesterWeekNumber, addWeekNumber, sortWeekDays } from './utils'
 import MultipleSelectCheckmarks from './MultipleSelectCheckmarks'
 /** @module @mui/material */
 import { Button, Stack } from '@mui/material'
+import ScheduleTableFilter from './ScheduleTableFilter'
 
 /**
  * @constant {Object[]} defaultColumns - The default columns for the table.
  */
-const defaultColumns = (salas) => [
+const defaultColumns = [
     {
         title: 'Curso',
         field: 'Curso',
         hozAlign: 'left',
         sorter: 'string',
-        headerFilter: true,
         visible: true,
         editor: 'list',
         editorParams: {
@@ -33,7 +33,6 @@ const defaultColumns = (salas) => [
         field: 'Unidade Curricular',
         hozAlign: 'left',
         sorter: 'string',
-        headerFilter: true,
         visible: true,
         editor: 'list',
         editorParams: {
@@ -46,7 +45,6 @@ const defaultColumns = (salas) => [
         field: 'Turno',
         hozAlign: 'left',
         sorter: 'string',
-        headerFilter: true,
         visible: true,
         editor: 'list',
         editorParams: {
@@ -59,7 +57,6 @@ const defaultColumns = (salas) => [
         field: 'Turma',
         hozAlign: 'left',
         sorter: 'string',
-        headerFilter: true,
         visible: true,
         editor: 'list',
         editorParams: {
@@ -72,12 +69,8 @@ const defaultColumns = (salas) => [
         field: 'Inscritos no turno',
         hozAlign: 'left',
         sorter: 'number',
-        headerFilter: true,
         visible: true,
         editor: 'number',
-        editorParams: {
-            min: 0,
-        },
     },
     {
         title: 'Dia da semana',
@@ -85,11 +78,6 @@ const defaultColumns = (salas) => [
         hozAlign: 'left',
         sorter: function (a, b) {
             return sortWeekDays(a, b)
-        },
-        headerFilter: true,
-        headerFilterParams: {
-            values: { Seg: 'Seg', Ter: 'Ter', Qua: 'Qua', Qui: 'Qui', Sex: 'Sex', Sáb: 'Sáb' },
-            clearable: true,
         },
         visible: true,
         editor: 'list',
@@ -102,7 +90,6 @@ const defaultColumns = (salas) => [
         title: 'Hora início da aula',
         field: 'Hora início da aula',
         hozAlign: 'left',
-        headerFilter: 'input',
         visible: true,
         editor: 'time',
         editorParams: {
@@ -118,7 +105,6 @@ const defaultColumns = (salas) => [
         editorParams: {
             format: 'HH:mm:ss',
         },
-        headerFilter: 'input',
     },
     {
         title: 'Data da aula',
@@ -130,44 +116,26 @@ const defaultColumns = (salas) => [
         editorParams: {
             format: 'dd/MM/yyyy',
         },
-        headerFilter: 'input',
     },
     {
         title: 'Características da sala pedida para a aula',
         field: 'Características da sala pedida para a aula',
         hozAlign: 'left',
         sorter: 'string',
-        headerFilter: true,
         visible: true,
-        editor: salas && salas.length > 0 ? 'list' : undefined,
-        editorParams:
-            salas && salas.length > 0
-                ? {
-                      values: [...Object.keys(salas[0]).slice(5), 'Não necessita de sala'],
-                  }
-                : undefined,
     },
     {
         title: 'Sala atribuída à aula',
         field: 'Sala atribuída à aula',
         hozAlign: 'left',
         sorter: 'string',
-        headerFilter: true,
         visible: true,
-        editor: salas && salas.length > 0 ? 'list' : undefined,
-        editorParams:
-            salas && salas.length > 0
-                ? {
-                      values: [...new Set(salas.map((sala) => sala['Nome sala']))],
-                  }
-                : undefined,
     },
     {
         title: 'Semana do ano',
         field: 'Semana do ano',
         hozAlign: 'left',
         sorter: 'number',
-        headerFilter: true,
         visible: true,
         editor: 'number',
     },
@@ -176,14 +144,10 @@ const defaultColumns = (salas) => [
         field: 'Semana do semestre',
         hozAlign: 'left',
         sorter: 'number',
-        headerFilter: true,
         visible: true,
         editor: 'number',
     },
 ]
-
-//https://github.com/ngduc/react-tabulator/blob/master/src/ReactTabulatorExample.tsx#L83
-//neste link tem um exemplo de como fazer o download de um arquivo csv e como editar uma celula
 /**
  * This is the ScheduleTable component of the application.
  * It displays a table of schedules with various properties.
@@ -196,16 +160,42 @@ const defaultColumns = (salas) => [
  */
 export default function ScheduleTable({ defaultData, salas }) {
     const dataWithWeekAndSemesterNumber = addSemesterWeekNumber(addWeekNumber(defaultData))
-    const [columns, setColumns] = useState(defaultColumns(salas))
+    const [columns, setColumns] = React.useState(defaultColumns)
     const tableRef = React.useRef(null)
 
-    useEffect(() => {
-        setColumns(defaultColumns(salas))
+    React.useEffect(() => {
+        if (salas.length > 0) {
+            const listaSalas = [...new Set(salas.map((sala) => sala['Nome sala']))]
+            const listaCaracteristicasSalas = [...Object.keys(salas[0]).slice(5), 'Não necessita de sala']
+            const newColumns = defaultColumns.map((col) => {
+                if (col.title === 'Sala atribuída à aula') {
+                    return {
+                        ...col,
+                        editor: 'list',
+                        editorParams: {
+                            values: listaSalas,
+                        },
+                    }
+                } else if (col.title === 'Características da sala pedida para a aula') {
+                    return {
+                        ...col,
+                        editor: 'list',
+                        editorParams: {
+                            values: listaCaracteristicasSalas,
+                        },
+                    }
+                } else {
+                    return col
+                }
+            })
+            setColumns(newColumns)
+        }
     }, [salas])
 
     return (
         <div>
-            <MultipleSelectCheckmarks defaultColumns={defaultColumns} salas={salas} setColumns={setColumns} />
+            <MultipleSelectCheckmarks tableRef={tableRef} />
+            <ScheduleTableFilter tableRef={tableRef} />
             <ReactTabulator
                 onRef={(r) => (tableRef.current = r.current)}
                 data={dataWithWeekAndSemesterNumber}
