@@ -2,6 +2,7 @@ import {
     addWeekNumber,
     addSemesterWeekNumber,
     parseDate,
+    parseHour,
     sortDate,
     validateRoomAvailability,
     sortWeekDays,
@@ -74,7 +75,52 @@ describe('sortDate', () => {
         expect(sameDates.sort(sortDate)).toEqual(dates)
     })
 
-    // Adicione mais testes conforme necessário para cobrir outros casos de uso
+    it('should return a negative number if a is earlier than b', () => {
+        const a = '01/01/2022'
+        const b = '01/02/2022'
+
+        const result = sortDate(a, b)
+
+        expect(result).toBeLessThan(0)
+    })
+
+    it('should return a positive number if a is later than b', () => {
+        const a = '01/02/2022'
+        const b = '01/01/2022'
+
+        const result = sortDate(a, b)
+
+        expect(result).toBeGreaterThan(0)
+    })
+
+    it('should return 0 if a and b are the same', () => {
+        const a = '01/01/2022'
+        const b = '01/01/2022'
+
+        const result = sortDate(a, b)
+
+        expect(result).toBe(0)
+    })
+
+    it('should handle cases where only one of a or b is a valid date string', () => {
+        const a = '01/01/2022'
+        const b = null
+
+        const result1 = sortDate(a, b)
+        const result2 = sortDate(b, a)
+
+        expect(result1).toBeLessThan(0)
+        expect(result2).toBeGreaterThan(0)
+    })
+
+    it('should handle cases where both a and b are empty strings', () => {
+        const a = ''
+        const b = ''
+
+        const result = sortDate(a, b)
+
+        expect(result).toBe(1)
+    })
 })
 
 describe('validateRoomAvailability', () => {
@@ -117,5 +163,55 @@ describe('sortWeekDays', () => {
         const sortedDays = ['Seg', 'Seg', 'Ter', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']
         const shuffledDays = ['Dom', 'Seg', 'Ter', 'Qui', 'Qua', 'Seg', 'Sáb', 'Ter', 'Sex']
         expect(shuffledDays.sort(sortWeekDays)).toEqual(sortedDays)
+    })
+})
+
+describe('addSemesterWeekNumber function', () => {
+    it('should add semester week numbers to data', () => {
+        const defaultData = [
+            { 'Data da aula': '01/01/2024', 'Semana do ano': 1 },
+            { 'Data da aula': '02/01/2024', 'Semana do ano': 1 },
+            { 'Data da aula': '03/01/2024', 'Semana do ano': 2 },
+            { 'Data da aula': '04/01/2024', 'Semana do ano': 2 },
+            { 'Data da aula': '05/01/2024', 'Semana do ano': 0 },
+            { 'Data da aula': '06/01/2024', 'Semana do ano': 3 },
+        ]
+
+        const expectedResult = [
+            { 'Data da aula': '01/01/2024', 'Semana do ano': 1, 'Semana do semestre': 1 },
+            { 'Data da aula': '02/01/2024', 'Semana do ano': 1, 'Semana do semestre': 1 },
+            { 'Data da aula': '03/01/2024', 'Semana do ano': 2, 'Semana do semestre': 2 },
+            { 'Data da aula': '04/01/2024', 'Semana do ano': 2, 'Semana do semestre': 2 },
+            { 'Data da aula': '05/01/2024', 'Semana do ano': 0, 'Semana do semestre': '' },
+            { 'Data da aula': '06/01/2024', 'Semana do ano': 3, 'Semana do semestre': 3 },
+        ]
+
+        const result = addSemesterWeekNumber(defaultData)
+
+        expect(result).toEqual(expectedResult)
+    })
+})
+
+describe('parseHour function', () => {
+    it('should parse hour string into milliseconds since Unix Epoch', () => {
+        const hourString = '12:30:45'
+        const expectedHourMilliseconds = 12 * 60 * 60 * 1000 + 30 * 60 * 1000 + 45 * 1000 // Calculate expected milliseconds for the time portion only
+
+        const result = parseHour(hourString)
+        const receivedDate = new Date(result)
+        const receivedHourMilliseconds =
+            receivedDate.getUTCHours() * 60 * 60 * 1000 +
+            receivedDate.getUTCMinutes() * 60 * 1000 +
+            receivedDate.getUTCSeconds() * 1000 // Calculate milliseconds for the time portion only from the received date
+
+        expect(receivedHourMilliseconds).toEqual(expectedHourMilliseconds)
+    })
+
+    it('should return null if input is not a string', () => {
+        const hourString = null
+
+        const result = parseHour(hourString)
+
+        expect(result).toBeNull()
     })
 })
