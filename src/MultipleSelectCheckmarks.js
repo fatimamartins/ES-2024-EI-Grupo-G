@@ -59,13 +59,11 @@ const colName = [
  */
 export default function MultipleSelectCheckmarks({ tableRef }) {
     const [selectedColumns, setSelectedColumns] = useState(colName) //the default value is all columns because all columns are visible by default
-    console.log('🚀 ~ MultipleSelectCheckmarks ~ selectedColumns:', selectedColumns)
 
     const handleChange = (event) => {
         const {
             target: { value },
         } = event
-        console.log('🚀 ~ handleChange ~ value:', value)
         colName.forEach((col) => {
             if (
                 //if selectedColumns doesn't have the column it means it has not visible.
