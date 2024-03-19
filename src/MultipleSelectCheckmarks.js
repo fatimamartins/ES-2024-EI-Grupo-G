@@ -57,19 +57,26 @@ const colName = [
  * @name MultipleSelectCheckmarks
  * @returns {JSX.Element} The rendered MultipleSelectCheckmarks component.
  */
-export default function MultipleSelectCheckmarks({ defaultColumns, setColumns }) {
-    const [selectedColumns, setSelectedColumns] = useState(colName)
+export default function MultipleSelectCheckmarks({ tableRef }) {
+    const [selectedColumns, setSelectedColumns] = useState(colName) //the default value is all columns because all columns are visible by default
 
     const handleChange = (event) => {
         const {
             target: { value },
         } = event
-        setSelectedColumns(typeof value === 'string' ? value.split(',') : value)
-
-        const newValue = defaultColumns.map((col) => {
-            return { ...col, visible: value.includes(col.title) }
+        colName.forEach((col) => {
+            if (
+                (value.includes(col) && !selectedColumns.includes(col)) ||
+                //if selectedColumns doesn't have the column it means it has not visible.
+                //if the value has the column it means it should be visible now
+                (!value.includes(col) && selectedColumns.includes(col))
+                //if selectedColumns has the column it means it has visible
+                //if the value doesn't have the column it means it should be hidden now
+            ) {
+                return tableRef.current.toggleColumn(col)
+            }
         })
-        setColumns(newValue)
+        setSelectedColumns(typeof value === 'string' ? value.split(',') : value)
     }
 
     return (
