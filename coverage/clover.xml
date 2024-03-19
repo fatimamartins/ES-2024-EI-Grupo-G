@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1710858922352" clover="3.2.0">
-  <project timestamp="1710858922352" name="All files">
-    <metrics statements="166" coveredstatements="67" conditionals="82" coveredconditionals="21" methods="52" coveredmethods="20" elements="300" coveredelements="108" complexity="0" loc="166" ncloc="166" packages="1" files="10" classes="10"/>
+<coverage generated="1710860518833" clover="3.2.0">
+  <project timestamp="1710860518833" name="All files">
+    <metrics statements="166" coveredstatements="76" conditionals="82" coveredconditionals="33" methods="52" coveredmethods="25" elements="300" coveredelements="134" complexity="0" loc="166" ncloc="166" packages="1" files="10" classes="10"/>
     <file name="App.js" path="C:\Users\MasterAdmin\Documents\GitHub\ES-2024-EI-Grupo-G\src\App.js">
       <metrics statements="3" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
       <line num="40" count="0" type="stmt"/>
@@ -16,20 +16,20 @@
     </file>
     <file name="MultipleSelectCheckmarks.js" path="C:\Users\MasterAdmin\Documents\GitHub\ES-2024-EI-Grupo-G\src\MultipleSelectCheckmarks.js">
       <metrics statements="14" coveredstatements="14" conditionals="2" coveredconditionals="1" methods="5" coveredmethods="5"/>
-      <line num="22" count="1" type="stmt"/>
-      <line num="24" count="1" type="stmt"/>
-      <line num="26" count="1" type="stmt"/>
-      <line num="36" count="1" type="stmt"/>
-      <line num="61" count="15" type="stmt"/>
-      <line num="63" count="15" type="stmt"/>
-      <line num="66" count="13" type="stmt"/>
-      <line num="67" count="13" type="cond" truecount="1" falsecount="1"/>
-      <line num="69" count="13" type="stmt"/>
-      <line num="70" count="169" type="stmt"/>
-      <line num="72" count="13" type="stmt"/>
-      <line num="75" count="15" type="stmt"/>
-      <line num="86" count="17" type="stmt"/>
-      <line num="90" count="195" type="stmt"/>
+      <line num="22" count="2" type="stmt"/>
+      <line num="24" count="2" type="stmt"/>
+      <line num="26" count="2" type="stmt"/>
+      <line num="36" count="2" type="stmt"/>
+      <line num="61" count="22" type="stmt"/>
+      <line num="63" count="22" type="stmt"/>
+      <line num="66" count="17" type="stmt"/>
+      <line num="67" count="17" type="cond" truecount="1" falsecount="1"/>
+      <line num="69" count="17" type="stmt"/>
+      <line num="70" count="221" type="stmt"/>
+      <line num="72" count="17" type="stmt"/>
+      <line num="75" count="22" type="stmt"/>
+      <line num="86" count="27" type="stmt"/>
+      <line num="90" count="286" type="stmt"/>
     </file>
     <file name="RemoteFile.js" path="C:\Users\MasterAdmin\Documents\GitHub\ES-2024-EI-Grupo-G\src\RemoteFile.js">
       <metrics statements="13" coveredstatements="12" conditionals="2" coveredconditionals="2" methods="3" coveredmethods="3"/>
@@ -122,17 +122,17 @@
       <line num="374" count="0" type="stmt"/>
     </file>
     <file name="ScheduleTable.js" path="C:\Users\MasterAdmin\Documents\GitHub\ES-2024-EI-Grupo-G\src\ScheduleTable.js">
-      <metrics statements="12" coveredstatements="0" conditionals="16" coveredconditionals="0" methods="8" coveredmethods="0"/>
-      <line num="17" count="0" type="stmt"/>
+      <metrics statements="12" coveredstatements="9" conditionals="16" coveredconditionals="12" methods="8" coveredmethods="5"/>
+      <line num="17" count="3" type="stmt"/>
       <line num="87" count="0" type="stmt"/>
-      <line num="161" count="0" type="stmt"/>
-      <line num="198" count="0" type="stmt"/>
-      <line num="199" count="0" type="stmt"/>
-      <line num="200" count="0" type="stmt"/>
-      <line num="202" count="0" type="stmt"/>
-      <line num="203" count="0" type="stmt"/>
-      <line num="206" count="0" type="stmt"/>
-      <line num="210" count="0" type="stmt"/>
+      <line num="161" count="18" type="stmt"/>
+      <line num="198" count="2" type="stmt"/>
+      <line num="199" count="2" type="stmt"/>
+      <line num="200" count="2" type="stmt"/>
+      <line num="202" count="2" type="stmt"/>
+      <line num="203" count="1" type="stmt"/>
+      <line num="206" count="2" type="stmt"/>
+      <line num="210" count="1" type="stmt"/>
       <line num="226" count="0" type="stmt"/>
       <line num="233" count="0" type="stmt"/>
     </file>
@@ -158,26 +158,26 @@
     </file>
     <file name="utils.js" path="C:\Users\MasterAdmin\Documents\GitHub\ES-2024-EI-Grupo-G\src\utils.js">
       <metrics statements="39" coveredstatements="39" conditionals="23" coveredconditionals="18" methods="11" coveredmethods="11"/>
-      <line num="17" count="2" type="stmt"/>
-      <line num="18" count="5" type="stmt"/>
-      <line num="19" count="5" type="stmt"/>
-      <line num="20" count="5" type="cond" truecount="2" falsecount="0"/>
-      <line num="33" count="2" type="stmt"/>
-      <line num="34" count="2" type="stmt"/>
-      <line num="36" count="2" type="stmt"/>
-      <line num="37" count="5" type="stmt"/>
-      <line num="39" count="6" type="cond" truecount="2" falsecount="0"/>
+      <line num="17" count="4" type="stmt"/>
+      <line num="18" count="21" type="stmt"/>
+      <line num="19" count="21" type="stmt"/>
+      <line num="20" count="21" type="cond" truecount="2" falsecount="0"/>
+      <line num="33" count="4" type="stmt"/>
+      <line num="34" count="4" type="stmt"/>
+      <line num="36" count="4" type="stmt"/>
+      <line num="37" count="41" type="stmt"/>
+      <line num="39" count="22" type="cond" truecount="2" falsecount="0"/>
       <line num="40" count="1" type="stmt"/>
-      <line num="42" count="6" type="cond" truecount="2" falsecount="0"/>
-      <line num="43" count="3" type="stmt"/>
-      <line num="44" count="3" type="stmt"/>
-      <line num="46" count="6" type="cond" truecount="2" falsecount="0"/>
-      <line num="59" count="46" type="cond" truecount="1" falsecount="1"/>
-      <line num="61" count="46" type="stmt"/>
-      <line num="62" count="46" type="stmt"/>
-      <line num="63" count="46" type="stmt"/>
-      <line num="64" count="46" type="stmt"/>
-      <line num="65" count="46" type="stmt"/>
+      <line num="42" count="22" type="cond" truecount="2" falsecount="0"/>
+      <line num="43" count="13" type="stmt"/>
+      <line num="44" count="13" type="stmt"/>
+      <line num="46" count="22" type="cond" truecount="2" falsecount="0"/>
+      <line num="59" count="134" type="cond" truecount="1" falsecount="1"/>
+      <line num="61" count="134" type="stmt"/>
+      <line num="62" count="134" type="stmt"/>
+      <line num="63" count="134" type="stmt"/>
+      <line num="64" count="134" type="stmt"/>
+      <line num="65" count="134" type="stmt"/>
       <line num="78" count="2" type="cond" truecount="2" falsecount="0"/>
       <line num="79" count="1" type="stmt"/>
       <line num="80" count="1" type="stmt"/>
@@ -187,11 +187,11 @@
       <line num="84" count="1" type="stmt"/>
       <line num="85" count="1" type="stmt"/>
       <line num="87" count="1" type="stmt"/>
-      <line num="101" count="22" type="cond" truecount="2" falsecount="0"/>
-      <line num="102" count="20" type="cond" truecount="2" falsecount="0"/>
-      <line num="103" count="19" type="stmt"/>
-      <line num="104" count="19" type="stmt"/>
-      <line num="105" count="19" type="stmt"/>
+      <line num="101" count="58" type="cond" truecount="2" falsecount="0"/>
+      <line num="102" count="56" type="cond" truecount="2" falsecount="0"/>
+      <line num="103" count="55" type="stmt"/>
+      <line num="104" count="55" type="stmt"/>
+      <line num="105" count="55" type="stmt"/>
       <line num="118" count="34" type="stmt"/>
       <line num="119" count="34" type="stmt"/>
       <line num="134" count="1" type="stmt"/>

@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">76.92% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/13</span>
+                <span class='fraction'>10/13</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">75% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/16</span>
+                <span class='fraction'>12/16</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">62.5% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/8</span>
+                <span class='fraction'>5/8</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">75% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/12</span>
+                <span class='fraction'>9/12</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line medium'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -319,7 +319,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -463,7 +463,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">18x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -500,19 +500,19 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -559,7 +559,7 @@ import { Button, Stack } from '@mui/material'
 /**
  * @constant {Object[]} defaultColumns - The default columns for the table.
  */
-const defaultColumns = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(s</span>alas) =&gt; <span class="cstat-no" title="statement not covered" >[</span></span>
+const defaultColumns = (salas) =&gt; [
     {
         title: 'Curso',
         field: 'Curso',
@@ -684,13 +684,13 @@ const defaultColumns = <span class="cstat-no" title="statement not covered" ><sp
         sorter: 'string',
         headerFilter: true,
         visible: true,
-        editor: salas &amp;&amp; salas.length &gt; 0 ? 'list' : undefined,
+        editor: salas &amp;&amp; salas.length &gt; 0 ? 'list' : <span class="branch-1 cbranch-no" title="branch not covered" >undefined,</span>
         editorParams:
             salas &amp;&amp; salas.length &gt; 0
                 ? {
                       values: [...Object.keys(salas[0]).slice(5), 'Não necessita de sala'],
                   }
-                : undefined,
+                : <span class="branch-1 cbranch-no" title="branch not covered" >undefined,</span>
     },
     {
         title: 'Sala atribuída à aula',
@@ -699,13 +699,13 @@ const defaultColumns = <span class="cstat-no" title="statement not covered" ><sp
         sorter: 'string',
         headerFilter: true,
         visible: true,
-        editor: salas &amp;&amp; salas.length &gt; 0 ? 'list' : undefined,
+        editor: salas &amp;&amp; salas.length &gt; 0 ? 'list' : <span class="branch-1 cbranch-no" title="branch not covered" >undefined,</span>
         editorParams:
             salas &amp;&amp; salas.length &gt; 0
                 ? {
-                      values: [...new Set(salas.map(<span class="fstat-no" title="function not covered" >(s</span>ala) =&gt; <span class="cstat-no" title="statement not covered" >sala['Nome sala'])</span>)],
+                      values: [...new Set(salas.map((sala) =&gt; sala['Nome sala']))],
                   }
-                : undefined,
+                : <span class="branch-1 cbranch-no" title="branch not covered" >undefined,</span>
     },
     {
         title: 'Semana do ano',
@@ -739,20 +739,20 @@ const defaultColumns = <span class="cstat-no" title="statement not covered" ><sp
  * @param {Object[]} props.data - The data to display in the table.
  * @returns {JSX.Element} The rendered ScheduleTable component.
  */
-export default function <span class="fstat-no" title="function not covered" >ScheduleTable(</span>{ defaultData, salas }) {
-    const dataWithWeekAndSemesterNumber = <span class="cstat-no" title="statement not covered" >addSemesterWeekNumber(addWeekNumber(defaultData))</span>
-    const [columns, setColumns] = <span class="cstat-no" title="statement not covered" >useState(defaultColumns(salas))</span>
-    const tableRef = <span class="cstat-no" title="statement not covered" >React.useRef(null)</span>
+export default function ScheduleTable({ defaultData, salas }) {
+    const dataWithWeekAndSemesterNumber = addSemesterWeekNumber(addWeekNumber(defaultData))
+    const [columns, setColumns] = useState(defaultColumns(salas))
+    const tableRef = React.useRef(null)
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    useEffect(<span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >        setColumns(defaultColumns(salas))</span>
+    useEffect(() =&gt; {
+        setColumns(defaultColumns(salas))
     }, [salas])
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    return (</span>
+    return (
         &lt;div&gt;
             &lt;MultipleSelectCheckmarks defaultColumns={defaultColumns} setColumns={setColumns} /&gt;
             &lt;ReactTabulator
-                onRef={<span class="fstat-no" title="function not covered" >(r</span>) =&gt; (<span class="cstat-no" title="statement not covered" >tableRef.current = r.current)</span>}
+                onRef={(r) =&gt; (tableRef.current = r.current)}
                 data={dataWithWeekAndSemesterNumber}
                 columns={columns}
                 options={{
@@ -790,7 +790,7 @@ export default function <span class="fstat-no" title="function not covered" >Sch
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-03-19T14:35:22.317Z
+                at 2024-03-19T15:01:58.807Z
             </div>
         <script src="prettify.js"></script>
         <script>
