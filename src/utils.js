@@ -97,7 +97,7 @@ export function parseHour(hourString) {
  * @returns {number} A negative number if `a` is earlier than `b`, a positive number if `a` is later than `b`, or 0 if they are the same.
  */
 export function sortDate(a, b) {
-    //a, b - the two values being compared
+    // a, b - the two values being compared
     if (!a) return 1
     if (!b) return -1
     const dateA = parseDate(a)
