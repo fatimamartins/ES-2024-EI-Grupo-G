@@ -5,11 +5,13 @@
         "jest/globals": true
     },
     "extends": [
+        "react-app",
+        "standard",
         "plugin:react/recommended",
         "plugin:react-hooks/recommended",
-        "standard",
         "plugin:prettier/recommended",
-        "plugin:jest/recommended"
+        "plugin:jest/recommended",
+        "prettier"
     ],
     "parserOptions": {
         "ecmaFeatures": {
@@ -18,19 +20,18 @@
         "ecmaVersion": "latest",
         "sourceType": "module"
     },
-    "plugins": ["react", "react-hooks", "jest", "jsx-a11y"],
+    "plugins": ["react", "jsx-a11y", "jest"],
     "rules": {
         "react/self-closing-comp": "error",
         "prettier/prettier": [
             "error",
             {
-                "printWidth": 80,
-                "tabWidth": 2,
-                "singleQuote": true,
-                "trailingComma": "all",
-                "arrowParens": "always",
+                "endOfLine": "auto",
+                "trailingComma": "es5",
+                "tabWidth": 4,
                 "semi": false,
-                "endOfLine": "auto"
+                "singleQuote": true,
+                "printWidth": 120
             }
         ],
         "react/react-in-jsx-scope": "off",
@@ -47,23 +48,12 @@
         "jsx-a11y/aria-unsupported-elements": "warn",
         "jsx-a11y/role-has-required-aria-props": "warn",
         "jsx-a11y/role-supports-aria-props": "warn",
-        "react/no-unknown-property": "error",
-        "import/extensions": [
-            "error",
-            "ignorePackages",
-            {
-                "js": "always",
-                "jsx": "always"
-            }
-        ]
+        "react/no-unknown-property": "error"
     },
     "settings": {
         "react": {
             "version": "detect"
         }
-        // "import/parsers": {
-        //     [require.resolve("@typescript-eslint/parser")]: [".ts", ".tsx", ".d.ts"],
-        // }
     },
     "ignorePatterns": ["node_modules"]
 }

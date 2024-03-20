@@ -35,7 +35,7 @@ export default function MultipleSelectCheckmarks({ tableRef }) {
     const [selectedField, setSelectedField] = React.useState('')
     const [value, setValue] = React.useState('')
     const [logicOperator, setLogicOperator] = React.useState('AND')
-    const [type, setType] = React.useState('=') //type of filter comparison. Example: =, <, >, <=, >=, !=  like starts ends
+    const [type, setType] = React.useState('=') // type of filter comparison. Example: =, <, >, <=, >=, !=  like starts ends
     const [filters, setFilters] = React.useState([])
     const [tabulatorFilter, setTabulatorFilter] = React.useState([])
 
@@ -45,12 +45,12 @@ export default function MultipleSelectCheckmarks({ tableRef }) {
             {
                 title: selectedField,
                 field: selectedField,
-                value: value,
+                value,
                 logic: logicOperator,
-                type: type,
+                type,
             },
         ])
-        const newFilter = { field: selectedField, type: type, value: value }
+        const newFilter = { field: selectedField, type, value }
         tableRef?.current.setFilter([newFilter])
         updateTabulatorFilter(newFilter) // update tabulator filter
         setSelectedField('') // reset all states

@@ -158,7 +158,7 @@ export default function RoomsTable({ defaultData }) {
     const [selectedField, setSelectedField] = React.useState('')
     const [value, setValue] = React.useState('')
     const [logicOperator, setLogicOperator] = React.useState('AND')
-    const [type, setType] = React.useState('=') //type of filter comparison. Example: =, <, >, <=, >=, !=  like starts ends
+    const [type, setType] = React.useState('=') // type of filter comparison. Example: =, <, >, <=, >=, !=  like starts ends
     const [filters, setFilters] = React.useState([])
     const [tabulatorFilter, setTabulatorFilter] = React.useState([])
 
@@ -176,16 +176,16 @@ export default function RoomsTable({ defaultData }) {
             {
                 title: defaultFilterFields.find((f) => f.field === selectedField).title,
                 field: selectedField,
-                value: value,
+                value,
                 logic: logicOperator,
-                type: type,
+                type,
             },
         ])
         // if selectedField is 'Tipo de sala' then field is equal to value (room type) and value is equal to 'X'
         const newFilter =
             selectedField === 'Tipo de sala'
                 ? { field: value, type: '=', value: 'X' }
-                : { field: selectedField, type: type, value: value }
+                : { field: selectedField, type, value }
 
         updateTabulatorFilter(newFilter) // update tabulator filter
         setSelectedField('') // reset all states
