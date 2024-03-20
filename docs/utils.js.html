@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: utils.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: utils.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @file This file contains utility functions for handling data.
+ */
+
+/** @module date-fns */
+import { getISOWeek } from 'date-fns'
+
+/**
+ * Adds a week number to each row of the provided data based on the date.
+ *
+ * @function
+ * @name addWeekNumber
+ * @param {Object[]} defaultData - The data to add week numbers to.
+ * @returns {Object[]} The data with added week numbers.
+ */
+export function addWeekNumber(defaultData) {
+    return defaultData.map((datum) => {
+        const date = parseDate(datum['Data da aula'])
+        const weekNumber = getISOWeek(date)
+        return { ...datum, 'Semana do ano': isNaN(weekNumber) ? '' : weekNumber }
+    })
+}
+
+/**
+ * Adds a semester week number to each row of the provided data.
+ *
+ * @function
+ * @name addSemesterWeekNumber
+ * @param {Object[]} defaultData - The data to add semester week numbers to.
+ * @returns {Object[]} The data with added semester week numbers.
+ */
+export function addSemesterWeekNumber(defaultData) {
+    let semesterWeekNumber = 0
+    let weekNumber = 0
+
+    return defaultData
+        .sort((a, b) => sortDate(a['Data da aula'], b['Data da aula']))
+        .map((datum) => {
+            if (datum['Semana do ano'] === 0) {
+                weekNumber = datum['Semana do ano']
+            }
+            if (datum['Semana do ano'] !== weekNumber) {
+                weekNumber = datum['Semana do ano']
+                semesterWeekNumber++
+            }
+            return { ...datum, 'Semana do semestre': !datum['Semana do ano'] ? '' : semesterWeekNumber }
+        })
+}
+
+/**
+ * Parses a date string in the format 'dd/mm/yyyy' and returns a Date object.
+ *
+ * @function
+ * @name parseDate
+ * @param {string} dateString - The date string to parse.
+ * @returns {Date} The parsed date.
+ */
+export function parseDate(dateString) {
+    if (dateString) {
+        // Split the input string into day, month, and year components and returns a new Date object
+        const parts = dateString.split('/')
+        const day = parseInt(parts[0], 10)
+        const month = parseInt(parts[1], 10) // Month is zero-based
+        const year = parseInt(parts[2], 10)
+        return new Date(year, month - 1, day)
+    }
+}
+
+/**
+ * Compares two date strings and returns a number indicating their sort order.
+ *
+ * @function
+ * @name sortDate
+ * @param {string} a - The first date string to compare.
+ * @param {string} b - The second date string to compare.
+ * @returns {number} A negative number if `a` is earlier than `b`, a positive number if `a` is later than `b`, or 0 if they are the same.
+ */
+export function sortDate(a, b) {
+    //a, b - the two values being compared
+    if (!a) return 1
+    if (!b) return -1
+    const dateA = parseDate(a)
+    const dateB = parseDate(b)
+    return dateA.getTime() - dateB.getTime()
+}
+
+/**
+ * Compares two weekday strings and returns a number indicating their sort order.
+ *
+ * @function
+ * @name sortWeekDays
+ * @param {string} a - The first weekday string to compare.
+ * @param {string} b - The second weekday string to compare.
+ * @returns {number} A negative number if `a` is earlier in the week than `b`, a positive number if `a` is later in the week than `b`, or 0 if they are the same.
+ */
+export function sortWeekDays(a, b) {
+    const weekDays = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']
+    return weekDays.indexOf(a) - weekDays.indexOf(b)
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="@fontsource_roboto_300.module_css.html">css</a></li><li><a href="@fontsource_roboto_400.module_css.html">css</a></li><li><a href="@fontsource_roboto_500.module_css.html">css</a></li><li><a href="@fontsource_roboto_700.module_css.html">css</a></li><li><a href="App.module_css.html">css</a></li><li><a href="index.module_css.html">css</a></li><li><a href="module-@mui_material.html">@mui/material</a></li><li><a href="module-@mui_material_Checkbox.html">@mui/material/Checkbox</a></li><li><a href="module-@mui_material_FormControl.html">@mui/material/FormControl</a></li><li><a href="module-@mui_material_InputLabel.html">@mui/material/InputLabel</a></li><li><a href="module-@mui_material_ListItem.html">@mui/material/ListItem</a></li><li><a href="module-@mui_material_ListItemText.html">@mui/material/ListItemText</a></li><li><a href="module-@mui_material_MenuItem.html">@mui/material/MenuItem</a></li><li><a href="module-@mui_material_Select.html">@mui/material/Select</a></li><li><a href="module-App.html">App</a></li><li><a href="module-CsvReader.html">CsvReader</a></li><li><a href="module-MultipleSelectCheckmarks.html">MultipleSelectCheckmarks</a></li><li><a href="module-RemoteFile.html">RemoteFile</a></li><li><a href="module-RoomsTable.html">RoomsTable</a></li><li><a href="module-ScheduleTable.html">ScheduleTable</a></li><li><a href="module-date-fns.html">date-fns</a></li><li><a href="module-papaparse.html">papaparse</a></li><li><a href="module-react.html">react</a></li><li><a href="module-react-csv-reader.html">react-csv-reader</a></li><li><a href="module-react-dom_client.html">react-dom/client</a></li><li><a href="module-react-tabulator.html">react-tabulator</a></li><li><a href="module-reportWebVitals.html">reportWebVitals</a></li><li><a href="module-utils.html">utils</a></li><li><a href="react-tabulator_css_bootstrap_tabulator_bootstrap.min.module_css.html">css</a></li><li><a href="react-tabulator_lib_css_tabulator.min.module_css.html">css</a></li><li><a href="react-tabulator_lib_styles.module_css.html">css</a></li></ul><h3>Global</h3><ul><li><a href="global.html#reportWebVitals">reportWebVitals</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Thu Mar 14 2024 22:11:45 GMT+0000 (Hora padrão da Europa Ocidental)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
