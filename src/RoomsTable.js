@@ -26,7 +26,7 @@ import Cancel from '@mui/icons-material/Delete'
 const defaultColumns = [
     {
         title: 'Edifício',
-        field: 'Edif�cio',
+        field: 'Edifício',
         hozAlign: 'left',
     },
     {
@@ -49,7 +49,7 @@ const defaultColumns = [
     },
     {
         title: 'Nº características',
-        field: 'N� caracter�sticas',
+        field: 'Nº características',
         hozAlign: 'left',
     },
     { title: 'Anfiteatro aulas', field: 'Anfiteatro aulas', visible: false },
@@ -64,81 +64,78 @@ const defaultColumns = [
     { title: 'Focus Group', field: 'Focus Group', visible: false },
     {
         title: 'Laboratório de Arquitectura de Computadores I',
-        field: 'Laborat�rio de Arquitectura de Computadores I',
+        field: 'Laboratório de Arquitectura de Computadores I',
         visible: false,
     },
     {
         title: 'Laboratório de Arquitectura de Computadores II',
-        field: 'Laborat�rio de Arquitectura de Computadores II',
+        field: 'Laboratório de Arquitectura de Computadores II',
         visible: false,
     },
-    { title: 'Laboratório de Bases de Engenharia', field: 'Laborat�rio de Bases de Engenharia', visible: false },
-    { title: 'Laboratório de Electrónica', field: 'Laborat�rio de Electr�ica', visible: false },
-    { title: 'Laboratório de Informática', field: 'Laborat�rio de Inform�tica', visible: false },
-    { title: 'Laboratório de Jornalismo', field: 'Laborat�rio de Jornalismo', visible: false },
+    { title: 'Laboratório de Bases de Engenharia', field: 'Laboratório de Bases de Engenharia', visible: false },
+    { title: 'Laboratório de Electrónica', field: 'Laboratório de Electrónica', visible: false },
+    { title: 'Laboratório de Informática', field: 'Laboratório de Informática', visible: false },
+    { title: 'Laboratório de Jornalismo', field: 'Laboratório de Jornalismo', visible: false },
     {
         title: 'Laboratório de Redes de Computadores I',
-        field: 'Laborat�rio de Redes de Computadores I',
+        field: 'Laboratório de Redes de Computadores I',
         visible: false,
     },
     {
         title: 'Laboratório de Redes de Computadores II',
-        field: 'Laborat�rio de Redes de Computadores II',
+        field: 'Laboratório de Redes de Computadores II',
         visible: false,
     },
-    { title: 'Laboratório de Telecomunicações', field: 'Laborat�rio de Telecomunica��es', visible: false },
+    { title: 'Laboratório de Telecomunicações', field: 'Laboratório de Telecomunicações', visible: false },
     { title: 'Sala Aulas Mestrado', field: 'Sala Aulas Mestrado', visible: false },
     { title: 'Sala Aulas Mestrado Plus', field: 'Sala Aulas Mestrado Plus', visible: false },
     { title: 'Sala NEE', field: 'Sala NEE', visible: false },
     { title: 'Sala Provas', field: 'Sala Provas', visible: false },
-    { title: 'Sala Reunião', field: 'Sala Reuni�o', visible: false },
+    { title: 'Sala Reunião', field: 'Sala Reunião', visible: false },
     { title: 'Sala de Arquitectura', field: 'Sala de Arquitectura', visible: false },
     { title: 'Sala de Aulas normal', field: 'Sala de Aulas normal', visible: false },
-    { title: 'Videoconferência', field: 'videoconfer�ncia', visible: false },
-    { title: 'Átrio', field: '�trio', visible: false },
+    { title: 'Videoconferência', field: 'Videoconferência', visible: false },
+    { title: 'Átrio', field: 'Átrio', visible: false },
 ]
 
 const defaultFilterFields = [
-    { title: 'Edifício', field: 'Edif�cio' },
+    { title: 'Edifício', field: 'Edifício' },
     { title: 'Nome sala', field: 'Nome sala' },
     { title: 'Capacidade Normal', field: 'Capacidade Normal' },
     { title: 'Capacidade Exame', field: 'Capacidade Exame' },
-    { title: 'Nº características', field: 'N� caracter�sticas' },
+    { title: 'Nº características', field: 'Nº características' },
     { title: 'Tipo de sala', field: 'Tipo de sala' },
 ]
 
 const defaultRoomTypes = [
-    { title: 'Anfiteatro aulas', field: 'Anfiteatro aulas' },
-    { title: 'Arq 1', field: 'Arq 1' },
-    { title: 'Arq 2', field: 'Arq 2' },
-    { title: 'Arq 3', field: 'Arq 3' },
-    { title: 'Arq 4', field: 'Arq 4' },
-    { title: 'Arq 5', field: 'Arq 5' },
-    { title: 'Arq 6', field: 'Arq 6' },
-    { title: 'Arq 9', field: 'Arq 9' },
-    { title: 'BYOD (Bring Your Own Device)', field: 'BYOD (Bring Your Own Device)' },
-    { title: 'Focus Group', field: 'Focus Group', visible: false },
-    { title: 'Laboratório de Arquitectura de Computadores I', field: 'Laborat�rio de Arquitectura de Computadores I' },
-    {
-        title: 'Laboratório de Arquitectura de Computadores II',
-        field: 'Laborat�rio de Arquitectura de Computadores II',
-    },
-    { title: 'Laboratório de Bases de Engenharia', field: 'Laborat�rio de Bases de Engenharia' },
-    { title: 'Laboratório de Electrónica', field: 'Laborat�rio de Electr�ica' },
-    { title: 'Laboratório de Informática', field: 'Laborat�rio de Inform�tica' },
-    { title: 'Laboratório de Jornalismo', field: 'Laborat�rio de Jornalismo' },
-    { title: 'Laboratório de Redes de Computadores I', field: 'Laborat�rio de Redes de Computadores I' },
-    { title: 'Laboratório de Redes de Computadores II', field: 'Laborat�rio de Redes de Computadores II' },
-    { title: 'Laboratório de Telecomunicações', field: 'Laborat�rio de Telecomunica��es' },
-    { title: 'Sala Aulas Mestrado', field: 'Sala Aulas Mestrado' },
-    { title: 'Sala Aulas Mestrado Plus', field: 'Sala Aulas Mestrado Plus' },
-    { title: 'Sala NEE', field: 'Sala NEE' },
-    { title: 'Sala Provas', field: 'Sala Provas' },
-    { title: 'Sala Reunião', field: 'Sala Reuni�o' },
-    { title: 'Sala de Arquitectura', field: 'Sala de Arquitectura' },
-    { title: 'Sala de Aulas normal', field: 'Sala de Aulas normal' },
-    { title: 'Videoconferência', field: 'videoconfer刃cia' },
-    { title: 'Átrio', field: '�trio' },
+    'Anfiteatro aulas',
+    'Arq 1',
+    'Arq 2',
+    'Arq 3',
+    'Arq 4',
+    'Arq 5',
+    'Arq 6',
+    'Arq 9',
+    'BYOD (Bring Your Own Device)',
+    'Focus Group',
+    'Laboratório de Arquitectura de Computadores I',
+    'Laboratório de Arquitectura de Computadores II',
+    'Laboratório de Bases de Engenharia',
+    'Laboratório de Electrónica',
+    'Laboratório de Informática',
+    'Laboratório de Jornalismo',
+    'Laboratório de Redes de Computadores I',
+    'Laboratório de Redes de Computadores II',
+    'Laboratório de Telecomunicações',
+    'Sala Aulas Mestrado',
+    'Sala Aulas Mestrado Plus',
+    'Sala NEE',
+    'Sala Provas',
+    'Sala Reunião',
+    'Sala de Arquitectura',
+    'Sala de Aulas normal',
+    'Videoconferência',
+    'Átrio',
 ]
 
 const defaultTypeOfFilterComparison = ['=', '!=', 'like', 'starts', 'ends', '<', '>', '<=', '>=']
@@ -161,14 +158,6 @@ export default function RoomsTable({ defaultData }) {
     const [type, setType] = React.useState('=') // type of filter comparison. Example: =, <, >, <=, >=, !=  like starts ends
     const [filters, setFilters] = React.useState([])
     const [tabulatorFilter, setTabulatorFilter] = React.useState([])
-
-    const handleFieldChange = (event) => {
-        setSelectedField(event.target.value)
-    }
-
-    const handleTypeChange = (event) => {
-        setType(event.target.value)
-    }
 
     const addFilter = () => {
         setFilters([
@@ -272,7 +261,7 @@ export default function RoomsTable({ defaultData }) {
                         id="simple-select1"
                         value={selectedField}
                         label="Campo a filtrar"
-                        onChange={handleFieldChange}
+                        onChange={(event) => setSelectedField(event.target.value)}
                     >
                         {defaultFilterFields.map((col) => {
                             return (
@@ -290,7 +279,7 @@ export default function RoomsTable({ defaultData }) {
                         id="simple-select2"
                         value={type}
                         label="Tipo"
-                        onChange={handleTypeChange}
+                        onChange={(event) => setType(event.target.value)}
                     >
                         {defaultTypeOfFilterComparison.map((t, index) => {
                             return (
@@ -324,8 +313,8 @@ export default function RoomsTable({ defaultData }) {
                             }}
                         >
                             {defaultRoomTypes.map((col) => (
-                                <MenuItem key={col.title} value={col.field}>
-                                    <ListItemText primary={col.title} />
+                                <MenuItem key={col} value={col}>
+                                    <ListItemText primary={col} />
                                 </MenuItem>
                             ))}
                         </Select>
