@@ -5,22 +5,24 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import Modal from '@mui/material/Modal'
+import { Stack } from '@mui/material'
 
 const style = {
     position: 'absolute',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
+    width: 900,
     bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
+    boxShadow: 20,
     p: 4,
 }
 
 const ReplaceCourse = () => {
     const selectedCourse = useAtomValue(atomModalReplaceCourse)
+    console.log('🚀 ~ ReplaceCourse ~ selectedCourse:', selectedCourse)
     const setOpen = useSetAtom(atomModalReplaceCourse) // function to open/close the modal with the rules to replace a course
+    // const [rules, setRules] = React.useState([]) // rules to replace a course
 
     return (
         <div>
@@ -35,13 +37,17 @@ const ReplaceCourse = () => {
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
-                    <Typography id="modal-modal-title" variant="h6" component="h2">
-                        Text in a modal
+                    <h3>Slots para alocação de uma aula de substituição</h3>
+                    <Typography variant="body1" color="primary" mb={1} mt={4}>
+                        Regras de alocação de uma aula de substituição
                     </Typography>
-                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                    </Typography>
-                    <Button onClick={() => setOpen(null)}>Cancel</Button>
+                    <Typography variant="subtitle2">Excluir</Typography>
+                    <Stack direction="row" justifyContent="end">
+                        <Button onClick={() => setOpen(null)}>Cancelar</Button>
+                        <Button variant="contained" style={{ marginLeft: '15px' }}>
+                            Inserir alterações
+                        </Button>
+                    </Stack>
                 </Box>
             </Modal>
         </div>
