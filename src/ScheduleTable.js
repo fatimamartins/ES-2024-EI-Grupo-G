@@ -48,13 +48,13 @@ const listaCaracteristicasSalas = {
     HorSalaVisPub: 'Horário sala visível portal público',
     LabArq1: 'Laboratório de Arquitectura de Computadores I',
     LabArq2: 'Laboratório de Arquitectura de Computadores II',
-    LabBasesEng: 'Laboratório de Bases de Engenharia',
+    LabEng: 'Laboratório de Bases de Engenharia',
     LabElect: 'Laboratório de Electrónica',
     LabInfor: 'Laboratório de Informática',
     LabJorn: 'Laboratório de Jornalismo',
-    LabRedesComp1: 'Laboratório de Redes de Computadores I',
-    LabRedesComp2: 'Laboratório de Redes de Computadores II',
-    LabTele: 'Laboratório de Telecomunicações',
+    LabRedes1: 'Laboratório de Redes de Computadores I',
+    LabRedes2: 'Laboratório de Redes de Computadores II',
+    LabTelec: 'Laboratório de Telecomunicações',
     SalaAulasMe: 'Sala Aulas Mestrado',
     SalaAulasMePlus: 'Sala Aulas Mestrado Plus',
     SalaNEE: 'Sala NEE',
@@ -198,8 +198,8 @@ const listaSalas = {
     E210: '2E10',
     Aud2: 'Auditório 2',
     Aud4: 'Auditório 4',
-    BalnFem: 'Balneário feminino',
-    BalnMasc: 'Balneário masculino',
+    BalFem: 'Balneário feminino',
+    BalMasc: 'Balneário masculino',
     Campo: 'Campo',
 }
 
@@ -377,22 +377,21 @@ const defaultColumns = [
         },
     },
     {
-        title: 'Semana do ano',
+        title: 'Sem. ano',
         field: 'Semana do ano',
         hozAlign: 'left',
         sorter: 'number',
         visible: true,
         editor: 'number',
-        width: 147,
+        width: 112,
     },
     {
-        title: 'Semana do semestre',
+        title: 'Sem. semestre',
         field: 'Semana do semestre',
         hozAlign: 'left',
         sorter: 'number',
         visible: true,
         editor: 'number',
-        width: 186,
     },
 ]
 
@@ -406,7 +405,7 @@ const defaultColumns = [
  * @param {Object[]} props.data - The data to display in the table.
  * @returns {JSX.Element} The rendered ScheduleTable component.
  */
-export default function ScheduleTable({ defaultData, salas }) {
+export default function ScheduleTable({ defaultData }) {
     const dataWithWeekAndSemesterNumber = addSemesterWeekNumber(addWeekNumber(defaultData))
     const [columns] = React.useState(defaultColumns)
     const tableRef = React.useRef(null)

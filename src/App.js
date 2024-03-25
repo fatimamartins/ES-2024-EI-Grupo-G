@@ -46,7 +46,7 @@ export default function App() {
     const [salas, setSalas] = useState([])
 
     return (
-        <Container sx={{ maxWidth: 1350, minWidth: 1350 }}>
+        <Container sx={{ maxWidth: 1250, minWidth: 1250 }}>
             <h1>Aplicação de suporte à gestão de horários</h1>
             <h2>Horário</h2>
             <Stack direction="row" alignItems="center" mt={6} mb={2}>
@@ -54,7 +54,7 @@ export default function App() {
                 <h4>OU</h4>
                 <RemoteFile setData={setHorario} />
             </Stack>
-            <ScheduleTable defaultData={horario} salas={salas} />
+            <ScheduleTable defaultData={horario} />
             <ReplaceCourse />
             <h2>Salas</h2>
             <Stack direction="row" alignItems="center" mt={4} mb={4}>
