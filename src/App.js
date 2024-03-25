@@ -53,7 +53,7 @@ export default function App() {
                 <h4>OU</h4>
                 <RemoteFile setData={setHorario} />
             </Stack>
-            <ScheduleTable defaultData={horario} salas={salas} />
+            <ScheduleTable defaultData={horario} />
             <h2>Salas</h2>
             <Stack direction="row" alignItems="center" mt={4} mb={4}>
                 <CsvReader setData={setSalas} id="2" />
