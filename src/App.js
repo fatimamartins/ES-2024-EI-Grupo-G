@@ -21,6 +21,7 @@ import 'react-tabulator/lib/styles.css'
 // import 'react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
 // import 'react-tabulator/css/semantic-ui/tabulator_semantic-ui.css'
 import 'react-tabulator/css/tabulator_bootstrap3.css'
+import ReplaceCourse from './ReplaceCourse'
 // import 'react-tabulator/css/tabulator_semanticui.css'
 // import 'react-tabulator/css/tabulator_simple.css'
 
@@ -54,6 +55,7 @@ export default function App() {
                 <RemoteFile setData={setHorario} />
             </Stack>
             <ScheduleTable defaultData={horario} salas={salas} />
+            <ReplaceCourse />
             <h2>Salas</h2>
             <Stack direction="row" alignItems="center" mt={4} mb={4}>
                 <CsvReader setData={setSalas} id="2" />

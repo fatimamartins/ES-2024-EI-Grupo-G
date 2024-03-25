@@ -11,6 +11,8 @@ import MultipleSelectCheckmarks from './MultipleSelectCheckmarks'
 /** @module @mui/material */
 import { Button, Stack } from '@mui/material'
 import ScheduleTableFilter from './ScheduleTableFilter'
+import { useSetAtom } from 'jotai'
+import { atomModalReplaceCourse } from './atoms/modalReplaceCourse'
 
 /**
  * @constant {Object[]} defaultColumns - The default columns for the table.
@@ -162,6 +164,7 @@ export default function ScheduleTable({ defaultData, salas }) {
     const dataWithWeekAndSemesterNumber = addSemesterWeekNumber(addWeekNumber(defaultData))
     const [columns, setColumns] = React.useState(defaultColumns)
     const tableRef = React.useRef(null)
+    const setOpen = useSetAtom(atomModalReplaceCourse) // function to open the modal with the rules to replace a course
 
     React.useEffect(() => {
         if (salas.length > 0) {
@@ -207,6 +210,11 @@ export default function ScheduleTable({ defaultData, salas }) {
                     movableColumns: true,
                     paginationCounter: 'rows',
                     layout: 'fitColumns',
+                }}
+                events={{
+                    rowClick: (e, row) => {
+                        setOpen(true)
+                    },
                 }}
             />
             <Stack direction={'row'} mt={2} mb={5} justifyContent={'flex-end'}>
