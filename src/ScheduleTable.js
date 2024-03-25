@@ -4,6 +4,7 @@
 
 /** @module react */
 import React from 'react'
+import { renderToString } from 'react-dom/server'
 /** @module react-tabulator */
 import { ReactTabulator } from 'react-tabulator'
 import { addSemesterWeekNumber, addWeekNumber, sortWeekDays } from './utils'
@@ -13,11 +14,19 @@ import { Button, Stack } from '@mui/material'
 import ScheduleTableFilter from './ScheduleTableFilter'
 import { useSetAtom } from 'jotai'
 import { atomModalReplaceCourse } from './atoms/modalReplaceCourse'
+import FindReplaceIcon from '@mui/icons-material/FindReplace'
 
 /**
  * @constant {Object[]} defaultColumns - The default columns for the table.
  */
 const defaultColumns = [
+    {
+        field: 'Substituir',
+        formatter: (cell, formatterParams, onRendered) => {
+            return renderToString(<FindReplaceIcon id="substituirAula" style={{ fill: '#1976d2' }} />)
+        },
+        width: 1,
+    },
     {
         title: 'Curso',
         field: 'Curso',
@@ -25,17 +34,19 @@ const defaultColumns = [
         sorter: 'string',
         visible: true,
         editor: 'list',
+        width: 82,
         editorParams: {
             valuesLookup: true,
             valuesLookupField: 'Curso',
         },
     },
     {
-        title: 'Unidade Curricular',
+        title: 'UC',
         field: 'Unidade Curricular',
         hozAlign: 'left',
         sorter: 'string',
         visible: true,
+        width: 62,
         editor: 'list',
         editorParams: {
             valuesLookup: true,
@@ -48,6 +59,7 @@ const defaultColumns = [
         hozAlign: 'left',
         sorter: 'string',
         visible: true,
+        width: 82,
         editor: 'list',
         editorParams: {
             valuesLookup: true,
@@ -60,6 +72,7 @@ const defaultColumns = [
         hozAlign: 'left',
         sorter: 'string',
         visible: true,
+        width: 87,
         editor: 'list',
         editorParams: {
             valuesLookup: true,
@@ -67,17 +80,19 @@ const defaultColumns = [
         },
     },
     {
-        title: 'Inscritos no turno',
+        title: 'Inscritos',
         field: 'Inscritos no turno',
         hozAlign: 'left',
         sorter: 'number',
         visible: true,
+        width: 102,
         editor: 'number',
     },
     {
-        title: 'Dia da semana',
+        title: 'Dia',
         field: 'Dia da semana',
         hozAlign: 'left',
+        width: 64,
         sorter: function (a, b) {
             return sortWeekDays(a, b)
         },
@@ -89,49 +104,54 @@ const defaultColumns = [
         },
     },
     {
-        title: 'Hora início da aula',
+        title: 'Início',
         field: 'Hora início da aula',
         hozAlign: 'left',
         visible: true,
         editor: 'time',
+        width: 79,
         editorParams: {
             format: 'HH:mm:ss',
         },
     },
     {
-        title: 'Hora fim da aula',
+        title: 'Fim',
         field: 'Hora fim da aula',
         hozAlign: 'left',
         visible: true,
+        width: 66,
         editor: 'time',
         editorParams: {
             format: 'HH:mm:ss',
         },
     },
     {
-        title: 'Data da aula',
+        title: 'Data',
         field: 'Data da aula',
         hozAlign: 'left',
         sorter: 'date',
         visible: true,
+        width: 75,
         editor: 'date',
         editorParams: {
             format: 'dd/MM/yyyy',
         },
     },
     {
-        title: 'Características da sala pedida para a aula',
+        title: 'Características',
         field: 'Características da sala pedida para a aula',
         hozAlign: 'left',
         sorter: 'string',
         visible: true,
+        width: 147,
     },
     {
-        title: 'Sala atribuída à aula',
+        title: 'Sala ',
         field: 'Sala atribuída à aula',
         hozAlign: 'left',
         sorter: 'string',
         visible: true,
+        width: 75,
     },
     {
         title: 'Semana do ano',
@@ -140,6 +160,7 @@ const defaultColumns = [
         sorter: 'number',
         visible: true,
         editor: 'number',
+        width: 147,
     },
     {
         title: 'Semana do semestre',
@@ -148,6 +169,7 @@ const defaultColumns = [
         sorter: 'number',
         visible: true,
         editor: 'number',
+        width: 186,
     },
 ]
 /**
@@ -213,7 +235,12 @@ export default function ScheduleTable({ defaultData, salas }) {
                 }}
                 events={{
                     rowClick: (e, row) => {
-                        setOpen(true)
+                        const className = e.target.getAttribute('id')
+                        const objString = JSON.stringify(row.getData())
+                        console.log('🚀 ~ ScheduleTable ~ objString:', objString)
+                        if (className === 'substituirAula') {
+                            setOpen(true)
+                        }
                     },
                 }}
             />

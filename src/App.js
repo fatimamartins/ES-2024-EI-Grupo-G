@@ -46,7 +46,7 @@ export default function App() {
     const [salas, setSalas] = useState([])
 
     return (
-        <Container>
+        <Container sx={{ maxWidth: 1350, minWidth: 1350 }}>
             <h1>Aplicação de suporte à gestão de horários</h1>
             <h2>Horário</h2>
             <Stack direction="row" alignItems="center" mt={6} mb={2}>
