@@ -186,7 +186,7 @@ export default function ScheduleTable({ defaultData, salas }) {
     const dataWithWeekAndSemesterNumber = addSemesterWeekNumber(addWeekNumber(defaultData))
     const [columns, setColumns] = React.useState(defaultColumns)
     const tableRef = React.useRef(null)
-    const setOpen = useSetAtom(atomModalReplaceCourse) // function to open the modal with the rules to replace a course
+    const setOpen = useSetAtom(atomModalReplaceCourse) // function to open/close the modal with the rules to replace a course
 
     React.useEffect(() => {
         if (salas.length > 0) {
@@ -236,10 +236,8 @@ export default function ScheduleTable({ defaultData, salas }) {
                 events={{
                     rowClick: (e, row) => {
                         const className = e.target.getAttribute('id')
-                        const objString = JSON.stringify(row.getData())
-                        console.log('🚀 ~ ScheduleTable ~ objString:', objString)
                         if (className === 'substituirAula') {
-                            setOpen(true)
+                            setOpen(row.getData())
                         }
                     },
                 }}
