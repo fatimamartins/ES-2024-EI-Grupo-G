@@ -5,7 +5,18 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import Modal from '@mui/material/Modal'
-import { Stack } from '@mui/material'
+import { Checkbox, FormControlLabel, ListItemText, Radio, RadioGroup, Stack } from '@mui/material'
+import InputLabel from '@mui/material/InputLabel'
+import MenuItem from '@mui/material/MenuItem'
+import FormControl from '@mui/material/FormControl'
+import Select from '@mui/material/Select'
+import dayjs from 'dayjs'
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
+import { COURSE_PERIODS, DAY_PERIODS, ROOMS, ROOM_FEATURES, WEEKDAYS } from './constants'
+import { getFormattedDateTime } from './utils'
 
 const style = {
     position: 'absolute',
@@ -18,11 +29,30 @@ const style = {
     p: 4,
 }
 
+/** @constant {number} ITEM_HEIGHT - The height of each item in the select menu. */
+const ITEM_HEIGHT = 48
+/** @constant {number} ITEM_PADDING_TOP - The padding at the top of each item in the select menu. */
+const ITEM_PADDING_TOP = 8
+/** @constant {object} MenuProps - The properties for the select menu. */
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 50,
+        },
+    },
+}
+
 const ReplaceCourse = () => {
     const selectedCourse = useAtomValue(atomModalReplaceCourse)
-    console.log('🚀 ~ ReplaceCourse ~ selectedCourse:', selectedCourse)
     const setOpen = useSetAtom(atomModalReplaceCourse) // function to open/close the modal with the rules to replace a course
-    // const [rules, setRules] = React.useState([]) // rules to replace a course
+    const [rulesToInclude, setRulesToInclude] = React.useState(null) // rules to replace a course
+    const [rulesToExclude, setRulesToExclude] = React.useState(null)
+    const formattedDateTime = getFormattedDateTime(
+        selectedCourse?.['Data da aula'],
+        selectedCourse?.['Hora início da aula'],
+        "yyyy-MM-dd'T'HH:mm"
+    )
 
     return (
         <div>
@@ -38,11 +68,186 @@ const ReplaceCourse = () => {
             >
                 <Box sx={style}>
                     <h3>Slots para alocação de uma aula de substituição</h3>
-                    <Typography variant="body1" color="primary" mb={1} mt={4}>
+                    <Typography variant="body1" color="primary" mb={2} mt={1}>
                         Regras de alocação de uma aula de substituição
                     </Typography>
                     <Typography variant="subtitle2">Excluir</Typography>
-                    <Stack direction="row" justifyContent="end">
+                    <Stack direction="row" mt={2}>
+                        <FormControl sx={{ minWidth: 150 }}>
+                            <InputLabel id="simple-select-label1">Período aula</InputLabel>
+                            <Select
+                                labelId="simple-select-label1"
+                                id="simple-select1"
+                                value={rulesToExclude?.hora || ''}
+                                label="Período aula"
+                                onChange={(e) => {
+                                    setRulesToExclude({ ...rulesToExclude, hora: e.target.value })
+                                }}
+                            >
+                                {COURSE_PERIODS.map((period, index) => (
+                                    <MenuItem key={index} value={period}>
+                                        {period}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        <FormControl sx={{ minWidth: 150, marginLeft: 2 }}>
+                            <InputLabel id="simple-select-label2">Dia da semana</InputLabel>
+                            <Select
+                                labelId="simple-select-label2"
+                                id="simple-select2"
+                                value={rulesToExclude?.dia || ''}
+                                label="Dia da semana"
+                                onChange={(e) => {
+                                    setRulesToExclude({ ...rulesToExclude, dia: e.target.value })
+                                }}
+                            >
+                                {WEEKDAYS.map((day, index) => (
+                                    <MenuItem key={index} value={day}>
+                                        {day}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        <FormControl sx={{ minWidth: 150, marginLeft: 2 }}>
+                            <InputLabel id="simple-select-label3">Período dia</InputLabel>
+                            <Select
+                                labelId="simple-select-label3"
+                                id="simple-select3"
+                                value={rulesToExclude?.turno || ''}
+                                label="Período dia"
+                                onChange={(e) => {
+                                    setRulesToExclude({ ...rulesToExclude, turno: e.target.value })
+                                }}
+                            >
+                                {DAY_PERIODS.map((turno, index) => (
+                                    <MenuItem key={index} value={turno}>
+                                        {turno}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        <FormControl sx={{ width: 350, marginLeft: 2 }}>
+                            <InputLabel id="multiple-checkbox-label1">Salas</InputLabel>
+                            <Select
+                                labelId="multiple-checkbox-label1"
+                                id="multiple-checkbox1"
+                                multiple
+                                value={rulesToExclude?.salas || []}
+                                onChange={(e) => {
+                                    setRulesToExclude({ ...rulesToExclude, salas: e.target.value })
+                                }}
+                                label="Salas"
+                                renderValue={(selected) => selected.join(', ')}
+                                MenuProps={MenuProps}
+                            >
+                                {ROOMS.map((room, index) => (
+                                    <MenuItem key={index} value={room}>
+                                        <Checkbox checked={rulesToExclude?.salas?.indexOf(room) > -1} />
+                                        <ListItemText primary={room} />
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Stack>
+                    <Typography variant="subtitle2" mt={3}>
+                        Incluir
+                    </Typography>
+                    <Stack direction="row" mt={2}>
+                        <FormControl sx={{ width: 350 }}>
+                            <InputLabel id="multiple-checkbox-label2">Salas</InputLabel>
+                            <Select
+                                labelId="multiple-checkbox-label2"
+                                id="multiple-checkbox2"
+                                multiple
+                                value={rulesToInclude?.salas || []}
+                                onChange={(e) => {
+                                    setRulesToInclude({ ...rulesToInclude, salas: e.target.value })
+                                }}
+                                label="Salas"
+                                renderValue={(selected) => selected.join(', ')}
+                                MenuProps={MenuProps}
+                            >
+                                {ROOMS.map((room) => (
+                                    <MenuItem key={room} value={room}>
+                                        <Checkbox checked={rulesToInclude?.salas?.indexOf(room) > -1} />
+                                        <ListItemText primary={room} />
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        <FormControl sx={{ width: 350, marginLeft: 2 }}>
+                            <InputLabel id="multiple-checkbox-label3">Características</InputLabel>
+                            <Select
+                                labelId="multiple-checkbox-label3"
+                                id="multiple-checkbox3"
+                                multiple
+                                value={rulesToInclude?.caracteristicas || []}
+                                onChange={(e) => {
+                                    setRulesToInclude({ ...rulesToInclude, caracteristicas: e.target.value })
+                                }}
+                                label="Características"
+                                renderValue={(selected) => selected.join(', ')}
+                                MenuProps={MenuProps}
+                            >
+                                {ROOM_FEATURES.map((feature) => (
+                                    <MenuItem key={feature} value={feature}>
+                                        <Checkbox checked={rulesToInclude?.caracteristicas?.indexOf(feature) > -1} />
+                                        <ListItemText primary={feature} />
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Stack>
+                    <FormControl>
+                        <Typography variant="subtitle2" mt={3}>
+                            Data pretendida para substituição
+                        </Typography>
+                        <RadioGroup
+                            row
+                            aria-labelledby="radio-buttons-group-label"
+                            defaultValue="mesmoDia"
+                            name="radio-buttons-group"
+                            onChange={(e) => {
+                                setRulesToInclude({ ...rulesToInclude, data: e.target.value })
+                            }}
+                        >
+                            <FormControlLabel value="mesmoDia" control={<Radio />} label="no mesmo dia" />
+                            <FormControlLabel value="mesmaSemana" control={<Radio />} label="na mesma semana" />
+                            <FormControlLabel value="outro" control={<Radio />} label="outro" />
+                        </RadioGroup>
+                    </FormControl>
+                    {rulesToInclude?.data === 'outro' && (
+                        <Stack direction="row">
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DemoContainer components={['DateTimePicker']} sx={{ width: 350 }}>
+                                    <DateTimePicker
+                                        label="Início"
+                                        format="DD-MM-YYYY HH:mm"
+                                        views={['day', 'month', 'year', 'hours', 'minutes']}
+                                        value={
+                                            rulesToInclude?.dataInicio || dayjs(formattedDateTime, { timeZone: 'GMT' })
+                                        }
+                                        onChange={(e) => {
+                                            setRulesToInclude({ ...rulesToInclude, dataInicio: e })
+                                        }}
+                                    />
+                                </DemoContainer>
+                            </LocalizationProvider>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DemoContainer components={['DateTimePicker']} sx={{ width: 350, marginLeft: 2 }}>
+                                    <DateTimePicker
+                                        label="Fim"
+                                        format="DD-MM-YYYY HH:mm"
+                                        views={['day', 'month', 'year', 'hours', 'minutes']}
+                                        value={rulesToInclude?.dataFim || dayjs(formattedDateTime, { timeZone: 'GMT' })}
+                                        onChange={(e) => setRulesToInclude({ ...rulesToInclude, dataFim: e })}
+                                    />
+                                </DemoContainer>
+                            </LocalizationProvider>
+                        </Stack>
+                    )}
+                    <Stack direction="row" justifyContent="end" mt={4}>
                         <Button onClick={() => setOpen(null)}>Cancelar</Button>
                         <Button variant="contained" style={{ marginLeft: '15px' }}>
                             Inserir alterações

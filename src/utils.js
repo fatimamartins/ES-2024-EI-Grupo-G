@@ -3,7 +3,7 @@
  */
 
 /** @module date-fns */
-import { getISOWeek } from 'date-fns'
+import { format, getISOWeek } from 'date-fns'
 
 /**
  * Adds a week number to each row of the provided data based on the date.
@@ -141,4 +141,20 @@ export function validateRoomAvailability(room, date, hour, horario) {
             )
     )
     return roomData.length > 0
+}
+
+export function getFormattedDateTime(date, time, formatStr) {
+    if (date && time) {
+        const parsedTime = new Date(parseHour(time))
+        const parsedDate = parseDate(date)
+        const combinedDateTime = new Date(
+            parsedDate?.getFullYear(),
+            parsedDate?.getMonth(),
+            parsedDate?.getDate(),
+            parsedTime?.getHours(),
+            parsedTime?.getMinutes()
+        )
+        return format(combinedDateTime, formatStr)
+    }
+    return ''
 }
