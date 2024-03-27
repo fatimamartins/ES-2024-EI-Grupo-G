@@ -90,7 +90,6 @@ export default function MultipleSelectCheckmarks({ tableRef }) {
                     value={selectedColumns}
                     onChange={handleChange}
                     label="Colunas visíveis"
-                    // input={<OutlinedInput label="Colunas" />}
                     renderValue={(selected) => selected.join(', ')}
                     MenuProps={MenuProps}
                 >
