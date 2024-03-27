@@ -24,10 +24,11 @@ import { Button, Stack } from '@mui/material'
  * @module ScheduleTableFilter
  */
 import ScheduleTableFilter from './ScheduleTableFilter'
-import { useSetAtom } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { atomModalReplaceCourse } from './atoms/modalReplaceCourse'
 import FindReplaceIcon from '@mui/icons-material/FindReplace'
 import { ROOM_FEATURES, ROOMS } from './constants'
+import { atomSchedule } from './atoms/schedule'
 
 /**
  * @constant {Object[]} defaultColumns - The default columns for the table.
@@ -231,7 +232,8 @@ const defaultColumns = [
  * @param {Object[]} props.data - The data to display in the table.
  * @returns {JSX.Element} The rendered ScheduleTable component.
  */
-export default function ScheduleTable({ defaultData }) {
+export default function ScheduleTable() {
+    const defaultData = useAtomValue(atomSchedule)
     const dataWithWeekAndSemesterNumber = addSemesterWeekNumber(addWeekNumber(defaultData))
     const [columns] = React.useState(defaultColumns)
     const tableRef = React.useRef(null)

@@ -19,6 +19,9 @@ import {
     TextField,
 } from '@mui/material'
 import Cancel from '@mui/icons-material/Delete'
+import { useAtomValue } from 'jotai'
+import { atomRooms } from './atoms/rooms'
+import { ROOM_FEATURES, TYPE_FILTER_COMPARISON } from './constants'
 
 /**
  * @constant {Object[]} defaultColumns - The default columns for the table.
@@ -99,46 +102,13 @@ const defaultColumns = [
 ]
 
 const defaultFilterFields = [
-    { title: 'Edifício', field: 'Edifício' },
-    { title: 'Nome sala', field: 'Nome sala' },
-    { title: 'Capacidade Normal', field: 'Capacidade Normal' },
-    { title: 'Capacidade Exame', field: 'Capacidade Exame' },
-    { title: 'Nº características', field: 'Nº características' },
-    { title: 'Tipo de sala', field: 'Tipo de sala' },
+    'Edifício',
+    'Nome sala',
+    'Capacidade Normal',
+    'Capacidade Exame',
+    'Nº características',
+    'Tipo de sala',
 ]
-
-const defaultRoomTypes = [
-    'Anfiteatro aulas',
-    'Arq 1',
-    'Arq 2',
-    'Arq 3',
-    'Arq 4',
-    'Arq 5',
-    'Arq 6',
-    'Arq 9',
-    'BYOD (Bring Your Own Device)',
-    'Focus Group',
-    'Laboratório de Arquitectura de Computadores I',
-    'Laboratório de Arquitectura de Computadores II',
-    'Laboratório de Bases de Engenharia',
-    'Laboratório de Electrónica',
-    'Laboratório de Informática',
-    'Laboratório de Jornalismo',
-    'Laboratório de Redes de Computadores I',
-    'Laboratório de Redes de Computadores II',
-    'Laboratório de Telecomunicações',
-    'Sala Aulas Mestrado',
-    'Sala Aulas Mestrado Plus',
-    'Sala NEE',
-    'Sala Provas',
-    'Sala Reunião',
-    'Sala de Arquitectura',
-    'Sala de Aulas normal',
-    'Videoconferência',
-    'Átrio',
-]
-
-const defaultTypeOfFilterComparison = ['=', '!=', 'like', 'starts', 'ends', '<', '>', '<=', '>=']
 
 /**
  * This is the RoomsTable component of the application.
@@ -150,20 +120,22 @@ const defaultTypeOfFilterComparison = ['=', '!=', 'like', 'starts', 'ends', '<',
  * @param {Object[]} props.data - The data to display in the table.
  * @returns {JSX.Element} The rendered RoomsTable component.
  */
-export default function RoomsTable({ defaultData }) {
+export default function RoomsTable() {
+    const defaultData = useAtomValue(atomRooms)
     const tableRef = React.useRef(null)
     const [selectedField, setSelectedField] = React.useState('')
     const [value, setValue] = React.useState('')
     const [logicOperator, setLogicOperator] = React.useState('AND')
     const [type, setType] = React.useState('=') // type of filter comparison. Example: =, <, >, <=, >=, !=  like starts ends
     const [filters, setFilters] = React.useState([])
+    console.log('🚀 ~ RoomsTable ~ filters:', filters)
     const [tabulatorFilter, setTabulatorFilter] = React.useState([])
 
     const addFilter = () => {
         setFilters([
             ...filters,
             {
-                title: defaultFilterFields.find((f) => f.field === selectedField).title,
+                title: defaultFilterFields.find((f) => f === selectedField),
                 field: selectedField,
                 value,
                 logic: logicOperator,
@@ -263,10 +235,10 @@ export default function RoomsTable({ defaultData }) {
                         label="Campo a filtrar"
                         onChange={(event) => setSelectedField(event.target.value)}
                     >
-                        {defaultFilterFields.map((col) => {
+                        {defaultFilterFields.map((col, index) => {
                             return (
-                                <MenuItem key={col.title} value={col.field}>
-                                    <ListItemText primary={col.title} />
+                                <MenuItem key={index} value={col}>
+                                    <ListItemText primary={col} />
                                 </MenuItem>
                             )
                         })}
@@ -281,7 +253,7 @@ export default function RoomsTable({ defaultData }) {
                         label="Tipo"
                         onChange={(event) => setType(event.target.value)}
                     >
-                        {defaultTypeOfFilterComparison.map((t, index) => {
+                        {TYPE_FILTER_COMPARISON.map((t, index) => {
                             return (
                                 <MenuItem key={index} value={t}>
                                     {t}
@@ -312,7 +284,7 @@ export default function RoomsTable({ defaultData }) {
                                 setValue(event.target.value)
                             }}
                         >
-                            {defaultRoomTypes.map((col) => (
+                            {ROOM_FEATURES.map((col) => (
                                 <MenuItem key={col} value={col}>
                                     <ListItemText primary={col} />
                                 </MenuItem>

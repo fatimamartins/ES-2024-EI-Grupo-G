@@ -17,6 +17,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
 import { COURSE_PERIODS, DAY_PERIODS, ROOMS, ROOM_FEATURES, WEEKDAYS } from './constants'
 import { getFormattedDateTime } from './utils'
+import { atomSchedule } from './atoms/schedule'
 
 const style = {
     position: 'absolute',
@@ -44,6 +45,8 @@ const MenuProps = {
 }
 
 const ReplaceCourse = () => {
+    const schedule = useAtomValue(atomSchedule)
+    console.log('🚀 ~ ReplaceCourse ~ schedule:', schedule)
     const selectedCourse = useAtomValue(atomModalReplaceCourse)
     const setOpen = useSetAtom(atomModalReplaceCourse) // function to open/close the modal with the rules to replace a course
     const [rulesToInclude, setRulesToInclude] = React.useState(null) // rules to replace a course

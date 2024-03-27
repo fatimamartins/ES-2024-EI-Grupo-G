@@ -6,6 +6,9 @@
 import React from 'react'
 /** @module react-csv-reader */
 import CSVReader from 'react-csv-reader'
+import { useSetAtom } from 'jotai'
+import { atomSchedule } from './atoms/schedule'
+import { atomRooms } from './atoms/rooms'
 
 /**
  * This is the CsvReader component of the application.
@@ -18,7 +21,8 @@ import CSVReader from 'react-csv-reader'
  * @param {string} props.id - The id of the input element.
  * @returns {JSX.Element} The rendered CsvReader component.
  */
-export default function CsvReader({ setData, id }) {
+export default function CsvReader({ id }) {
+    const setData = useSetAtom(id === 'scheduleReader' ? atomSchedule : atomRooms)
     /**
      * This function is called when a file is loaded.
      * It calls the setData function with the data from the file.

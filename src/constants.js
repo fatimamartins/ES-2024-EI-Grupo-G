@@ -196,3 +196,8 @@ export const ROOM_FEATURES = [
     'Átrio',
     'Não necessita de sala',
 ]
+
+/**
+ * @typedef {Object} TYPE_FILTER_COMPARISON - Object representing a list of type filters comparison.
+ */
+export const TYPE_FILTER_COMPARISON = ['=', '!=', 'like', 'starts', 'ends', '<', '>', '<=', '>=']
