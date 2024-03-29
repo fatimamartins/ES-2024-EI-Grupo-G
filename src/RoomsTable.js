@@ -21,6 +21,7 @@ import {
 import Cancel from '@mui/icons-material/Delete'
 import { useAtomValue } from 'jotai'
 import { atomRooms } from './atoms/rooms'
+import { atomSchedule } from './atoms/schedule'
 import { ROOM_FEATURES, TYPE_FILTER_COMPARISON } from './constants'
 
 /**
@@ -122,6 +123,7 @@ const defaultFilterFields = [
  */
 export default function RoomsTable() {
     const defaultData = useAtomValue(atomRooms)
+    const defaultDataSchedule = useAtomValue(atomSchedule)
     const tableRef = React.useRef(null)
     const [selectedField, setSelectedField] = React.useState('')
     const [value, setValue] = React.useState('')
