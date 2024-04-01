@@ -238,8 +238,20 @@ export default function RoomsTable() {
     
             console.log('IDs das salas disponíveis:', availableRoomIds);
     
-            const roomFilter = { field: 'Nome sala', type: '=', value: availableRoomIds };
-            updateTabulatorFilter(roomFilter);
+            /*availableRoomIds.forEach(roomId => {
+                const trimmedRoomId = roomId.trim();
+                const roomFilter = { field: 'Nome sala', type: '=', value: trimmedRoomId };
+                console.log('Filtro a ser aplicado:', roomFilter);
+                updateTabulatorFilter(roomFilter);
+            });*/
+
+            const roomFilters = availableRoomIds.map(roomId => ({
+                field: 'Nome sala',
+                type: '=',
+                value: roomId.trim() // Remove espaços em branco no início e no final da string
+            }));
+
+            updateTabulatorFilter(roomFilters);
         }
     };
     
