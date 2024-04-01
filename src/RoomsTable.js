@@ -21,8 +21,8 @@ import {
 import Cancel from '@mui/icons-material/Delete'
 import { useAtomValue } from 'jotai'
 import { atomRooms } from './atoms/rooms'
-import { atomSchedule } from './atoms/schedule'
 import { ROOM_FEATURES, TYPE_FILTER_COMPARISON } from './constants'
+import { atomSchedule } from './atoms/schedule'
 
 /**
  * @constant {Object[]} defaultColumns - The default columns for the table.
@@ -123,13 +123,16 @@ const defaultFilterFields = [
  */
 export default function RoomsTable() {
     const defaultData = useAtomValue(atomRooms)
-    const defaultDataSchedule = useAtomValue(atomSchedule)
+    const defaultScheduleData = useAtomValue(atomSchedule)
     const tableRef = React.useRef(null)
     const [selectedField, setSelectedField] = React.useState('')
     const [value, setValue] = React.useState('')
     const [logicOperator, setLogicOperator] = React.useState('AND')
     const [type, setType] = React.useState('=') // type of filter comparison. Example: =, <, >, <=, >=, !=  like starts ends
     const [filters, setFilters] = React.useState([])
+    const [startTime, setStartTime] = React.useState('');
+    const [endTime, setEndTime] = React.useState('');
+    const [selectedDate, setSelectedDate] = React.useState('');
     console.log('🚀 ~ RoomsTable ~ filters:', filters)
     const [tabulatorFilter, setTabulatorFilter] = React.useState([])
 
@@ -215,6 +218,37 @@ export default function RoomsTable() {
             tableRef?.current.setFilter(tabulatorFilter)
         }
     }, [tabulatorFilter])
+
+    const filterRoomsByTime = () => {
+        if (startTime && endTime && selectedDate) {
+            const formattedStartTime = startTime.includes(':') ? startTime + ':00' : startTime;
+            const formattedEndTime = endTime.includes(':') ? endTime + ':00' : endTime;
+    
+            const formattedDate = selectedDate.split('-').reverse().join('/'); // Formatar a data para dd/mm/aaaa
+    
+            const availableRooms = defaultScheduleData.filter((item) => {
+                const itemStartTime = item['Hora início da aula'];
+                const itemEndTime = item['Hora fim da aula'];
+                const itemDate = item['Data da aula'];
+    
+                return itemStartTime >= formattedStartTime && itemEndTime <= formattedEndTime && itemDate === formattedDate;
+            });
+    
+            const availableRoomIds = availableRooms.map((item) => item['Sala atribuída à aula']);
+    
+            console.log('IDs das salas disponíveis:', availableRoomIds);
+    
+            const roomFilter = { field: 'Nome sala', type: '=', value: availableRoomIds };
+            updateTabulatorFilter(roomFilter);
+        }
+    };
+    
+    
+    
+
+    const handleDateChange = (event) => {
+        setSelectedDate(event.target.value);
+    };
 
     return (
         <div>
@@ -333,6 +367,38 @@ export default function RoomsTable() {
                     })}
                 </Stack>
             )}
+            <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2, mb: 2 }}>
+                <TextField
+                    type="time"
+                    sx={{ ml: 1, width: 150 }}
+                    label="Hora de início"
+                    value={startTime}
+                    onChange={(event) => setStartTime(event.target.value)}
+                />
+
+                <TextField
+                    type="time"
+                    sx={{ ml: 1, width: 150 }}
+                    label="Hora de fim"
+                    value={endTime}
+                    onChange={(event) => setEndTime(event.target.value)}
+                />
+                <TextField
+                    id="date"
+                    label="Data"
+                    type="date"
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
+                    value={selectedDate}
+                    onChange={(event) => setSelectedDate(event.target.value)}
+                    sx={{ ml: 1, width: 150 }}
+                />
+
+                <Button variant="contained" onClick={filterRoomsByTime} sx={{ ml: 1 }}>
+                    Filtrar por horário
+                </Button>
+            </Stack>
             <ReactTabulator
                 onRef={(r) => (tableRef.current = r.current)}
                 data={defaultData}
