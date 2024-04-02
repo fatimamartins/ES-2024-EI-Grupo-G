@@ -15,9 +15,10 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
-import { COURSE_PERIODS, DAY_PERIODS, ROOMS, ROOM_FEATURES, WEEKDAYS } from './constants'
+import { COURSE_END_TIMES, COURSE_START_TIMES, DAY_PERIODS, ROOMS, ROOM_FEATURES, WEEKDAYS } from './constants'
 import { getFormattedDateTime } from './utils'
 import { atomSchedule } from './atoms/schedule'
+import { lookupSlots } from './lib/replaceCourse'
 
 const style = {
     position: 'absolute',
@@ -46,16 +47,39 @@ const MenuProps = {
 
 const ReplaceCourse = () => {
     const schedule = useAtomValue(atomSchedule)
-    console.log('🚀 ~ ReplaceCourse ~ schedule:', schedule)
     const selectedCourse = useAtomValue(atomModalReplaceCourse)
     const setOpen = useSetAtom(atomModalReplaceCourse) // function to open/close the modal with the rules to replace a course
     const [rulesToInclude, setRulesToInclude] = React.useState(null) // rules to replace a course
     const [rulesToExclude, setRulesToExclude] = React.useState(null)
+    const [slots, setSlots] = React.useState([]) // slots to replace a course
     const formattedDateTime = getFormattedDateTime(
         selectedCourse?.['Data da aula'],
         selectedCourse?.['Hora início da aula'],
         "yyyy-MM-dd'T'HH:mm"
     )
+    React.useEffect(() => {
+        if (rulesToInclude === null && selectedCourse) {
+            setRulesToInclude({
+                curso: selectedCourse.Curso,
+                turma: selectedCourse.Turma,
+            })
+        }
+
+        if (formattedDateTime && !rulesToInclude?.dataInicio) {
+            setRulesToInclude((old) => ({
+                ...old,
+                dataInicio: dayjs(formattedDateTime, { timeZone: 'GMT' }),
+                dataFim: dayjs(formattedDateTime, { timeZone: 'GMT' }),
+            }))
+        }
+    }, [formattedDateTime, rulesToInclude, selectedCourse])
+
+    const handleCancel = () => {
+        setOpen(null)
+        setRulesToInclude(null)
+        setRulesToExclude(null)
+        setSlots([])
+    }
 
     return (
         <div>
@@ -77,17 +101,17 @@ const ReplaceCourse = () => {
                     <Typography variant="subtitle2">Excluir</Typography>
                     <Stack direction="row" mt={2}>
                         <FormControl sx={{ minWidth: 150 }}>
-                            <InputLabel id="simple-select-label1">Período aula</InputLabel>
+                            <InputLabel id="simple-select-label1">Início aula</InputLabel>
                             <Select
                                 labelId="simple-select-label1"
                                 id="simple-select1"
-                                value={rulesToExclude?.hora || ''}
-                                label="Período aula"
+                                value={rulesToExclude?.['Hora início da aula'] || ''}
+                                label="Início aula"
                                 onChange={(e) => {
-                                    setRulesToExclude({ ...rulesToExclude, hora: e.target.value })
+                                    setRulesToExclude({ ...rulesToExclude, 'Hora início da aula': e.target.value })
                                 }}
                             >
-                                {COURSE_PERIODS.map((period, index) => (
+                                {COURSE_START_TIMES.map((period, index) => (
                                     <MenuItem key={index} value={period}>
                                         {period}
                                     </MenuItem>
@@ -95,14 +119,32 @@ const ReplaceCourse = () => {
                             </Select>
                         </FormControl>
                         <FormControl sx={{ minWidth: 150, marginLeft: 2 }}>
-                            <InputLabel id="simple-select-label2">Dia da semana</InputLabel>
+                            <InputLabel id="simple-select-label2">Fim aula</InputLabel>
                             <Select
                                 labelId="simple-select-label2"
                                 id="simple-select2"
-                                value={rulesToExclude?.dia || ''}
+                                value={rulesToExclude?.['Hora fim da aula'] || ''}
+                                label="Fim aula"
+                                onChange={(e) => {
+                                    setRulesToExclude({ ...rulesToExclude, 'Hora fim da aula': e.target.value })
+                                }}
+                            >
+                                {COURSE_END_TIMES.map((period, index) => (
+                                    <MenuItem key={index} value={period}>
+                                        {period}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        <FormControl sx={{ minWidth: 150, marginLeft: 2 }}>
+                            <InputLabel id="simple-select-label3">Dia da semana</InputLabel>
+                            <Select
+                                labelId="simple-select-label3"
+                                id="simple-select3"
+                                value={rulesToExclude?.diaDaSemana || ''}
                                 label="Dia da semana"
                                 onChange={(e) => {
-                                    setRulesToExclude({ ...rulesToExclude, dia: e.target.value })
+                                    setRulesToExclude({ ...rulesToExclude, diaDaSemana: e.target.value })
                                 }}
                             >
                                 {WEEKDAYS.map((day, index) => (
@@ -113,10 +155,10 @@ const ReplaceCourse = () => {
                             </Select>
                         </FormControl>
                         <FormControl sx={{ minWidth: 150, marginLeft: 2 }}>
-                            <InputLabel id="simple-select-label3">Período dia</InputLabel>
+                            <InputLabel id="simple-select-label4">Período dia</InputLabel>
                             <Select
-                                labelId="simple-select-label3"
-                                id="simple-select3"
+                                labelId="simple-select-label4"
+                                id="simple-select4"
                                 value={rulesToExclude?.turno || ''}
                                 label="Período dia"
                                 onChange={(e) => {
@@ -209,18 +251,25 @@ const ReplaceCourse = () => {
                         <RadioGroup
                             row
                             aria-labelledby="radio-buttons-group-label"
-                            defaultValue="mesmoDia"
                             name="radio-buttons-group"
+                            defaultValue={'nenhuma'}
                             onChange={(e) => {
-                                setRulesToInclude({ ...rulesToInclude, data: e.target.value })
+                                setRulesToInclude({
+                                    ...rulesToInclude,
+                                    data: {
+                                        label: e.target.value,
+                                        value: dayjs(formattedDateTime, { timeZone: 'GMT' }),
+                                    },
+                                })
                             }}
                         >
+                            <FormControlLabel value="nenhuma" control={<Radio />} label="nenhuma" />
                             <FormControlLabel value="mesmoDia" control={<Radio />} label="no mesmo dia" />
                             <FormControlLabel value="mesmaSemana" control={<Radio />} label="na mesma semana" />
                             <FormControlLabel value="outro" control={<Radio />} label="outro" />
                         </RadioGroup>
                     </FormControl>
-                    {rulesToInclude?.data === 'outro' && (
+                    {rulesToInclude?.data?.label === 'outro' && (
                         <Stack direction="row">
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <DemoContainer components={['DateTimePicker']} sx={{ width: 350 }}>
@@ -251,11 +300,27 @@ const ReplaceCourse = () => {
                         </Stack>
                     )}
                     <Stack direction="row" justifyContent="end" mt={4}>
-                        <Button onClick={() => setOpen(null)}>Cancelar</Button>
-                        <Button variant="contained" style={{ marginLeft: '15px' }}>
-                            Inserir alterações
+                        {slots.length === 0 && <Button onClick={handleCancel}>Cancelar</Button>}
+                        <Button
+                            variant="contained"
+                            style={{ marginLeft: '15px', width: '180px' }}
+                            onClick={() => {
+                                const slots = lookupSlots(rulesToInclude, rulesToExclude, schedule)
+                                setSlots(slots)
+                            }}
+                        >
+                            Procurar slots
                         </Button>
                     </Stack>
+                    {slots.length > 0 && (
+                        // Inserir aqui tabela com slots: slots.map().....
+                        <Stack direction="row" justifyContent="end" mt={4}>
+                            <Button onClick={handleCancel}>Cancelar</Button>
+                            <Button variant="contained" style={{ marginLeft: '15px', width: '180px' }}>
+                                Inserir alterações
+                            </Button>
+                        </Stack>
+                    )}
                 </Box>
             </Modal>
         </div>

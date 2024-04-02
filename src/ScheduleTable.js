@@ -163,14 +163,14 @@ const defaultColumns = [
             values: ROOM_FEATURES,
         },
         validator: function (cell, value) {
-            if (value.trim() === '' && cell.getInitialValue() === '') {
+            if (value && value.trim() === '' && cell.getInitialValue() === '') {
                 return false
             } else {
                 return true
             }
         },
         mutator: function (value, data, type, params, component) {
-            if (value.trim() === '' && type === 'edit') {
+            if (value && value.trim() === '' && type === 'edit') {
                 return component.getInitialValue()
             } else {
                 return value
@@ -189,14 +189,14 @@ const defaultColumns = [
             values: ROOMS,
         },
         validator: function (cell, value) {
-            if (value.trim() === '' && cell.getInitialValue() === '') {
+            if (value && value.trim() === '' && cell.getInitialValue() === '') {
                 return false
             } else {
                 return true
             }
         },
         mutator: function (value, data, type, params, component) {
-            if (value.trim() === '' && type === 'edit') {
+            if (value && value.trim() === '' && type === 'edit') {
                 return component.getInitialValue()
             } else {
                 return value

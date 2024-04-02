@@ -128,7 +128,6 @@ export default function RoomsTable() {
     const [logicOperator, setLogicOperator] = React.useState('AND')
     const [type, setType] = React.useState('=') // type of filter comparison. Example: =, <, >, <=, >=, !=  like starts ends
     const [filters, setFilters] = React.useState([])
-    console.log('🚀 ~ RoomsTable ~ filters:', filters)
     const [tabulatorFilter, setTabulatorFilter] = React.useState([])
 
     const addFilter = () => {
