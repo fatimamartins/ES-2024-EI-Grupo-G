@@ -133,6 +133,7 @@ export default function RoomsTable() {
     const [startTime, setStartTime] = React.useState('');
     const [endTime, setEndTime] = React.useState('');
     const [selectedDate, setSelectedDate] = React.useState('');
+    const [availableDecision, setAvailableDecision] = React.useState('Disponível')
     console.log('🚀 ~ RoomsTable ~ filters:', filters)
     const [tabulatorFilter, setTabulatorFilter] = React.useState([])
 
@@ -225,18 +226,51 @@ export default function RoomsTable() {
             const formattedEndTime = endTime.includes(':') ? endTime + ':00' : endTime;
     
             const formattedDate = selectedDate.split('-').reverse().join('/'); // Formatar a data para dd/mm/aaaa
+            
+            if (availableDecision === 'Ocupado') {
+                const availableRooms = defaultScheduleData.filter((item) => {
+                    const itemStartTime = item['Hora início da aula'];
+                    const itemEndTime = item['Hora fim da aula'];
+                    const itemDate = item['Data da aula'];
+        
+                    return itemStartTime >= formattedStartTime && itemEndTime <= formattedEndTime && itemDate === formattedDate;
+                });
+
+                const availableRoomIds = availableRooms.map((item) => item['Sala atribuída à aula']);
+
+                const roomFilters = availableRoomIds.map(roomId => ({
+                    field: 'Nome sala',
+                    type: '=',
+                    value: roomId.trim() // Remove espaços em branco no início e no final da string
+                }));
     
-            const availableRooms = defaultScheduleData.filter((item) => {
-                const itemStartTime = item['Hora início da aula'];
-                const itemEndTime = item['Hora fim da aula'];
-                const itemDate = item['Data da aula'];
+                updateTabulatorFilter(roomFilters);
+
+
+            } else if (availableDecision === 'Disponível') {
+                const availableRooms = defaultScheduleData.filter((item) => {
+                    const itemStartTime = item['Hora início da aula'];
+                    const itemEndTime = item['Hora fim da aula'];
+                    const itemDate = item['Data da aula'];
+        
+                    return itemStartTime < formattedStartTime && itemEndTime <= formattedStartTime || itemStartTime >= formattedEndTime && itemEndTime > formattedEndTime && itemDate === formattedDate;
+                });
+
+                const availableRoomIds = availableRooms.map((item) => item['Sala atribuída à aula']);
+
+                const roomFilters = availableRoomIds.map(roomId => ({
+                    field: 'Nome sala',
+                    type: '=',
+                    value: roomId.trim() // Remove espaços em branco no início e no final da string
+                }));
     
-                return itemStartTime >= formattedStartTime && itemEndTime <= formattedEndTime && itemDate === formattedDate;
-            });
+                updateTabulatorFilter(roomFilters);
+
+            }
     
-            const availableRoomIds = availableRooms.map((item) => item['Sala atribuída à aula']);
+            //const availableRoomIds = availableRooms.map((item) => item['Sala atribuída à aula']);
     
-            console.log('IDs das salas disponíveis:', availableRoomIds);
+            //console.log('IDs das salas disponíveis:', availableRoomIds);
     
             /*availableRoomIds.forEach(roomId => {
                 const trimmedRoomId = roomId.trim();
@@ -245,13 +279,13 @@ export default function RoomsTable() {
                 updateTabulatorFilter(roomFilter);
             });*/
 
-            const roomFilters = availableRoomIds.map(roomId => ({
-                field: 'Nome sala',
-                type: '=',
-                value: roomId.trim() // Remove espaços em branco no início e no final da string
-            }));
+            //const roomFilters = availableRoomIds.map(roomId => ({
+            //    field: 'Nome sala',
+            //    type: '=',
+            //    value: roomId.trim() // Remove espaços em branco no início e no final da string
+            //}));
 
-            updateTabulatorFilter(roomFilters);
+            //updateTabulatorFilter(roomFilters); 
         }
     };
     
@@ -379,6 +413,15 @@ export default function RoomsTable() {
                     })}
                 </Stack>
             )}
+            <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2 }}>
+                <Typography>Ocupado</Typography>
+                <Switch
+                    defaultChecked
+                    inputProps={{ 'aria-label': 'ant design' }}
+                    onChange={(e, c) => setAvailableDecision(c ? 'Disponível' : 'Ocupado')}
+                />
+                <Typography>Disponível</Typography>
+            </Stack>
             <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2, mb: 2 }}>
                 <TextField
                     type="time"
