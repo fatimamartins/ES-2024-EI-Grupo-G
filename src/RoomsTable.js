@@ -134,7 +134,6 @@ export default function RoomsTable() {
     const [endTime, setEndTime] = React.useState('')
     const [selectedDate, setSelectedDate] = React.useState('')
     const [availableDecision, setAvailableDecision] = React.useState('Disponível')
-    console.log('🚀 ~ RoomsTable ~ filters:', filters)
     const [tabulatorFilter, setTabulatorFilter] = React.useState([])
 
     const addFilter = () => {
@@ -276,12 +275,9 @@ export default function RoomsTable() {
 
             // const availableRoomIds = availableRooms.map((item) => item['Sala atribuída à aula']);
 
-            // console.log('IDs das salas disponíveis:', availableRoomIds);
-
             /* availableRoomIds.forEach(roomId => {
                 const trimmedRoomId = roomId.trim();
                 const roomFilter = { field: 'Nome sala', type: '=', value: trimmedRoomId };
-                console.log('Filtro a ser aplicado:', roomFilter);
                 updateTabulatorFilter(roomFilter);
             }); */
 

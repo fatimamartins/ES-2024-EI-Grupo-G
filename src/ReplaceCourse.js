@@ -46,7 +46,6 @@ const MenuProps = {
 
 const ReplaceCourse = () => {
     const schedule = useAtomValue(atomSchedule)
-    console.log('🚀 ~ ReplaceCourse ~ schedule:', schedule)
     const selectedCourse = useAtomValue(atomModalReplaceCourse)
     const setOpen = useSetAtom(atomModalReplaceCourse) // function to open/close the modal with the rules to replace a course
     const [rulesToInclude, setRulesToInclude] = React.useState(null) // rules to replace a course
