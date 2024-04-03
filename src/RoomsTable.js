@@ -130,9 +130,9 @@ export default function RoomsTable() {
     const [logicOperator, setLogicOperator] = React.useState('AND')
     const [type, setType] = React.useState('=') // type of filter comparison. Example: =, <, >, <=, >=, !=  like starts ends
     const [filters, setFilters] = React.useState([])
-    const [startTime, setStartTime] = React.useState('');
-    const [endTime, setEndTime] = React.useState('');
-    const [selectedDate, setSelectedDate] = React.useState('');
+    const [startTime, setStartTime] = React.useState('')
+    const [endTime, setEndTime] = React.useState('')
+    const [selectedDate, setSelectedDate] = React.useState('')
     const [availableDecision, setAvailableDecision] = React.useState('Disponível')
     console.log('🚀 ~ RoomsTable ~ filters:', filters)
     const [tabulatorFilter, setTabulatorFilter] = React.useState([])
@@ -222,79 +222,84 @@ export default function RoomsTable() {
 
     const filterRoomsByTime = () => {
         if (startTime && endTime && selectedDate) {
-            const formattedStartTime = startTime.includes(':') ? startTime + ':00' : startTime;
-            const formattedEndTime = endTime.includes(':') ? endTime + ':00' : endTime;
-    
-            const formattedDate = selectedDate.split('-').reverse().join('/'); // Formatar a data para dd/mm/aaaa
-            
+            const formattedStartTime = startTime.includes(':') ? startTime + ':00' : startTime
+            const formattedEndTime = endTime.includes(':') ? endTime + ':00' : endTime
+
+            const formattedDate = selectedDate.split('-').reverse().join('/') // Formatar a data para dd/mm/aaaa
+
             if (availableDecision === 'Ocupado') {
                 const availableRooms = defaultScheduleData.filter((item) => {
-                    const itemStartTime = item['Hora início da aula'];
-                    const itemEndTime = item['Hora fim da aula'];
-                    const itemDate = item['Data da aula'];
-        
-                    return itemStartTime >= formattedStartTime && itemEndTime <= formattedEndTime && itemDate === formattedDate;
-                });
+                    const itemStartTime = item['Hora início da aula']
+                    const itemEndTime = item['Hora fim da aula']
+                    const itemDate = item['Data da aula']
 
-                const availableRoomIds = availableRooms.map((item) => item['Sala atribuída à aula']);
+                    return (
+                        itemStartTime >= formattedStartTime &&
+                        itemEndTime <= formattedEndTime &&
+                        itemDate === formattedDate
+                    )
+                })
 
-                const roomFilters = availableRoomIds.map(roomId => ({
+                const availableRoomIds = availableRooms.map((item) => item['Sala atribuída à aula'])
+
+                const roomFilters = availableRoomIds.map((roomId) => ({
                     field: 'Nome sala',
                     type: '=',
-                    value: roomId.trim() // Remove espaços em branco no início e no final da string
-                }));
-    
-                updateTabulatorFilter(roomFilters);
+                    value: roomId.trim(), // Remove espaços em branco no início e no final da string
+                }))
 
-
+                updateTabulatorFilter(roomFilters)
             } else if (availableDecision === 'Disponível') {
                 const availableRooms = defaultScheduleData.filter((item) => {
-                    const itemStartTime = item['Hora início da aula'];
-                    const itemEndTime = item['Hora fim da aula'];
-                    const itemDate = item['Data da aula'];
-        
-                    return itemStartTime < formattedStartTime && itemEndTime <= formattedStartTime || itemStartTime >= formattedEndTime && itemEndTime > formattedEndTime && itemDate === formattedDate;
-                });
+                    const itemStartTime = item['Hora início da aula']
+                    const itemEndTime = item['Hora fim da aula']
+                    const itemDate = item['Data da aula']
 
-                const availableRoomIds = availableRooms.map((item) => item['Sala atribuída à aula']);
+                    return (
+                        (itemStartTime < formattedStartTime && itemEndTime <= formattedStartTime) ||
+                        (itemStartTime >= formattedEndTime &&
+                            itemEndTime > formattedEndTime &&
+                            itemDate === formattedDate)
+                    )
+                })
 
-                const roomFilters = availableRoomIds.map(roomId => ({
+                const availableRoomIds = availableRooms.map((item) => item['Sala atribuída à aula'])
+
+                const roomFilters = availableRoomIds.map((roomId) => ({
                     field: 'Nome sala',
                     type: '=',
-                    value: roomId.trim() // Remove espaços em branco no início e no final da string
-                }));
-    
-                updateTabulatorFilter(roomFilters);
+                    value: roomId.trim(), // Remove espaços em branco no início e no final da string
+                }))
 
+                updateTabulatorFilter(roomFilters)
             }
-    
-            //const availableRoomIds = availableRooms.map((item) => item['Sala atribuída à aula']);
-    
-            //console.log('IDs das salas disponíveis:', availableRoomIds);
-    
-            /*availableRoomIds.forEach(roomId => {
+
+            // const availableRoomIds = availableRooms.map((item) => item['Sala atribuída à aula']);
+
+            // console.log('IDs das salas disponíveis:', availableRoomIds);
+
+            /* availableRoomIds.forEach(roomId => {
                 const trimmedRoomId = roomId.trim();
                 const roomFilter = { field: 'Nome sala', type: '=', value: trimmedRoomId };
                 console.log('Filtro a ser aplicado:', roomFilter);
                 updateTabulatorFilter(roomFilter);
-            });*/
+            }); */
 
-            //const roomFilters = availableRoomIds.map(roomId => ({
+            // const roomFilters = availableRoomIds.map(roomId => ({
             //    field: 'Nome sala',
             //    type: '=',
             //    value: roomId.trim() // Remove espaços em branco no início e no final da string
-            //}));
+            // }));
 
-            //updateTabulatorFilter(roomFilters); 
+            // updateTabulatorFilter(roomFilters);
         }
-    };
-    
-    
-    
+    }
 
+    /**
     const handleDateChange = (event) => {
-        setSelectedDate(event.target.value);
-    };
+        setSelectedDate(event.target.value)
+    }
+     */
 
     return (
         <div>
