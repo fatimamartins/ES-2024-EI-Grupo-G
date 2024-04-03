@@ -1,4 +1,9 @@
 /**
+ * @file constants
+ * This file exports constants used throughout the application, such as COURSE_START_TIMES, which represents the time the courses start.
+ */
+
+/**
  * @typedef {Object} COURSE_START_TIMES - Object representing the time the courses start
  * */
 export const COURSE_START_TIMES = [

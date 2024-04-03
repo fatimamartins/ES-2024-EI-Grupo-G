@@ -144,6 +144,14 @@ export function validateRoomAvailability(room, date, hour, horario) {
     return roomData.length > 0
 }
 
+/**
+ * @function getFormattedDateTime
+ * `getFormattedDateTime` is a function that formats a given date and time into a specific string format.
+ *
+ * @param {string} date - The date to format, in 'DD/MM/YYYY' format.
+ * @param {string} time - The time to format, in 'HH:mm' format.
+ * @returns {string} - Returns the formatted date and time as a string.
+ */
 export function getFormattedDateTime(date, time, formatStr) {
     if (date && time) {
         const parsedTime = new Date(parseHour(time))
