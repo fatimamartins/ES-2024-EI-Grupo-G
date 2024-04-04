@@ -8,6 +8,9 @@ import React, { useState } from 'react'
 import Papa from 'papaparse'
 /** @module @mui/material */
 import { Button, Input, Stack } from '@mui/material'
+import { atomSchedule } from './atoms/schedule'
+import { useSetAtom } from 'jotai'
+import { atomRooms } from './atoms/rooms'
 
 /**
  * This is the RemoteFile component of the application.
@@ -19,7 +22,8 @@ import { Button, Input, Stack } from '@mui/material'
  * @param {Function} props.setData - The function to call with the data from the CSV file.
  * @returns {JSX.Element} The rendered RemoteFile component.
  */
-export default function RemoteFile({ setData }) {
+export default function RemoteFile({ id }) {
+    const setData = useSetAtom(id === 'scheduleReader' ? atomSchedule : atomRooms)
     /**
      * fileName - The name of the file to be fetched.
      * @type {string}
