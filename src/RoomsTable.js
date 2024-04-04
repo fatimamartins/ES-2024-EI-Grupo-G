@@ -6,6 +6,11 @@
 import React from 'react'
 /** @module react-tabulator */
 import { ReactTabulator } from 'react-tabulator'
+/**
+ * @module @mui/material
+ * Material-UI is a popular React UI framework that provides a set of pre-designed components following Material Design guidelines.
+ * Here, several components are imported for use in the application.
+ */
 import {
     Button,
     Stack,
@@ -18,9 +23,28 @@ import {
     ListItemText,
     TextField,
 } from '@mui/material'
+/**
+ * @module @mui/icons-material/Delete
+ * Material-UI Icons is a set of pre-designed icons following Material Design guidelines.
+ * Here, the Delete icon is imported for use in the application.
+ */
 import Cancel from '@mui/icons-material/Delete'
+/**
+ * @module jotai
+ * Jotai is a primitive and flexible state management library for React.
+ * Here, the useAtomValue hook is imported for use in the application.
+ */
 import { useAtomValue } from 'jotai'
+/**
+ * @module atoms/rooms
+ * This module exports the atomRooms atom, which is used for managing the state of rooms in the application.
+ */
 import { atomRooms } from './atoms/rooms'
+/**
+ * @module constants
+ * This module exports constants used throughout the application.
+ * Here, ROOM_FEATURES and TYPE_FILTER_COMPARISON are imported for use in the application.
+ */
 import { ROOM_FEATURES, TYPE_FILTER_COMPARISON } from './constants'
 import { atomSchedule } from './atoms/schedule'
 
@@ -102,6 +126,9 @@ const defaultColumns = [
     { title: 'Átrio', field: 'Átrio', visible: false },
 ]
 
+/**
+ * @constant {Object[]} defaultFilterFields - Default filter fields for the RoomsTable component.
+ */
 const defaultFilterFields = [
     'Edifício',
     'Nome sala',

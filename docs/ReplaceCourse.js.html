@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: ReplaceCourse.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: ReplaceCourse.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @file ReplaceCourse
+ */
+
+/**
+ * @external React
+ * @see {@link https://reactjs.org/}
+ */
+import * as React from 'react'
+
+/**
+ * @external jotai
+ * @see {@link https://jotai.pmnd.rs/}
+ */
+import { useAtomValue, useSetAtom } from 'jotai'
+
+/**
+ * @module atoms/modalReplaceCourse
+ */
+import { atomModalReplaceCourse } from './atoms/modalReplaceCourse'
+
+/**
+ * @external Box
+ * @see {@link https://mui.com/api/box/}
+ */
+import Box from '@mui/material/Box'
+
+/**
+ * @external Button
+ * @see {@link https://mui.com/api/button/}
+ */
+import Button from '@mui/material/Button'
+
+/**
+ * @external Typography
+ * @see {@link https://mui.com/api/typography/}
+ */
+import Typography from '@mui/material/Typography'
+
+/**
+ * @external Modal
+ * @see {@link https://mui.com/api/modal/}
+ */
+import Modal from '@mui/material/Modal'
+
+/**
+ * @external Checkbox
+ * @see {@link https://mui.com/api/checkbox/}
+ */
+/**
+ * @external FormControlLabel
+ * @see {@link https://mui.com/api/form-control-label/}
+ */
+/**
+ * @external ListItemText
+ * @see {@link https://mui.com/api/list-item-text/}
+ */
+/**
+ * @external Radio
+ * @see {@link https://mui.com/api/radio/}
+ */
+/**
+ * @external RadioGroup
+ * @see {@link https://mui.com/api/radio-group/}
+ */
+/**
+ * @external Stack
+ * @see {@link https://mui.com/api/stack/}
+ */
+import { Checkbox, FormControlLabel, ListItemText, Radio, RadioGroup, Stack } from '@mui/material'
+
+/**
+ * @external InputLabel
+ * @see {@link https://mui.com/api/input-label/}
+ */
+import InputLabel from '@mui/material/InputLabel'
+
+/**
+ * @external MenuItem
+ * @see {@link https://mui.com/api/menu-item/}
+ */
+import MenuItem from '@mui/material/MenuItem'
+
+/**
+ * @external FormControl
+ * @see {@link https://mui.com/api/form-control/}
+ */
+import FormControl from '@mui/material/FormControl'
+
+/**
+ * @external Select
+ * @see {@link https://mui.com/api/select/}
+ */
+import Select from '@mui/material/Select'
+
+/**
+ * @external dayjs
+ * @see {@link https://day.js.org/}
+ */
+import dayjs from 'dayjs'
+
+/**
+ * @external DemoContainer
+ * @see {@link https://mui.com/components/date-picker/}
+ */
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo'
+
+/**
+ * @external AdapterDayjs
+ * @see {@link https://mui.com/components/date-picker/}
+ */
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+
+/**
+ * @external LocalizationProvider
+ * @see {@link https://mui.com/components/date-picker/}
+ */
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+
+/**
+ * @external DateTimePicker
+ * @see {@link https://mui.com/components/date-picker/}
+ */
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
+
+/**
+ * @module constants
+ */
+import { COURSE_END_TIMES, COURSE_START_TIMES, DAY_PERIODS, ROOMS, ROOM_FEATURES, WEEKDAYS } from './constants'
+
+/**
+ * @module utils
+ */
+import { getFormattedDateTime } from './utils'
+
+/**
+ * @module atoms/schedule
+ */
+import { atomSchedule } from './atoms/schedule'
+
+/**
+ * @module lib/replaceCourse
+ */
+import { lookupSlots } from './lib/replaceCourse'
+
+/**
+ * @constant
+ * @name style
+ * @type {Object}
+ * @property {string} position - The position property of the style object.
+ * @property {string} top - The top property of the style object.
+ * @description A style object used for positioning a modal at the center of the screen.
+ */
+const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 900,
+    bgcolor: 'background.paper',
+    boxShadow: 20,
+    p: 4,
+}
+
+/** @constant {number} ITEM_HEIGHT - The height of each item in the select menu. */
+const ITEM_HEIGHT = 48
+/** @constant {number} ITEM_PADDING_TOP - The padding at the top of each item in the select menu. */
+const ITEM_PADDING_TOP = 8
+/** @constant {object} MenuProps - The properties for the select menu. */
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 50,
+        },
+    },
+}
+
+/**
+ * ReplaceCourse component is responsible for managing the replacement of a course.
+ * It displays a modal with slots and rules for replacing a course.
+ *
+ * @returns {JSX.Element} The ReplaceCourse component.
+ */
+const ReplaceCourse = () => {
+    const schedule = useAtomValue(atomSchedule)
+    const selectedCourse = useAtomValue(atomModalReplaceCourse)
+    const setOpen = useSetAtom(atomModalReplaceCourse) // function to open/close the modal with the rules to replace a course
+    const [rulesToInclude, setRulesToInclude] = React.useState(null) // rules to replace a course
+    const [rulesToExclude, setRulesToExclude] = React.useState(null)
+    const [slots, setSlots] = React.useState([]) // slots to replace a course
+    const formattedDateTime = getFormattedDateTime(
+        selectedCourse?.['Data da aula'],
+        selectedCourse?.['Hora início da aula'],
+        "yyyy-MM-dd'T'HH:mm"
+    )
+    React.useEffect(() => {
+        if (rulesToInclude === null &amp;&amp; selectedCourse) {
+            setRulesToInclude({
+                curso: selectedCourse.Curso,
+                turma: selectedCourse.Turma,
+            })
+        }
+
+        if (formattedDateTime &amp;&amp; !rulesToInclude?.dataInicio) {
+            setRulesToInclude((old) => ({
+                ...old,
+                dataInicio: dayjs(formattedDateTime, { timeZone: 'GMT' }),
+                dataFim: dayjs(formattedDateTime, { timeZone: 'GMT' }),
+            }))
+        }
+    }, [formattedDateTime, rulesToInclude, selectedCourse])
+
+    const handleCancel = () => {
+        setOpen(null)
+        setRulesToInclude(null)
+        setRulesToExclude(null)
+        setSlots([])
+    }
+
+    return (
+        &lt;div>
+            &lt;Modal
+                open={selectedCourse !== null}
+                onClose={(event, reason) => {
+                    // modal should not be closed by clicking outside the modal or pressing the escape key
+                    if ((reason &amp;&amp; reason === 'backdropClick') || reason === 'escapeKeyDown') return
+                    setOpen(null)
+                }}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                &lt;Box sx={style}>
+                    &lt;h3>Slots para alocação de uma aula de substituição&lt;/h3>
+                    &lt;Typography variant="body1" color="primary" mb={2} mt={1}>
+                        Regras de alocação de uma aula de substituição
+                    &lt;/Typography>
+                    &lt;Typography variant="subtitle2">Excluir&lt;/Typography>
+                    &lt;Stack direction="row" mt={2}>
+                        &lt;FormControl sx={{ minWidth: 150 }}>
+                            &lt;InputLabel id="simple-select-label1">Início aula&lt;/InputLabel>
+                            &lt;Select
+                                labelId="simple-select-label1"
+                                id="simple-select1"
+                                value={rulesToExclude?.['Hora início da aula'] || ''}
+                                label="Início aula"
+                                onChange={(e) => {
+                                    setRulesToExclude({ ...rulesToExclude, 'Hora início da aula': e.target.value })
+                                }}
+                            >
+                                {COURSE_START_TIMES.map((period, index) => (
+                                    &lt;MenuItem key={index} value={period}>
+                                        {period}
+                                    &lt;/MenuItem>
+                                ))}
+                            &lt;/Select>
+                        &lt;/FormControl>
+                        &lt;FormControl sx={{ minWidth: 150, marginLeft: 2 }}>
+                            &lt;InputLabel id="simple-select-label2">Fim aula&lt;/InputLabel>
+                            &lt;Select
+                                labelId="simple-select-label2"
+                                id="simple-select2"
+                                value={rulesToExclude?.['Hora fim da aula'] || ''}
+                                label="Fim aula"
+                                onChange={(e) => {
+                                    setRulesToExclude({ ...rulesToExclude, 'Hora fim da aula': e.target.value })
+                                }}
+                            >
+                                {COURSE_END_TIMES.map((period, index) => (
+                                    &lt;MenuItem key={index} value={period}>
+                                        {period}
+                                    &lt;/MenuItem>
+                                ))}
+                            &lt;/Select>
+                        &lt;/FormControl>
+                        &lt;FormControl sx={{ minWidth: 150, marginLeft: 2 }}>
+                            &lt;InputLabel id="simple-select-label3">Dia da semana&lt;/InputLabel>
+                            &lt;Select
+                                labelId="simple-select-label3"
+                                id="simple-select3"
+                                value={rulesToExclude?.diaDaSemana || ''}
+                                label="Dia da semana"
+                                onChange={(e) => {
+                                    setRulesToExclude({ ...rulesToExclude, diaDaSemana: e.target.value })
+                                }}
+                            >
+                                {WEEKDAYS.map((day, index) => (
+                                    &lt;MenuItem key={index} value={day}>
+                                        {day}
+                                    &lt;/MenuItem>
+                                ))}
+                            &lt;/Select>
+                        &lt;/FormControl>
+                        &lt;FormControl sx={{ minWidth: 150, marginLeft: 2 }}>
+                            &lt;InputLabel id="simple-select-label4">Período dia&lt;/InputLabel>
+                            &lt;Select
+                                labelId="simple-select-label4"
+                                id="simple-select4"
+                                value={rulesToExclude?.turno || ''}
+                                label="Período dia"
+                                onChange={(e) => {
+                                    setRulesToExclude({ ...rulesToExclude, turno: e.target.value })
+                                }}
+                            >
+                                {DAY_PERIODS.map((turno, index) => (
+                                    &lt;MenuItem key={index} value={turno}>
+                                        {turno}
+                                    &lt;/MenuItem>
+                                ))}
+                            &lt;/Select>
+                        &lt;/FormControl>
+                        &lt;FormControl sx={{ width: 350, marginLeft: 2 }}>
+                            &lt;InputLabel id="multiple-checkbox-label1">Salas&lt;/InputLabel>
+                            &lt;Select
+                                labelId="multiple-checkbox-label1"
+                                id="multiple-checkbox1"
+                                multiple
+                                value={rulesToExclude?.salas || []}
+                                onChange={(e) => {
+                                    setRulesToExclude({ ...rulesToExclude, salas: e.target.value })
+                                }}
+                                label="Salas"
+                                renderValue={(selected) => selected.join(', ')}
+                                MenuProps={MenuProps}
+                            >
+                                {ROOMS.map((room, index) => (
+                                    &lt;MenuItem key={index} value={room}>
+                                        &lt;Checkbox checked={rulesToExclude?.salas?.indexOf(room) > -1} />
+                                        &lt;ListItemText primary={room} />
+                                    &lt;/MenuItem>
+                                ))}
+                            &lt;/Select>
+                        &lt;/FormControl>
+                    &lt;/Stack>
+                    &lt;Typography variant="subtitle2" mt={3}>
+                        Incluir
+                    &lt;/Typography>
+                    &lt;Stack direction="row" mt={2}>
+                        &lt;FormControl sx={{ width: 350 }}>
+                            &lt;InputLabel id="multiple-checkbox-label2">Salas&lt;/InputLabel>
+                            &lt;Select
+                                labelId="multiple-checkbox-label2"
+                                id="multiple-checkbox2"
+                                multiple
+                                value={rulesToInclude?.salas || []}
+                                onChange={(e) => {
+                                    setRulesToInclude({ ...rulesToInclude, salas: e.target.value })
+                                }}
+                                label="Salas"
+                                renderValue={(selected) => selected.join(', ')}
+                                MenuProps={MenuProps}
+                            >
+                                {ROOMS.map((room) => (
+                                    &lt;MenuItem key={room} value={room}>
+                                        &lt;Checkbox checked={rulesToInclude?.salas?.indexOf(room) > -1} />
+                                        &lt;ListItemText primary={room} />
+                                    &lt;/MenuItem>
+                                ))}
+                            &lt;/Select>
+                        &lt;/FormControl>
+                        &lt;FormControl sx={{ width: 350, marginLeft: 2 }}>
+                            &lt;InputLabel id="multiple-checkbox-label3">Características&lt;/InputLabel>
+                            &lt;Select
+                                labelId="multiple-checkbox-label3"
+                                id="multiple-checkbox3"
+                                multiple
+                                value={rulesToInclude?.caracteristicas || []}
+                                onChange={(e) => {
+                                    setRulesToInclude({ ...rulesToInclude, caracteristicas: e.target.value })
+                                }}
+                                label="Características"
+                                renderValue={(selected) => selected.join(', ')}
+                                MenuProps={MenuProps}
+                            >
+                                {ROOM_FEATURES.map((feature) => (
+                                    &lt;MenuItem key={feature} value={feature}>
+                                        &lt;Checkbox checked={rulesToInclude?.caracteristicas?.indexOf(feature) > -1} />
+                                        &lt;ListItemText primary={feature} />
+                                    &lt;/MenuItem>
+                                ))}
+                            &lt;/Select>
+                        &lt;/FormControl>
+                    &lt;/Stack>
+                    &lt;FormControl>
+                        &lt;Typography variant="subtitle2" mt={3}>
+                            Data pretendida para substituição
+                        &lt;/Typography>
+                        &lt;RadioGroup
+                            row
+                            aria-labelledby="radio-buttons-group-label"
+                            name="radio-buttons-group"
+                            defaultValue={'nenhuma'}
+                            onChange={(e) => {
+                                setRulesToInclude({
+                                    ...rulesToInclude,
+                                    data: {
+                                        label: e.target.value,
+                                        value: dayjs(formattedDateTime, { timeZone: 'GMT' }),
+                                    },
+                                })
+                            }}
+                        >
+                            &lt;FormControlLabel value="nenhuma" control={&lt;Radio />} label="nenhuma" />
+                            &lt;FormControlLabel value="mesmoDia" control={&lt;Radio />} label="no mesmo dia" />
+                            &lt;FormControlLabel value="mesmaSemana" control={&lt;Radio />} label="na mesma semana" />
+                            &lt;FormControlLabel value="outro" control={&lt;Radio />} label="outro" />
+                        &lt;/RadioGroup>
+                    &lt;/FormControl>
+                    {rulesToInclude?.data?.label === 'outro' &amp;&amp; (
+                        &lt;Stack direction="row">
+                            &lt;LocalizationProvider dateAdapter={AdapterDayjs}>
+                                &lt;DemoContainer components={['DateTimePicker']} sx={{ width: 350 }}>
+                                    &lt;DateTimePicker
+                                        label="Início"
+                                        format="DD-MM-YYYY HH:mm"
+                                        views={['day', 'month', 'year', 'hours', 'minutes']}
+                                        value={
+                                            rulesToInclude?.dataInicio || dayjs(formattedDateTime, { timeZone: 'GMT' })
+                                        }
+                                        onChange={(e) => {
+                                            setRulesToInclude({ ...rulesToInclude, dataInicio: e })
+                                        }}
+                                    />
+                                &lt;/DemoContainer>
+                            &lt;/LocalizationProvider>
+                            &lt;LocalizationProvider dateAdapter={AdapterDayjs}>
+                                &lt;DemoContainer components={['DateTimePicker']} sx={{ width: 350, marginLeft: 2 }}>
+                                    &lt;DateTimePicker
+                                        label="Fim"
+                                        format="DD-MM-YYYY HH:mm"
+                                        views={['day', 'month', 'year', 'hours', 'minutes']}
+                                        value={rulesToInclude?.dataFim || dayjs(formattedDateTime, { timeZone: 'GMT' })}
+                                        onChange={(e) => setRulesToInclude({ ...rulesToInclude, dataFim: e })}
+                                    />
+                                &lt;/DemoContainer>
+                            &lt;/LocalizationProvider>
+                        &lt;/Stack>
+                    )}
+                    &lt;Stack direction="row" justifyContent="end" mt={4}>
+                        {slots.length === 0 &amp;&amp; &lt;Button onClick={handleCancel}>Cancelar&lt;/Button>}
+                        &lt;Button
+                            variant="contained"
+                            style={{ marginLeft: '15px', width: '180px' }}
+                            onClick={() => {
+                                const slots = lookupSlots(rulesToInclude, rulesToExclude, schedule)
+                                setSlots(slots)
+                            }}
+                        >
+                            Procurar slots
+                        &lt;/Button>
+                    &lt;/Stack>
+                    {slots.length > 0 &amp;&amp; (
+                        // Inserir aqui tabela com slots: slots.map().....
+                        &lt;Stack direction="row" justifyContent="end" mt={4}>
+                            &lt;Button onClick={handleCancel}>Cancelar&lt;/Button>
+                            &lt;Button variant="contained" style={{ marginLeft: '15px', width: '180px' }}>
+                                Inserir alterações
+                            &lt;/Button>
+                        &lt;/Stack>
+                    )}
+                &lt;/Box>
+            &lt;/Modal>
+        &lt;/div>
+    )
+}
+
+/**
+ * Represents a class for replacing a course.
+ * @class
+ * @exports ReplaceCourse
+ */
+export default ReplaceCourse
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="@fontsource_roboto_300.module_css.html">css</a></li><li><a href="@fontsource_roboto_400.module_css.html">css</a></li><li><a href="@fontsource_roboto_500.module_css.html">css</a></li><li><a href="@fontsource_roboto_700.module_css.html">css</a></li><li><a href="@mui_icons-material_Delete%250DMaterial-UI%2520Icons%2520is%2520a%2520set%2520of%2520pre-designed%2520icons%2520following%2520Material%2520Design%2520guidelines.%250DHere,%2520the%2520Delete%2520icon%2520is%2520imported%2520for%2520use%2520in%2520the%2520application.module_.html">@mui/icons-material/DeleteMaterial-UI Icons is a set of pre-designed icons following Material Design guidelines.Here, the Delete icon is imported for use in the application.</a></li><li><a href="@mui_icons-material_FindReplace%250DMaterial-UI%2520Icons%2520is%2520a%2520set%2520of%2520pre-designed%2520icons%2520following%2520Material%2520Design%2520guidelines.%250DHere,%2520the%2520FindReplace%2520icon%2520is%2520imported%2520for%2520use%2520in%2520the%2520application.module_.html">@mui/icons-material/FindReplaceMaterial-UI Icons is a set of pre-designed icons following Material Design guidelines.Here, the FindReplace icon is imported for use in the application.</a></li><li><a href="@mui_material%250DMaterial-UI%2520is%2520a%2520popular%2520React%2520UI%2520framework%2520that%2520provides%2520a%2520set%2520of%2520pre-designed%2520components%2520following%2520Material%2520Design%2520guidelines.%250DHere,%2520several%2520components%2520are%2520imported%2520for%2520use%2520in%2520the%2520application.module_.html">@mui/materialMaterial-UI is a popular React UI framework that provides a set of pre-designed components following Material Design guidelines.Here, several components are imported for use in the application.</a></li><li><a href="App.module_css.html">css</a></li><li><a href="atoms_modalReplaceCourse%250DThis%2520module%2520exports%2520the%2520atomModalReplaceCourse%2520atom,%2520which%2520is%2520used%2520for%2520managing%2520the%2520state%2520of%2520the%2520modal%2520for%2520replacing%2520a%2520course%2520in%2520the%2520application.module_.html">atoms/modalReplaceCourseThis module exports the atomModalReplaceCourse atom, which is used for managing the state of the modal for replacing a course in the application.</a></li><li><a href="atoms_rooms%250DThis%2520module%2520exports%2520the%2520atomRooms%2520atom,%2520which%2520is%2520used%2520for%2520managing%2520the%2520state%2520of%2520rooms%2520in%2520the%2520application.module_.html">atoms/roomsThis module exports the atomRooms atom, which is used for managing the state of rooms in the application.</a></li><li><a href="atoms_schedule%250DThis%2520module%2520exports%2520the%2520atomSchedule%2520atom,%2520which%2520is%2520used%2520for%2520managing%2520the%2520state%2520of%2520the%2520schedule%2520in%2520the%2520application.module_.html">atoms/scheduleThis module exports the atomSchedule atom, which is used for managing the state of the schedule in the application.</a></li><li><a href="constants%250DThis%2520module%2520exports%2520constants%2520used%2520throughout%2520the%2520application.%250DHere,%2520AFTERNOON_SHIFT,%2520COURSE_END_TIMES,%2520COURSE_START_TIMES,%2520MORNING_SHIFT,%2520NIGHT_SHIFT,%2520ROOMS,%2520and%2520WEEKDAYS%2520are%2520imported%2520for%2520use%2520in%2520the%2520application.module_.html">constantsThis module exports constants used throughout the application.Here, AFTERNOON_SHIFT, COURSE_END_TIMES, COURSE_START_TIMES, MORNING_SHIFT, NIGHT_SHIFT, ROOMS, and WEEKDAYS are imported for use in the application.</a></li><li><a href="constants%250DThis%2520module%2520exports%2520constants%2520used%2520throughout%2520the%2520application.%250DHere,%2520ROOM_FEATURES%2520and%2520ROOMS%2520are%2520imported%2520for%2520use%2520in%2520the%2520application.module_.html">constantsThis module exports constants used throughout the application.Here, ROOM_FEATURES and ROOMS are imported for use in the application.</a></li><li><a href="constants%250DThis%2520module%2520exports%2520constants%2520used%2520throughout%2520the%2520application.%250DHere,%2520ROOM_FEATURES%2520and%2520TYPE_FILTER_COMPARISON%2520are%2520imported%2520for%2520use%2520in%2520the%2520application.module_.html">constantsThis module exports constants used throughout the application.Here, ROOM_FEATURES and TYPE_FILTER_COMPARISON are imported for use in the application.</a></li><li><a href="index.module_css.html">css</a></li><li><a href="jotai%250DJotai%2520is%2520a%2520primitive%2520and%2520flexible%2520state%2520management%2520library%2520for%2520React.%250DHere,%2520the%2520useAtomValue%2520and%2520useSetAtom%2520hooks%2520are%2520imported%2520for%2520use%2520in%2520the%2520application.module_.html">jotaiJotai is a primitive and flexible state management library for React.Here, the useAtomValue and useSetAtom hooks are imported for use in the application.</a></li><li><a href="jotai%250DJotai%2520is%2520a%2520primitive%2520and%2520flexible%2520state%2520management%2520library%2520for%2520React.%250DHere,%2520the%2520useAtomValue%2520hook%2520is%2520imported%2520for%2520use%2520in%2520the%2520application.module_.html">jotaiJotai is a primitive and flexible state management library for React.Here, the useAtomValue hook is imported for use in the application.</a></li><li><a href="module-@mui_material.html">@mui/material</a></li><li><a href="module-@mui_material_Checkbox.html">@mui/material/Checkbox</a></li><li><a href="module-@mui_material_FormControl.html">@mui/material/FormControl</a></li><li><a href="module-@mui_material_InputLabel.html">@mui/material/InputLabel</a></li><li><a href="module-@mui_material_ListItemText.html">@mui/material/ListItemText</a></li><li><a href="module-@mui_material_MenuItem.html">@mui/material/MenuItem</a></li><li><a href="module-@mui_material_Select.html">@mui/material/Select</a></li><li><a href="module-App.html">App</a></li><li><a href="module-CsvReader.html">CsvReader</a></li><li><a href="module-MultipleSelectCheckmarks.html">MultipleSelectCheckmarks</a></li><li><a href="module-RemoteFile.html">RemoteFile</a></li><li><a href="module-ReplaceCourse.html">ReplaceCourse</a></li><li><a href="module-RoomsTable.html">RoomsTable</a></li><li><a href="module-ScheduleTable.html">ScheduleTable</a></li><li><a href="module-ScheduleTableFilter.html">ScheduleTableFilter</a></li><li><a href="module-atoms_modalReplaceCourse.html">atoms/modalReplaceCourse</a></li><li><a href="module-atoms_schedule.html">atoms/schedule</a></li><li><a href="module-constants.html">constants</a></li><li><a href="module-date-fns.html">date-fns</a></li><li><a href="module-dayjs.html">dayjs</a></li><li><a href="module-lib_replaceCourse.html">lib/replaceCourse</a></li><li><a href="module-papaparse.html">papaparse</a></li><li><a href="module-react.html">react</a></li><li><a href="module-react-csv-reader.html">react-csv-reader</a></li><li><a href="module-react-dom.html">react-dom</a></li><li><a href="module-react-dom_client.html">react-dom/client</a></li><li><a href="module-react-tabulator.html">react-tabulator</a></li><li><a href="module-reportWebVitals.html">reportWebVitals</a></li><li><a href="module-utils.html">utils</a></li><li><a href="react-tabulator_lib_css_tabulator.min.module_css.html">css</a></li><li><a href="react-tabulator_lib_styles.module_css.html">css</a></li></ul><h3>Externals</h3><ul><li><a href="external-AdapterDayjs.html">AdapterDayjs</a></li><li><a href="external-Box.html">Box</a></li><li><a href="external-Button.html">Button</a></li><li><a href="external-Checkbox.html">Checkbox</a></li><li><a href="external-DateTimePicker.html">DateTimePicker</a></li><li><a href="external-DemoContainer.html">DemoContainer</a></li><li><a href="external-FormControl.html">FormControl</a></li><li><a href="external-FormControlLabel.html">FormControlLabel</a></li><li><a href="external-InputLabel.html">InputLabel</a></li><li><a href="external-ListItemText.html">ListItemText</a></li><li><a href="external-LocalizationProvider.html">LocalizationProvider</a></li><li><a href="external-MenuItem.html">MenuItem</a></li><li><a href="external-Modal.html">Modal</a></li><li><a href="external-Radio.html">Radio</a></li><li><a href="external-RadioGroup.html">RadioGroup</a></li><li><a href="external-React.html">React</a></li><li><a href="external-Select.html">Select</a></li><li><a href="external-Stack.html">Stack</a></li><li><a href="external-Typography.html">Typography</a></li><li><a href="external-dayjs.html">dayjs</a></li><li><a href="external-jotai.html">jotai</a></li></ul><h3>Global</h3><ul><li><a href="global.html#reportWebVitals">reportWebVitals</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Apr 03 2024 21:51:48 GMT+0100 (Hora de verão da Europa Ocidental)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

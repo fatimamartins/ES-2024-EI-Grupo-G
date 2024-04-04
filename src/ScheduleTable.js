@@ -4,6 +4,7 @@
 
 /** @module react */
 import React from 'react'
+/** @module react-dom */
 import { renderToString } from 'react-dom/server'
 /** @module react-tabulator */
 import { ReactTabulator } from 'react-tabulator'
@@ -24,10 +25,33 @@ import { Button, Stack } from '@mui/material'
  * @module ScheduleTableFilter
  */
 import ScheduleTableFilter from './ScheduleTableFilter'
+/**
+ * @module jotai
+ * Jotai is a primitive and flexible state management library for React.
+ * Here, the useAtomValue and useSetAtom hooks are imported for use in the application.
+ */
 import { useAtomValue, useSetAtom } from 'jotai'
+/**
+ * @module atoms/modalReplaceCourse
+ * This module exports the atomModalReplaceCourse atom, which is used for managing the state of the modal for replacing a course in the application.
+ */
 import { atomModalReplaceCourse } from './atoms/modalReplaceCourse'
+/**
+ * @module @mui/icons-material/FindReplace
+ * Material-UI Icons is a set of pre-designed icons following Material Design guidelines.
+ * Here, the FindReplace icon is imported for use in the application.
+ */
 import FindReplaceIcon from '@mui/icons-material/FindReplace'
+/**
+ * @module constants
+ * This module exports constants used throughout the application.
+ * Here, ROOM_FEATURES and ROOMS are imported for use in the application.
+ */
 import { ROOM_FEATURES, ROOMS } from './constants'
+/**
+ * @module atoms/schedule
+ * This module exports the atomSchedule atom, which is used for managing the state of the schedule in the application.
+ */
 import { atomSchedule } from './atoms/schedule'
 
 /**
@@ -163,14 +187,14 @@ const defaultColumns = [
             values: ROOM_FEATURES,
         },
         validator: function (cell, value) {
-            if (value.trim() === '' && cell.getInitialValue() === '') {
+            if (value && value.trim() === '' && cell.getInitialValue() === '') {
                 return false
             } else {
                 return true
             }
         },
         mutator: function (value, data, type, params, component) {
-            if (value.trim() === '' && type === 'edit') {
+            if (value && value.trim() === '' && type === 'edit') {
                 return component.getInitialValue()
             } else {
                 return value
@@ -189,14 +213,14 @@ const defaultColumns = [
             values: ROOMS,
         },
         validator: function (cell, value) {
-            if (value.trim() === '' && cell.getInitialValue() === '') {
+            if (value && value.trim() === '' && cell.getInitialValue() === '') {
                 return false
             } else {
                 return true
             }
         },
         mutator: function (value, data, type, params, component) {
-            if (value.trim() === '' && type === 'edit') {
+            if (value && value.trim() === '' && type === 'edit') {
                 return component.getInitialValue()
             } else {
                 return value

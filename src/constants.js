@@ -1,16 +1,72 @@
 /**
- * @typedef {Object} COURSE_PERIODS - Object representing the periods of the courses
+ * @file constants
+ * This file exports constants used throughout the application, such as COURSE_START_TIMES, which represents the time the courses start.
+ */
+
+/**
+ * @typedef {Object} COURSE_START_TIMES - Object representing the time the courses start
  * */
-export const COURSE_PERIODS = [
-    '8h - 9:30h',
-    '9:30h - 11h',
-    '11h - 12:30h',
-    '13h - 14:30h',
-    '14:30h - 16h',
-    '16h - 17:30h',
-    '18h - 19:30h',
-    '19:30h - 21h',
-    '21h - 22:30h',
+export const COURSE_START_TIMES = [
+    '08:00:00',
+    '08:30:00',
+    '09:30:00',
+    '10:00:00',
+    '10:30:00',
+    '11:00:00',
+    '11:30:00',
+    '12:00:00',
+    '12:30:00',
+    '13:00:00',
+    '13:30:00',
+    '14:00:00',
+    '14:30:00',
+    '15:00:00',
+    '15:30:00',
+    '16:00:00',
+    '16:30:00',
+    '17:00:00',
+    '17:30:00',
+    '18:00:00',
+    '18:30:00',
+    '19:00:00',
+    '19:30:00',
+    '20:00:00',
+    '20:30:00',
+    '21:00:00',
+    '21:30:00',
+]
+
+/**
+ * @typedef {Object} COURSE_END_TIMES - Object representing the time the courses end
+ * */
+export const COURSE_END_TIMES = [
+    '09:30:00',
+    '10:00:00',
+    '10:30:00',
+    '11:00:00',
+    '11:30:00',
+    '12:00:00',
+    '12:30:00',
+    '13:00:00',
+    '13:30:00',
+    '14:00:00',
+    '14:30:00',
+    '15:00:00',
+    '15:30:00',
+    '16:00:00',
+    '16:30:00',
+    '17:00:00',
+    '17:30:00',
+    '18:00:00',
+    '18:30:00',
+    '19:00:00',
+    '19:30:00',
+    '20:00:00',
+    '20:30:00',
+    '21:00:00',
+    '21:30:00',
+    '22:00:00',
+    '22:30:00',
 ]
 
 /**
@@ -201,3 +257,50 @@ export const ROOM_FEATURES = [
  * @typedef {Object} TYPE_FILTER_COMPARISON - Object representing a list of type filters comparison.
  */
 export const TYPE_FILTER_COMPARISON = ['=', '!=', 'like', 'starts', 'ends', '<', '>', '<=', '>=']
+
+/**
+ * @typedef {Object} MORNING_SHIFT - Object representing the morning shift.
+ */
+export const MORNING_SHIFT = [
+    '08:00:00',
+    '08:30:00',
+    '09:30:00',
+    '10:00:00',
+    '10:30:00',
+    '11:00:00',
+    '11:30:00',
+    '12:00:00',
+    '12:30:00',
+]
+
+/**
+ * @typedef {Object} AFTERNOON_SHIFT - Object representing the afternoon shift.
+ */
+export const AFTERNOON_SHIFT = [
+    '13:00:00',
+    '13:30:00',
+    '14:00:00',
+    '14:30:00',
+    '15:00:00',
+    '15:30:00',
+    '16:00:00',
+    '16:30:00',
+    '17:00:00',
+    '17:30:00',
+]
+
+/**
+ * @typedef {Object} NIGHT_SHIFT - Object representing the night shift.
+ */
+export const NIGHT_SHIFT = [
+    '18:00:00',
+    '18:30:00',
+    '19:00:00',
+    '19:30:00',
+    '20:00:00',
+    '20:30:00',
+    '21:00:00',
+    '21:30:00',
+    '22:00:00',
+    '22:30:00',
+]

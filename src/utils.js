@@ -4,6 +4,7 @@
 
 /** @module date-fns */
 import { format, getISOWeek } from 'date-fns'
+/** @module dayjs */
 
 /**
  * Adds a week number to each row of the provided data based on the date.
@@ -80,7 +81,7 @@ export function parseHour(hourString) {
         const hour = parseInt(parts[0], 10)
         const minute = parseInt(parts[1], 10)
         const second = parts[2] ? parseInt(parts[2], 10) : 0
-        const date = new Date()
+        const date = new Date(2024, 2, 31)
         date.setHours(hour, minute, second)
         return date.getTime()
     }
@@ -143,6 +144,14 @@ export function validateRoomAvailability(room, date, hour, horario) {
     return roomData.length > 0
 }
 
+/**
+ * @function getFormattedDateTime
+ * `getFormattedDateTime` is a function that formats a given date and time into a specific string format.
+ *
+ * @param {string} date - The date to format, in 'DD/MM/YYYY' format.
+ * @param {string} time - The time to format, in 'HH:mm' format.
+ * @returns {string} - Returns the formatted date and time as a string.
+ */
 export function getFormattedDateTime(date, time, formatStr) {
     if (date && time) {
         const parsedTime = new Date(parseHour(time))
