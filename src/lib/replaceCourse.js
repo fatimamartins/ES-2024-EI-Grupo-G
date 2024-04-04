@@ -148,13 +148,14 @@ function isBetweenHours(rulesToExclude, slot) {
         !slot['Hora fim da aula']
     )
         return false
-    const slotStartHour = parseHour(slot['Hora início da aula'])
-    const slotEndHour = parseHour(slot['Hora fim da aula'])
-    const appointmentStartHour = parseHour(rulesToExclude['Hora início da aula'])
-    const appointmentEndHour = parseHour(rulesToExclude['Hora fim da aula'])
+    const slotStartHour = parseHour(slot['Hora início da aula']) // 8
+    const slotEndHour = parseHour(slot['Hora fim da aula']) // 22
+    const appointmentStartHour = parseHour(rulesToExclude['Hora início da aula']) // 17:30
+    const appointmentEndHour = parseHour(rulesToExclude['Hora fim da aula']) // 19:30
     return (
-        (slotStartHour >= appointmentStartHour && slotStartHour <= appointmentEndHour) ||
-        (slotEndHour <= appointmentEndHour && slotEndHour >= appointmentStartHour)
+        (slotStartHour >= appointmentStartHour && slotStartHour < appointmentEndHour) ||
+        (slotEndHour <= appointmentEndHour && slotEndHour > appointmentStartHour) ||
+        (slotStartHour < appointmentStartHour && slotEndHour > appointmentEndHour)
     )
 }
 
@@ -385,6 +386,26 @@ function removeSheduledSlots(map, slots) {
     }, [])
 }
 
+/**
+ * @function isOverlapping
+ * `isOverlapping` is a function that returns true if the slot overlaps with the schedule
+ *
+ * @param {Object} slot - The slot to check. This object should include `Hora início da aula` and `Hora fim da aula` properties that specify the time of the slot.
+ * @param {Array} schedule - An array of course slots. Each slot is an object that may include various properties depending on the structure of a course slot.
+ * @returns {boolean} - Returns true if the slot's time overlaps with the schedule, false otherwise.
+ */
+function isOverlapping(slot, schedule) {
+    return schedule.some((appointment) => {
+        if (
+            appointment['Data da aula'] === slot['Data da aula'] &&
+            appointment['Sala atribuída à aula'] === slot['Sala atribuída à aula']
+        ) {
+            return isBetweenHours(appointment, slot)
+        }
+        return false
+    })
+}
+
 // Lookup function which returns the available slots
 /**
  * @function lookupSlots
@@ -410,9 +431,12 @@ export function lookupSlots(rulesToInclude, rulesToExclude, schedule) {
         filtersIncludeToApply.every((filter) => filter(rulesToInclude, slot))
     )
 
+    // Convert the schedule array into a map for easier access
     const scheduleMap = mkSheduleMap(schedule)
 
+    // Remove slots that are already in the schedule
     const slotsWithoutScheduleClasses = removeSheduledSlots(scheduleMap, filteredSlots)
 
-    return slotsWithoutScheduleClasses
+    // Remove slots that overlap (time wise) with the schedule appointments
+    return slotsWithoutScheduleClasses.filter((slot) => !isOverlapping(slot, schedule))
 }
