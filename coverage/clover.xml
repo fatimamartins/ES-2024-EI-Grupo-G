@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1712333924822" clover="3.2.0">
-  <project timestamp="1712333924822" name="All files">
-    <metrics statements="450" coveredstatements="99" conditionals="285" coveredconditionals="55" methods="134" coveredmethods="26" elements="869" coveredelements="180" complexity="0" loc="450" ncloc="450" packages="3" files="17" classes="17"/>
+<coverage generated="1712335905376" clover="3.2.0">
+  <project timestamp="1712335905376" name="All files">
+    <metrics statements="450" coveredstatements="104" conditionals="285" coveredconditionals="52" methods="134" coveredmethods="28" elements="869" coveredelements="184" complexity="0" loc="450" ncloc="450" packages="3" files="17" classes="17"/>
     <package name="src">
       <metrics statements="336" coveredstatements="74" conditionals="189" coveredconditionals="24" methods="109" coveredmethods="18"/>
       <file name="App.js" path="D:\GithubProjetos\ES-2024-EI-Grupo-G\src\App.js">
@@ -396,14 +396,14 @@
       </file>
     </package>
     <package name="src.lib">
-      <metrics statements="111" coveredstatements="23" conditionals="96" coveredconditionals="31" methods="25" coveredmethods="8"/>
+      <metrics statements="111" coveredstatements="28" conditionals="96" coveredconditionals="28" methods="25" coveredmethods="10"/>
       <file name="replaceCourse.js" path="D:\GithubProjetos\ES-2024-EI-Grupo-G\src\lib\replaceCourse.js">
-        <metrics statements="111" coveredstatements="23" conditionals="96" coveredconditionals="31" methods="25" coveredmethods="8"/>
+        <metrics statements="111" coveredstatements="28" conditionals="96" coveredconditionals="28" methods="25" coveredmethods="10"/>
         <line num="46" count="4" type="cond" truecount="6" falsecount="0"/>
         <line num="47" count="2" type="stmt"/>
         <line num="48" count="2" type="stmt"/>
         <line num="49" count="2" type="stmt"/>
-        <line num="62" count="1" type="cond" truecount="3" falsecount="1"/>
+        <line num="62" count="0" type="cond" truecount="0" falsecount="4"/>
         <line num="63" count="0" type="stmt"/>
         <line num="64" count="0" type="stmt"/>
         <line num="65" count="0" type="stmt"/>
@@ -491,12 +491,12 @@
         <line num="336" count="0" type="stmt"/>
         <line num="338" count="0" type="stmt"/>
         <line num="340" count="0" type="stmt"/>
-        <line num="353" count="0" type="stmt"/>
-        <line num="364" count="0" type="stmt"/>
-        <line num="365" count="0" type="stmt"/>
-        <line num="366" count="0" type="stmt"/>
-        <line num="367" count="0" type="stmt"/>
-        <line num="369" count="0" type="stmt"/>
+        <line num="353" count="3" type="stmt"/>
+        <line num="364" count="2" type="stmt"/>
+        <line num="365" count="2" type="stmt"/>
+        <line num="366" count="2" type="stmt"/>
+        <line num="367" count="2" type="stmt"/>
+        <line num="369" count="2" type="stmt"/>
         <line num="382" count="0" type="stmt"/>
         <line num="383" count="0" type="stmt"/>
         <line num="384" count="0" type="cond" truecount="0" falsecount="2"/>

@@ -204,7 +204,7 @@ export function isSameShift(rulesToExclude, slot) {
  * @param {Object} rulesToInclude - The rules for inclusion. This object may include `salas`, `caracteristicas`, and `data` properties.
  * @returns {Array} - Returns an array of filter functions to be applied.
  */
-function getFiltersIncludeToApply(rulesToInclude) {
+export function getFiltersIncludeToApply(rulesToInclude) {
     const filters = []
     if (rulesToInclude?.salas?.length > 0) {
         filters.push(hasRoom)
@@ -231,7 +231,7 @@ function getFiltersIncludeToApply(rulesToInclude) {
  * @param {Object} rulesToExclude - The rules for exclusion. This object may include various properties depending on the exclusion rules.
  * @returns {Array} - Returns an array of filter functions to be applied.
  */
-function getFiltersExcludeToApply(rulesToExclude) {
+export function getFiltersExcludeToApply(rulesToExclude) {
     const filters = []
     if (rulesToExclude?.['Hora início da aula'] && !rulesToExclude?.['Hora fim da aula']) {
         filters.push(doesStartHourMatch)
@@ -263,7 +263,7 @@ function getFiltersExcludeToApply(rulesToExclude) {
  * @param {Object} rulesToExclude - The rules for exclusion. This object may include various properties depending on the exclusion rules.
  * @returns {Array} - Returns an array of filter functions to be applied.
  */
-function getAllSlots(rulesToInclude) {
+export function getAllSlots(rulesToInclude) {
     const combinations = []
     const startDate =
         rulesToInclude?.data?.label === 'outro' ||
@@ -301,7 +301,7 @@ function getAllSlots(rulesToInclude) {
  * @param {Object} rulesToInclude - The rules for inclusion. This object may include `data`, `dataInicio`, and `dataFim` properties that specify the date range.
  * @returns {string} - Returns the end date in 'DD/MM/YYYY' format.
  */
-function getEndDate(rulesToInclude) {
+export function getEndDate(rulesToInclude) {
     if (rulesToInclude?.data?.label === 'mesmoDia') {
         return rulesToInclude?.data?.value
     } else if (rulesToInclude?.data?.label === 'mesmaSemana') {
@@ -324,7 +324,7 @@ function getEndDate(rulesToInclude) {
  * @param {string} endDate - The end date in 'DD/MM/YYYY' format.
  * @returns {Array} - Returns an array of dates in 'DD/MM/YYYY' format, excluding Sundays.
  */
-function getDatesExcludingSundays(startDate, endDate) {
+export function getDatesExcludingSundays(startDate, endDate) {
     const result = []
     let currentDate = startDate
 
@@ -349,7 +349,7 @@ function getDatesExcludingSundays(startDate, endDate) {
  * @param {Object} slot - The course slot for which to generate an identifier. This object may include various properties depending on the structure of a course slot.
  * @returns {string} - Returns a unique identifier for the given course slot.
  */
-function mkId(entry) {
+export function mkId(entry) {
     return `${entry['Data da aula']}-${entry['Hora início da aula']}-${entry['Hora fim da aula']}-${entry['Sala atribuída à aula']}`
 }
 
@@ -360,7 +360,7 @@ function mkId(entry) {
  * @param {Array} slots - An array of course slots. Each slot is an object that may include various properties depending on the structure of a course slot.
  * @returns {Object} - Returns a map where each key is a unique identifier for a course slot, and each value is the corresponding schedule.
  */
-function mkSheduleMap(appointments) {
+export function mkSheduleMap(appointments) {
     const map = new Map()
     appointments.forEach((appointment) => {
         const id = mkId(appointment)
@@ -378,7 +378,7 @@ function mkSheduleMap(appointments) {
  * @param {Object} scheduleMap - A map where each key is a unique identifier for a course slot, and each value is the corresponding schedule.
  * @returns {Array} - Returns a new array of slots, excluding those that are already scheduled.
  */
-function removeSheduledSlots(map, slots) {
+export function removeSheduledSlots(map, slots) {
     return slots.reduce((acc, slot) => {
         const id = mkId(slot)
         return map.has(id) ? acc : [...acc, slot]

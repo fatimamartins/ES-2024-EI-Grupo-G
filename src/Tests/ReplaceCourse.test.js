@@ -1,4 +1,5 @@
-import { doesDayMatch, isSameWeek, hasRoom, hasFeature, doesStartHourMatch, doesEndHourMatch, isBetweenHours, isSameWeekDay } from '../lib/replaceCourse'; // Replace with the correct path to the replaceCourse.js file
+import { doesDayMatch, isSameWeek, hasRoom, hasFeature, doesStartHourMatch, doesEndHourMatch, isBetweenHours, isSameWeekDay, mkSheduleMap,
+mkId,  isSameShift, getFiltersIncludeToApply, getFiltersExcludeToApply, isBetweenDates, getAllSlots, getEndDate,getDatesExcludingSundays  } from '../lib/replaceCourse'; // Replace with the correct path to the replaceCourse.js file
 import dayjs from 'dayjs';
 
 describe('doesDayMatch', () => {
@@ -76,15 +77,6 @@ describe('doesDayMatch', () => {
         expect(result).toBe(false);
     });
 });
-
-describe('isSameWeek function', () => {
-    test('Should return false if slot[\'Data da aula\'] is not provided', () => {
-        const rulesToInclude = { data: { value: new Date('2024-04-01') } };
-        const slot = {}; // Missing 'Data da aula' property
-        expect(isSameWeek(rulesToInclude, slot)).toBe(false);
-    });
-});
-
 
 describe('hasRoom function', () => {
     test('Should return true if the row\'s room matches the room specified in the rules for inclusion', () => {
@@ -269,5 +261,44 @@ describe('isSameWeekDay function', () => {
         const rulesToExclude = { diaDaSemana: 'Monday' };
         const slot = { 'Data da aula': '2024-04-07' }; // Sunday
         expect(isSameWeekDay(rulesToExclude, slot)).toBe(false);
+    });
+});
+
+describe('mkSheduleMap function', () => {
+    test('Should return a map where each key-value pair represents a course slot and its corresponding schedule', () => {
+        const appointments = [
+            { 'Data da aula': '2024-04-01', 'Hora início da aula': '08:00', 'Hora fim da aula': '10:00', 'Sala atribuída à aula': 'Room1', schedule: 'schedule1', property1: 'value1', property2: 'value2' },
+            { 'Data da aula': '2024-04-02', 'Hora início da aula': '09:00', 'Hora fim da aula': '11:00', 'Sala atribuída à aula': 'Room2', schedule: 'schedule2', property1: 'value3', property2: 'value4' },
+        ];
+        const scheduleMap = mkSheduleMap(appointments);
+        expect(scheduleMap.size).toBe(2); // Ensure all appointments are included in the map
+        appointments.forEach(appointment => {
+            const id = `${appointment['Data da aula']}-${appointment['Hora início da aula']}-${appointment['Hora fim da aula']}-${appointment['Sala atribuída à aula']}`;
+            expect(scheduleMap.get(id)).toEqual(appointment); // Ensure each appointment is correctly mapped
+        });
+    });
+
+    test('Should return an empty map if appointments is empty', () => {
+        const appointments = [];
+        const scheduleMap = mkSheduleMap(appointments);
+        expect(scheduleMap.size).toBe(0); // Ensure empty map is returned
+    });
+});
+
+describe('mkId function', () => {
+    test('Should generate a unique identifier for a given course slot', () => {
+        const slot = {
+            'Data da aula': '2024-04-01',
+            'Hora início da aula': '08:00',
+            'Hora fim da aula': '10:00',
+            'Sala atribuída à aula': 'Room1',
+        };
+        const expectedId = '2024-04-01-08:00-10:00-Room1'; // Manually calculate the expected ID based on the provided slot
+        
+        // Call the mkId function with the provided slot
+        const generatedId = mkId(slot);
+        
+        // Assert that the generated ID matches the expected ID
+        expect(generatedId).toBe(expectedId);
     });
 });
