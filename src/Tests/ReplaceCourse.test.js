@@ -302,3 +302,396 @@ describe('mkId function', () => {
         expect(generatedId).toBe(expectedId);
     });
 });
+
+describe('isSameWeek', () => {
+    it('returns false when rulesToInclude data value is not provided', () => {
+        const rulesToInclude = {
+            data: {} // Placeholder value for data
+        };
+        const slot = {
+            'Data da aula': '2024-01-01' // Slot date doesn't matter for this test
+        };
+        const result = isSameWeek(rulesToInclude, slot);
+        expect(result).toBe(false);
+    });
+
+    it('returns false when slot date is not provided', () => {
+        const rulesToInclude = {
+            data: {
+                value: dayjs('2024-04-05')
+            }
+        };
+        const slot = {};
+        const result = isSameWeek(rulesToInclude, slot);
+        expect(result).toBe(false);
+    });
+
+    it('returns true when slot falls within the same week as specified by the rules', () => {
+        const rulesToInclude = {
+            data: {
+                value: dayjs('2024-04-05') // Rules specify a date in the first week of the year 2024
+            }
+        };
+        const slot = {
+            'Data da aula': '2024-04-05' // Slot falls within the same week as specified by the rules
+        };
+        const result = isSameWeek(rulesToInclude, slot);
+        expect(result).toBe(true);
+    });
+
+    it('returns false when slot falls outside the same week as specified by the rules', () => {
+        const rulesToInclude = {
+            data: {
+                value: dayjs('2024-04-05') // Rules specify a date in the first week of the year 2024
+            }
+        };
+        const slot = {
+            'Data da aula': '2023-12-31' // Slot falls outside the same week as specified by the rules
+        };
+        const result = isSameWeek(rulesToInclude, slot);
+        expect(result).toBe(false);
+    });
+});
+
+describe('isSameShift', () => {
+    it('returns true when slot falls within the same morning shift', () => {
+        // Define exclusion rules for morning shift
+        const rulesToExclude = {
+            turno: 'Manhã'
+        };
+
+        // Define a slot that falls within the morning shift
+        const slot = {
+            'Hora início da aula': '08:00:00' // Assuming the start hour of the morning shift
+        };
+
+        // Call isSameShift function
+        const result = isSameShift(rulesToExclude, slot);
+
+        // Assert that the result is true
+        expect(result).toBe(true);
+    });
+
+    it('returns true when slot falls within the same afternoon shift', () => {
+        // Define exclusion rules for afternoon shift
+        const rulesToExclude = {
+            turno: 'Tarde'
+        };
+
+        // Define a slot that falls within the afternoon shift
+        const slot = {
+            'Hora início da aula': '14:00:00' // Assuming the start hour of the afternoon shift
+        };
+
+        // Call isSameShift function
+        const result = isSameShift(rulesToExclude, slot);
+
+        // Assert that the result is true
+        expect(result).toBe(true);
+    });
+
+    it('returns true when slot falls within the same night shift', () => {
+        // Define exclusion rules for night shift
+        const rulesToExclude = {
+            turno: 'Noite'
+        };
+
+        // Define a slot that falls within the night shift
+        const slot = {
+            'Hora início da aula': '19:00:00' // Assuming the start hour of the night shift
+        };
+
+        // Call isSameShift function
+        const result = isSameShift(rulesToExclude, slot);
+
+        // Assert that the result is true
+        expect(result).toBe(true);
+    });
+
+    it('returns false when slot does not fall within the same shift', () => {
+        // Define exclusion rules for morning shift
+        const rulesToExclude = {
+            turno: 'Manhã'
+        };
+
+        // Define a slot that does not fall within the morning shift
+        const slot = {
+            'Hora início da aula': '14:00:00' // Assuming the start hour of the afternoon shift
+        };
+
+        // Call isSameShift function
+        const result = isSameShift(rulesToExclude, slot);
+
+        // Assert that the result is false
+        expect(result).toBe(false);
+    });
+
+    it('returns false when turno is not specified in rulesToExclude', () => {
+        // Define exclusion rules without specifying turno
+        const rulesToExclude = {};
+
+        // Define a slot
+        const slot = {
+            'Hora início da aula': '08:00:00' // Assuming the start hour of the morning shift
+        };
+
+        // Call isSameShift function
+        const result = isSameShift(rulesToExclude, slot);
+
+        // Assert that the result is false
+        expect(result).toBe(false);
+    });
+
+    it('returns false when Hora início da aula is not specified in slot', () => {
+        // Define exclusion rules for morning shift
+        const rulesToExclude = {
+            turno: 'Manhã'
+        };
+
+        // Define a slot without specifying Hora início da aula
+        const slot = {};
+
+        // Call isSameShift function
+        const result = isSameShift(rulesToExclude, slot);
+
+        // Assert that the result is false
+        expect(result).toBe(false);
+    });
+});
+
+describe('getFiltersIncludeToApply', () => {
+    it('returns an empty array when rulesToInclude is null', () => {
+        const rulesToInclude = null;
+        const filters = getFiltersIncludeToApply(rulesToInclude);
+        expect(filters).toEqual([]);
+    });
+
+    it('returns an empty array when no rules are provided', () => {
+        const rulesToInclude = {};
+        const filters = getFiltersIncludeToApply(rulesToInclude);
+        expect(filters).toEqual([]);
+    });
+
+    it('returns an array with hasRoom function when salas are provided', () => {
+        const rulesToInclude = {
+            salas: ['Room1', 'Room2']
+        };
+        const filters = getFiltersIncludeToApply(rulesToInclude);
+        expect(filters).toContain(hasRoom);
+    });
+
+    it('returns an array with hasFeature function when caracteristicas are provided', () => {
+        const rulesToInclude = {
+            caracteristicas: ['Feature1', 'Feature2']
+        };
+        const filters = getFiltersIncludeToApply(rulesToInclude);
+        expect(filters).toContain(hasFeature);
+    });
+
+    it('returns an array with doesDayMatch function when data.label is "mesmoDia"', () => {
+        const rulesToInclude = {
+            data: {
+                label: 'mesmoDia'
+            }
+        };
+        const filters = getFiltersIncludeToApply(rulesToInclude);
+        expect(filters).toContain(doesDayMatch);
+    });
+
+    it('returns an array with isSameWeek function when data.label is "mesmaSemana"', () => {
+        const rulesToInclude = {
+            data: {
+                label: 'mesmaSemana'
+            }
+        };
+        const filters = getFiltersIncludeToApply(rulesToInclude);
+        expect(filters).toContain(isSameWeek);
+    });
+
+    it('returns an array with isBetweenDates function when data.label is "outro"', () => {
+        const rulesToInclude = {
+            data: {
+                label: 'outro'
+            }
+        };
+        const filters = getFiltersIncludeToApply(rulesToInclude);
+        expect(filters).toContain(isBetweenDates);
+    });
+});
+
+describe('getFiltersExcludeToApply', () => {
+    it('returns an empty array when rulesToExclude is null', () => {
+        const rulesToExclude = null;
+        const filters = getFiltersExcludeToApply(rulesToExclude);
+        expect(filters).toEqual([]);
+    });
+
+    it('returns an empty array when no rules are provided', () => {
+        const rulesToExclude = {};
+        const filters = getFiltersExcludeToApply(rulesToExclude);
+        expect(filters).toEqual([]);
+    });
+
+    it('returns an array with doesStartHourMatch function when Hora início da aula is provided but Hora fim da aula is not provided', () => {
+        const rulesToExclude = {
+            'Hora início da aula': '08:00'
+        };
+        const filters = getFiltersExcludeToApply(rulesToExclude);
+        expect(filters).toContain(doesStartHourMatch);
+    });
+
+    it('returns an array with doesEndHourMatch function when Hora fim da aula is provided but Hora início da aula is not provided', () => {
+        const rulesToExclude = {
+            'Hora fim da aula': '10:00'
+        };
+        const filters = getFiltersExcludeToApply(rulesToExclude);
+        expect(filters).toContain(doesEndHourMatch);
+    });
+
+    it('returns an array with isBetweenHours function when both Hora início da aula and Hora fim da aula are provided', () => {
+        const rulesToExclude = {
+            'Hora início da aula': '08:00',
+            'Hora fim da aula': '10:00'
+        };
+        const filters = getFiltersExcludeToApply(rulesToExclude);
+        expect(filters).toContain(isBetweenHours);
+    });
+
+    it('returns an array with isSameWeekDay function when diaDaSemana is provided', () => {
+        const rulesToExclude = {
+            diaDaSemana: 'Monday'
+        };
+        const filters = getFiltersExcludeToApply(rulesToExclude);
+        expect(filters).toContain(isSameWeekDay);
+    });
+
+    it('returns an array with isSameShift function when turno is provided', () => {
+        const rulesToExclude = {
+            turno: 'Manhã'
+        };
+        const filters = getFiltersExcludeToApply(rulesToExclude);
+        expect(filters).toContain(isSameShift);
+    });
+
+    it('returns an array with hasRoom function when salas are provided', () => {
+        const rulesToExclude = {
+            salas: ['Room1', 'Room2']
+        };
+        const filters = getFiltersExcludeToApply(rulesToExclude);
+        expect(filters).toContain(hasRoom);
+    });
+});
+
+describe('getAllSlots', () => {
+  it('generates all possible slot combinations based on the provided rules for inclusion', () => {
+    // Mocking the rulesToInclude object
+    const rulesToInclude = {
+      data: {
+        label: 'outro', // Example label, adjust as needed
+        value: '2024-04-01', // Example start date, adjust as needed
+      },
+    };
+
+    // Mocking the expected output
+    const expectedCombinations = [
+      // Example slot combination
+      {
+        'Hora início da aula': '08:00', // Example start time, adjust as needed
+        'Hora fim da aula': '10:00', // Example end time, adjust as needed
+        'Sala atribuída à aula': 'Sala 1', // Example room, adjust as needed
+        'Data da aula': '01/04/2024', // Example date, adjust as needed
+      },
+      // More slot combinations...
+    ];
+
+    // Call the function with the mocked rulesToInclude
+    const generatedCombinations = getAllSlots(rulesToInclude);
+
+    // Assert that the generated combinations match the expected ones
+    expect(generatedCombinations).toEqual(expectedCombinations);
+
+  });
+
+});
+
+describe('getEndDate', () => {
+    test('returns the same date if label is "mesmoDia"', () => {
+        const rulesToInclude = {
+            data: {
+                label: 'mesmoDia',
+                value: '2024-04-05', // Example date
+            },
+        };
+        expect(getEndDate(rulesToInclude)).toEqual('2024-04-05');
+    });
+
+    test('calculates the end date correctly for "mesmaSemana"', () => {
+        const rulesToInclude = {
+            data: {
+                label: 'mesmaSemana',
+                value: new Date('2024-04-05'), // Example date falling on Tuesday
+            },
+        };
+        // Expected end date should be 6 days after the provided date, i.e., Sunday of the same week
+        expect(getEndDate(rulesToInclude)).toEqual(new Date('2024-04-11'));
+    });
+
+    test('returns the provided end date if label is "outro"', () => {
+        const rulesToInclude = {
+            data: {
+                label: 'outro',
+                dataFim: '2024-04-10', // Example end date
+            },
+        };
+        expect(getEndDate(rulesToInclude)).toEqual('2024-04-10');
+    });
+
+    test('returns the start date if no specific interval is provided', () => {
+        const rulesToInclude = {
+            dataInicio: '2024-04-05', // Example start date
+        };
+        expect(getEndDate(rulesToInclude)).toEqual('2024-04-05');
+    });
+
+    test('returns undefined if no rules are provided', () => {
+        expect(getEndDate(undefined)).toBeUndefined();
+    });
+});
+
+describe('getDatesExcludingSundays', () => {
+    test('generates dates excluding Sundays within the same week', () => {
+        const startDate = dayjs('2024-04-01'); // Saturday
+        const endDate = dayjs('2024-04-07'); // Friday
+        const expectedDates = ['01/04/2024', '02/04/2024', '04/04/2024', '05/04/2024', '06/04/2024', '07/04/2024'];
+        expect(getDatesExcludingSundays(startDate, endDate)).toEqual(expectedDates);
+    });
+
+    test('generates dates excluding Sundays across multiple weeks', () => {
+        const startDate = dayjs('2024-04-28'); // Sunday
+        const endDate = dayjs('2024-05-11'); // Sunday
+        const expectedDates = [
+            '29/04/2024', '30/04/2024', '01/05/2024', '02/05/2024', '03/05/2024',
+            '04/05/2024', '06/05/2024', '07/05/2024', '08/05/2024', '09/05/2024',
+            '10/05/2024', '11/05/2024'
+        ];
+        expect(getDatesExcludingSundays(startDate, endDate)).toEqual(expectedDates);
+    });
+
+    test('returns single date if start and end dates are the same and not a Sunday', () => {
+        const startDate = dayjs('2024-04-02'); // Monday
+        const endDate = dayjs('2024-04-02'); // Monday
+        expect(getDatesExcludingSundays(startDate, endDate)).toEqual(['02/04/2024']);
+    });
+
+    test('returns single date if start and end dates are the same and it is a Sunday', () => {
+        const startDate = dayjs('2024-04-01'); // Sunday
+        const endDate = dayjs('2024-04-01'); // Sunday
+        expect(getDatesExcludingSundays(startDate, endDate)).toEqual(['01/04/2024']);
+    });
+
+    test('returns empty array if end date is before start date', () => {
+        const startDate = dayjs('2024-05-01');
+        const endDate = dayjs('2024-04-30');
+        expect(getDatesExcludingSundays(startDate, endDate)).toEqual([]);
+    });
+});
