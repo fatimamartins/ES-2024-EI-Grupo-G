@@ -41,9 +41,9 @@ import {
  * @param {Object} slot - The slot to check.
  * @returns {boolean} - Returns true if the slot matches the rules for inclusion, false otherwise.
  */
-function doesDayMatch(rulesToInclude, slot) {
+export function doesDayMatch(rulesToInclude, slot) {
     // using date-fns to compare dates
-    if (!rulesToInclude.data.value || !slot['Data da aula']) return false
+    if (!rulesToInclude || !rulesToInclude.data || !rulesToInclude.data.value || !slot['Data da aula']) return false
     const date1 = parseDate(rulesToInclude?.data?.value.format('DD/MM/YYYY'))
     const date2 = parseDate(slot['Data da aula'])
     return isSameDay(date1, date2)
