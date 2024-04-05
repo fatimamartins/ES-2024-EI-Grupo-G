@@ -57,7 +57,7 @@ export function doesDayMatch(rulesToInclude, slot) {
  * @param {Object} slot - The slot to check.
  * @returns {boolean} - Returns true if the slot falls within the same week as specified by the rules for inclusion, false otherwise.
  */
-function isSameWeek(rulesToInclude, slot) {
+export function isSameWeek(rulesToInclude, slot) {
     // using date-fns to compare dates
     if (!rulesToInclude.data.value || !slot['Data da aula']) return false
     const date1 = parseDate(rulesToInclude?.data.value.format('DD/MM/YYYY'))
@@ -89,7 +89,7 @@ function isBetweenDates(rulesToInclude, slot) {
  * @param {Object} row - The row to check. This object should include a `room` property that specifies the room of the course slot.
  * @returns {boolean} - Returns true if the row's room matches the room specified in the rules for inclusion, false otherwise.
  */
-function hasRoom(rulesToInclude, row) {
+export function hasRoom(rulesToInclude, row) {
     return rulesToInclude.salas.includes(row['Sala atribuída à aula'])
 }
 
@@ -100,7 +100,7 @@ function hasRoom(rulesToInclude, row) {
  * @param {Object} row - The row to check. This object should include a `features` property that specifies the features of the course slot.
  * @returns {boolean} - Returns true if the row's features match any of the features specified in the rules for inclusion, false otherwise.
  */
-function hasFeature(rulesToInclude, row) {
+export function hasFeature(rulesToInclude, row) {
     return rulesToInclude?.caracteristicas?.includes(row['Características da sala pedida para a aula'])
 }
 
@@ -114,7 +114,7 @@ function hasFeature(rulesToInclude, row) {
  * @param {Object} row - The row to check. This object should include a `features` property that specifies the features of the course slot.
  * @returns {boolean} - Returns true if the row's features match any of the features specified in the rules for inclusion, false otherwise.
  */
-function doesStartHourMatch(rulesToExclude, slot) {
+export function doesStartHourMatch(rulesToExclude, slot) {
     if (!rulesToExclude['Hora início da aula'] || !slot['Hora início da aula']) return false
     return rulesToExclude['Hora início da aula'] === slot['Hora início da aula']
 }
@@ -127,7 +127,7 @@ function doesStartHourMatch(rulesToExclude, slot) {
  * @param {Object} slot - The slot to check. This object should include a `Hora fim da aula` property that specifies the end hour of the slot.
  * @returns {boolean} - Returns true if the slot's end hour matches the end hour specified in the rules for exclusion, false otherwise.
  */
-function doesEndHourMatch(rulesToExclude, slot) {
+export function doesEndHourMatch(rulesToExclude, slot) {
     if (!rulesToExclude['Hora fim da aula'] || !slot['Hora fim da aula']) return false
     return rulesToExclude['Hora fim da aula'] === slot['Hora fim da aula']
 }
@@ -140,7 +140,7 @@ function doesEndHourMatch(rulesToExclude, slot) {
  * @param {Object} slot - The slot to check. This object should include `Hora início da aula` and `Hora fim da aula` properties that specify the time of the slot.
  * @returns {boolean} - Returns true if the slot's time falls within the specified range, false otherwise.
  */
-function isBetweenHours(rulesToExclude, slot) {
+export function isBetweenHours(rulesToExclude, slot) {
     if (
         !rulesToExclude['Hora início da aula'] ||
         !rulesToExclude['Hora fim da aula'] ||
@@ -166,7 +166,7 @@ function isBetweenHours(rulesToExclude, slot) {
  * @param {Object} slot - The slot to check. This object should include a `Data da aula` property that specifies the date of the slot.
  * @returns {boolean} - Returns true if the slot's date falls on the same weekday as specified in the rules for exclusion, false otherwise.
  */
-function isSameWeekDay(rulesToExclude, slot) {
+export function isSameWeekDay(rulesToExclude, slot) {
     if (!rulesToExclude.diaDaSemana || !slot['Data da aula']) return false
     const day1Index = WEEKDAYS.indexOf(rulesToExclude?.diaDaSemana) + 1
     const day2Index = getDay(parseDate(slot?.data)) // getDay returns 0 for Sunday but our WEEKDAYS array starts at Monday
@@ -182,7 +182,7 @@ function isSameWeekDay(rulesToExclude, slot) {
  * @param {Object} slot - The slot to check. This object should include a `Hora início da aula` property that specifies the start hour of the slot.
  * @returns {boolean} - Returns true if the slot's start hour falls within the same shift as specified in the rules for exclusion, false otherwise.
  */
-function isSameShift(rulesToExclude, slot) {
+export function isSameShift(rulesToExclude, slot) {
     if (!rulesToExclude.turno || !slot['Hora início da aula']) return false
     if (rulesToExclude.turno === 'Manhã') {
         return MORNING_SHIFT.includes(slot['Hora início da aula'])
