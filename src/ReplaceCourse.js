@@ -142,6 +142,7 @@ import { atomSchedule } from './atoms/schedule'
  * @module lib/replaceCourse
  */
 import { lookupSlots } from './lib/replaceCourse'
+import { atomRooms } from './atoms/rooms'
 
 /**
  * @constant
@@ -184,6 +185,7 @@ const MenuProps = {
  */
 const ReplaceCourse = () => {
     const schedule = useAtomValue(atomSchedule)
+    const rooms = useAtomValue(atomRooms)
     const selectedCourse = useAtomValue(atomModalReplaceCourse)
     const setOpen = useSetAtom(atomModalReplaceCourse) // function to open/close the modal with the rules to replace a course
     const [rulesToInclude, setRulesToInclude] = React.useState(null) // rules to replace a course
@@ -194,6 +196,7 @@ const ReplaceCourse = () => {
         selectedCourse?.['Hora início da aula'],
         "yyyy-MM-dd'T'HH:mm"
     )
+
     React.useEffect(() => {
         if (rulesToInclude === null && selectedCourse) {
             setRulesToInclude({
@@ -372,12 +375,23 @@ const ReplaceCourse = () => {
                                 renderValue={(selected) => selected.join(', ')}
                                 MenuProps={MenuProps}
                             >
-                                {ROOM_FEATURES.map((feature) => (
-                                    <MenuItem key={feature} value={feature}>
-                                        <Checkbox checked={rulesToInclude?.caracteristicas?.indexOf(feature) > -1} />
-                                        <ListItemText primary={feature} />
+                                {rooms?.length > 0 ? (
+                                    ROOM_FEATURES.map((feature) => (
+                                        <MenuItem key={feature} value={feature}>
+                                            <Checkbox
+                                                checked={rulesToInclude?.caracteristicas?.indexOf(feature) > -1}
+                                            />
+                                            <ListItemText primary={feature} />
+                                        </MenuItem>
+                                    ))
+                                ) : (
+                                    <MenuItem value="Nenhuma característica disponível">
+                                        <p>
+                                            Nenhuma característica disponível. <br />
+                                            Carregue <strong>CaracterizaçãoDasSalas.csv</strong>
+                                        </p>
                                     </MenuItem>
-                                ))}
+                                )}
                             </Select>
                         </FormControl>
                     </Stack>
@@ -442,7 +456,7 @@ const ReplaceCourse = () => {
                             variant="contained"
                             style={{ marginLeft: '15px', width: '180px' }}
                             onClick={() => {
-                                const slots = lookupSlots(rulesToInclude, rulesToExclude, schedule)
+                                const slots = lookupSlots(rulesToInclude, rulesToExclude, schedule, rooms)
                                 setSlots(slots)
                             }}
                         >

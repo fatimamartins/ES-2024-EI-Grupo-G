@@ -100,8 +100,10 @@ function hasRoom(rulesToInclude, row) {
  * @param {Object} row - The row to check. This object should include a `features` property that specifies the features of the course slot.
  * @returns {boolean} - Returns true if the row's features match any of the features specified in the rules for inclusion, false otherwise.
  */
-function hasFeature(rulesToInclude, row) {
-    return rulesToInclude?.caracteristicas?.includes(row['Características da sala pedida para a aula'])
+function hasFeature(rulesToInclude, slot, rooms) {
+    const selectedRoom = rooms.find((room) => room['Nome sala'] === slot['Sala atribuída à aula'])
+    // if selectedRoom includes the features specified in the rulesToInclude, return true
+    return rulesToInclude?.caracteristicas?.map((caracteristica) => selectedRoom[caracteristica] === 'X')
 }
 
 // Exclusion filters
@@ -415,7 +417,7 @@ function isOverlapping(slot, schedule) {
  * @param {string} course - The course for which to retrieve the slots.
  * @returns {Array} - Returns an array of slots associated with the given course.
  */
-export function lookupSlots(rulesToInclude, rulesToExclude, schedule) {
+export function lookupSlots(rulesToInclude, rulesToExclude, schedule, rooms) {
     // Get all available slots for a given interval of time
     const allSlots = getAllSlots(rulesToInclude)
 
@@ -428,7 +430,7 @@ export function lookupSlots(rulesToInclude, rulesToExclude, schedule) {
     // Filter the slots that match the inclusion filters
     const filtersIncludeToApply = getFiltersIncludeToApply(rulesToInclude)
     const filteredSlots = slotsWithoutExclusionRules.filter((slot) =>
-        filtersIncludeToApply.every((filter) => filter(rulesToInclude, slot))
+        filtersIncludeToApply.every((filter) => filter(rulesToInclude, slot, rooms))
     )
 
     // Convert the schedule array into a map for easier access
