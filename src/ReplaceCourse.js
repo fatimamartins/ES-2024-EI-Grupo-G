@@ -126,12 +126,20 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
 /**
  * @module constants
  */
-import { COURSE_END_TIMES, COURSE_START_TIMES, DAY_PERIODS, ROOMS, ROOM_FEATURES, WEEKDAYS } from './constants'
+import {
+    COURSE_DURATION,
+    COURSE_END_TIMES,
+    COURSE_START_TIMES,
+    DAY_PERIODS,
+    ROOMS,
+    ROOM_FEATURES,
+    WEEKDAYS,
+} from './constants'
 
 /**
  * @module utils
  */
-import { getFormattedDateTime } from './utils'
+import { getCourseDurationToMilliseconds, getFormattedDateTime } from './utils'
 
 /**
  * @module atoms/schedule
@@ -202,6 +210,14 @@ const ReplaceCourse = () => {
             setRulesToInclude({
                 curso: selectedCourse.Curso,
                 turma: selectedCourse.Turma,
+                duracao: getCourseDurationToMilliseconds(
+                    selectedCourse['Hora início da aula'],
+                    selectedCourse['Hora fim da aula']
+                ),
+                data: {
+                    label: 'mesmoDia',
+                    value: dayjs(formattedDateTime, { timeZone: 'GMT' }),
+                },
             })
         }
 
@@ -394,6 +410,24 @@ const ReplaceCourse = () => {
                                 )}
                             </Select>
                         </FormControl>
+                        <FormControl sx={{ minWidth: 150, marginLeft: 2 }}>
+                            <InputLabel id="label4">Duração</InputLabel>
+                            <Select
+                                labelId="label4"
+                                id="select4"
+                                value={rulesToInclude?.duracao || ''}
+                                label="Duração"
+                                onChange={(e) => {
+                                    setRulesToInclude({ ...rulesToInclude, duracao: e.target.value })
+                                }}
+                            >
+                                {COURSE_DURATION.map((time, index) => (
+                                    <MenuItem key={time.key} value={time.value}>
+                                        {time.key}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
                     </Stack>
                     <FormControl>
                         <Typography variant="subtitle2" mt={3}>
@@ -403,7 +437,7 @@ const ReplaceCourse = () => {
                             row
                             aria-labelledby="radio-buttons-group-label"
                             name="radio-buttons-group"
-                            defaultValue={'nenhuma'}
+                            defaultValue={rulesToInclude?.data?.label || 'mesmoDia'}
                             onChange={(e) => {
                                 setRulesToInclude({
                                     ...rulesToInclude,
@@ -414,7 +448,6 @@ const ReplaceCourse = () => {
                                 })
                             }}
                         >
-                            <FormControlLabel value="nenhuma" control={<Radio />} label="nenhuma" />
                             <FormControlLabel value="mesmoDia" control={<Radio />} label="no mesmo dia" />
                             <FormControlLabel value="mesmaSemana" control={<Radio />} label="na mesma semana" />
                             <FormControlLabel value="outro" control={<Radio />} label="outro" />

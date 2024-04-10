@@ -282,19 +282,29 @@ function getAllSlots(rulesToInclude) {
         for (let e = 0; e < COURSE_END_TIMES.length; e++) {
             for (let j = 0; j < ROOMS.length; j++) {
                 for (let k = 0; k < daysArray.length; k++) {
+                    // Verificar a duração da aula
                     if (COURSE_START_TIMES[i] < COURSE_END_TIMES[e]) {
-                        combinations.push({
-                            'Hora início da aula': COURSE_START_TIMES[i],
-                            'Hora fim da aula': COURSE_END_TIMES[e],
-                            'Sala atribuída à aula': ROOMS[j],
-                            'Data da aula': daysArray[k],
-                        })
+                        const slotTime = getSlotTime(COURSE_START_TIMES[i], COURSE_END_TIMES[e])
+                        if (slotTime === rulesToInclude?.duracao) {
+                            combinations.push({
+                                'Hora início da aula': COURSE_START_TIMES[i],
+                                'Hora fim da aula': COURSE_END_TIMES[e],
+                                'Sala atribuída à aula': ROOMS[j],
+                                'Data da aula': daysArray[k],
+                            })
+                        }
                     }
                 }
             }
         }
     }
     return combinations
+}
+
+function getSlotTime(start, end) {
+    const startHour = parseHour(start)
+    const endHour = parseHour(end)
+    return endHour - startHour
 }
 
 /**
@@ -307,6 +317,8 @@ function getAllSlots(rulesToInclude) {
 function getEndDate(rulesToInclude) {
     if (rulesToInclude?.data?.label === 'mesmoDia') {
         return rulesToInclude?.data?.value
+    } else if (rulesToInclude?.data?.label === 'proximosDias') {
+        return rulesToInclude?.data?.value
     } else if (rulesToInclude?.data?.label === 'mesmaSemana') {
         const dayOfWeek = rulesToInclude?.data?.value.day()
         const daysRemaining = 6 - dayOfWeek
@@ -314,7 +326,6 @@ function getEndDate(rulesToInclude) {
     } else if (rulesToInclude?.data?.label === 'outro') {
         return rulesToInclude?.dataFim
     } else {
-        // if the user doesn't specify a time interval we generate slots for the same day
         return rulesToInclude?.dataInicio
     }
 }

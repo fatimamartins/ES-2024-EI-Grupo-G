@@ -89,6 +89,25 @@ export function parseHour(hourString) {
 }
 
 /**
+ * Parses a string representation of time into a numerical representation.
+ *
+ * @function
+ * @name getCourseDurationToMilliseconds
+ * @param {string} start - A string representing the start time for a course in the format 'HH:MM:SS'.
+ * * @param {string} end - A string representing the end time for a course in the format 'HH:MM:SS'.
+ * @returns {number|null} The duration of a course parsed in milliseconds
+ */
+export function getCourseDurationToMilliseconds(start, end) {
+    if (start && end) {
+        const startHour = parseHour(start)
+        const endHour = parseHour(end)
+        const duration = endHour - startHour
+        return duration
+    }
+    return 0
+}
+
+/**
  * Compares two date strings and returns a number indicating their sort order.
  *
  * @function
