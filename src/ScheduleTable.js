@@ -53,6 +53,7 @@ import { ROOM_FEATURES, ROOMS } from './constants'
  * This module exports the atomSchedule atom, which is used for managing the state of the schedule in the application.
  */
 import { atomSchedule } from './atoms/schedule'
+import { atomSeletedSlotToReplaceCourse } from './atoms/selectedSlotToReplaceCourse'
 
 /**
  * @constant {Object[]} defaultColumns - The default columns for the table.
@@ -262,6 +263,13 @@ export default function ScheduleTable() {
     const [columns] = React.useState(defaultColumns)
     const tableRef = React.useRef(null)
     const setOpen = useSetAtom(atomModalReplaceCourse) // function to open/close the modal with the rules to replace a course
+    const selectedSlot = useAtomValue(atomSeletedSlotToReplaceCourse) // selected slot to replace a course
+
+    React.useEffect(() => {
+        if (selectedSlot) {
+            console.log('🚀 ~ OLAAAAAAAAAAAAAAA:', selectedSlot)
+        }
+    }, [selectedSlot])
 
     return (
         <div>

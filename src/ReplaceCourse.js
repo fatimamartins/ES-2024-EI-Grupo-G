@@ -151,6 +151,7 @@ import { atomSchedule } from './atoms/schedule'
  */
 import { lookupSlots } from './lib/replaceCourse'
 import { atomRooms } from './atoms/rooms'
+import SlotsTable from './SlotsTable'
 
 /**
  * @constant
@@ -166,9 +167,11 @@ const style = {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: 900,
+    height: 600,
     bgcolor: 'background.paper',
     boxShadow: 20,
     p: 4,
+    overflow: 'scroll',
 }
 
 /** @constant {number} ITEM_HEIGHT - The height of each item in the select menu. */
@@ -483,7 +486,7 @@ const ReplaceCourse = () => {
                             </LocalizationProvider>
                         </Stack>
                     )}
-                    <Stack direction="row" justifyContent="end" mt={4}>
+                    <Stack direction="row" justifyContent="end" alignItems="center" mt={4}>
                         {slots.length === 0 && <Button onClick={handleCancel}>Cancelar</Button>}
                         <Button
                             variant="contained"
@@ -496,15 +499,7 @@ const ReplaceCourse = () => {
                             Procurar slots
                         </Button>
                     </Stack>
-                    {slots.length > 0 && (
-                        // Inserir aqui tabela com slots: slots.map().....
-                        <Stack direction="row" justifyContent="end" mt={4}>
-                            <Button onClick={handleCancel}>Cancelar</Button>
-                            <Button variant="contained" style={{ marginLeft: '15px', width: '180px' }}>
-                                Inserir alterações
-                            </Button>
-                        </Stack>
-                    )}
+                    {slots.length > 0 && <SlotsTable slots={slots} handleCancel={handleCancel} />}
                 </Box>
             </Modal>
         </div>
