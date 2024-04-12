@@ -217,6 +217,7 @@ const ReplaceCourse = () => {
                     selectedCourse['Hora início da aula'],
                     selectedCourse['Hora fim da aula']
                 ),
+                salas: [selectedCourse['Sala atribuída à aula']],
                 data: {
                     label: 'mesmoDia',
                     value: dayjs(formattedDateTime, { timeZone: 'GMT' }),
