@@ -36,6 +36,7 @@ const columns = [
 const SlotsTable = ({ slots, handleCancel }) => {
     const setSlot = useSetAtom(atomSeletedSlotToReplaceCourse)
     const [selectedSlot, setSelectedSlot] = React.useState(null)
+    const [selectionModel, setSelectionModel] = React.useState([])
 
     return (
         <div style={{ width: '100%', marginTop: '20px' }}>
@@ -47,12 +48,21 @@ const SlotsTable = ({ slots, handleCancel }) => {
                         paginationModel: { page: 0, pageSize: 5 },
                     },
                 }}
+                pageSizeOptions={[5]}
                 checkboxSelection
                 hideFooterSelectedRowCount
                 onRowSelectionModelChange={(selection) => {
-                    // TODO:  only allow one selection at a time
-                    setSelectedSlot(slots[selection[0]])
+                    if (selection.length > 1) {
+                        const result = selection.filter((s) => !selectionModel.includes(s))
+
+                        setSelectionModel(result)
+                        setSelectedSlot(slots[result[0]])
+                    } else {
+                        setSelectionModel(selection)
+                        setSelectedSlot(slots[selection[0]])
+                    }
                 }}
+                rowSelectionModel={selectionModel}
             />
             <Stack direction="row" justifyContent="end" mt={4}>
                 <Button onClick={handleCancel}>Cancelar</Button>
