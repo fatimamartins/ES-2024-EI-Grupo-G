@@ -21,7 +21,7 @@ import {
 import Cancel from '@mui/icons-material/Delete'
 import { useAtomValue } from 'jotai'
 import { atomRooms } from './atoms/rooms'
-import { ROOM_FEATURES, TYPE_FILTER_COMPARISON } from './constants'
+import { ROOM_FEATURES, TYPE_FILTER_COMPARISON, ROOMS } from './constants'
 import { atomSchedule } from './atoms/schedule'
 
 /**
@@ -184,6 +184,16 @@ export default function RoomsTable() {
         setTabulatorFilter([])
     }
 
+    const clearRoomFilter = () => {
+        tableRef?.current.clearFilter()
+        setFilters([]) // clear all filters
+        setAvailableDecision('Disponível')
+        setStartTime('')
+        setEndTime('')
+        setSelectedDate('')
+        setTabulatorFilter([])
+    }
+
     const deleteFilter = (indexToRemove) => {
         if (filters.length === 1) {
             clear()
@@ -255,47 +265,30 @@ export default function RoomsTable() {
                     const itemDate = item['Data da aula']
 
                     return (
-                        (itemStartTime < formattedStartTime && itemEndTime <= formattedStartTime) ||
-                        (itemStartTime >= formattedEndTime &&
-                            itemEndTime > formattedEndTime &&
-                            itemDate === formattedDate)
+                        itemStartTime >= formattedStartTime &&
+                        itemEndTime <= formattedEndTime &&
+                        itemDate === formattedDate
                     )
                 })
 
-                const availableRoomIds = availableRooms.map((item) => item['Sala atribuída à aula'])
+                const availableRoomIds = availableRooms.map((item) => item['Sala atribuída à aula'].trim())
 
-                const roomFilters = availableRoomIds.map((roomId) => ({
+                // Filter out occupied rooms from available rooms
+                const availableRoomsNotOccupied = ROOMS.filter((room) => !availableRoomIds.includes(room))
+
+                const roomFilters = availableRoomsNotOccupied.map((roomId) => ({
                     field: 'Nome sala',
                     type: '=',
                     value: roomId.trim(), // Remove espaços em branco no início e no final da string
                 }))
 
                 updateTabulatorFilter(roomFilters)
+                setStartTime('')
+                setEndTime('')
+                setSelectedDate('')
             }
-
-            // const availableRoomIds = availableRooms.map((item) => item['Sala atribuída à aula']);
-
-            /* availableRoomIds.forEach(roomId => {
-                const trimmedRoomId = roomId.trim();
-                const roomFilter = { field: 'Nome sala', type: '=', value: trimmedRoomId };
-                updateTabulatorFilter(roomFilter);
-            }); */
-
-            // const roomFilters = availableRoomIds.map(roomId => ({
-            //    field: 'Nome sala',
-            //    type: '=',
-            //    value: roomId.trim() // Remove espaços em branco no início e no final da string
-            // }));
-
-            // updateTabulatorFilter(roomFilters);
         }
     }
-
-    /**
-    const handleDateChange = (event) => {
-        setSelectedDate(event.target.value)
-    }
-     */
 
     return (
         <div>
@@ -453,6 +446,9 @@ export default function RoomsTable() {
 
                 <Button variant="contained" onClick={filterRoomsByTime} sx={{ ml: 1 }}>
                     Filtrar por horário
+                </Button>
+                <Button variant="text" onClick={clearRoomFilter}>
+                    Limpar filtro
                 </Button>
             </Stack>
             <ReactTabulator
