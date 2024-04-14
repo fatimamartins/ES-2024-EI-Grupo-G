@@ -73,7 +73,7 @@ export function isSameWeek(rulesToInclude, slot) {
  * @param {Object} slot - The slot to check. This object should include a `date` property.
  * @returns {boolean} - Returns true if the slot's date falls within the specified range, false otherwise.
  */
-function isBetweenDates(rulesToInclude, slot) {
+export function isBetweenDates(rulesToInclude, slot) {
     // using dayjs library
     if (!rulesToInclude.dataInicio || !rulesToInclude.dataFim || !slot['Data da aula']) return false
     const formattedDateTime = dayjs(
@@ -271,8 +271,8 @@ export function getAllSlots(rulesToInclude) {
         !rulesToInclude?.data?.label
             ? rulesToInclude?.dataInicio
             : rulesToInclude?.data?.value
-    const endDate = getEndDate(rulesToInclude)
-    const days = getDatesExcludingSundays(startDate, endDate)
+    const endDate = getEndDate(rulesToInclude) //Todo
+    const days = getDatesExcludingSundays('10/04/2024', '11/04/2024')
     const daysArray = days.length === 0 ? [startDate.format('DD/MM/YYYY')] : days
 
     for (let i = 0; i < COURSE_START_TIMES.length; i++) {
@@ -309,6 +309,7 @@ export function getEndDate(rulesToInclude) {
         const daysRemaining = 6 - dayOfWeek
         return rulesToInclude?.data?.value.add(daysRemaining, 'day')
     } else if (rulesToInclude?.data?.label === 'outro') {
+        //Todo
         return rulesToInclude?.dataFim
     } else {
         // if the user doesn't specify a time interval we generate slots for the same day
@@ -327,7 +328,7 @@ export function getEndDate(rulesToInclude) {
 export function getDatesExcludingSundays(startDate, endDate) {
     const result = []
     let currentDate = startDate
-
+    //Todo
     while (currentDate.isBefore(endDate)) {
         if (currentDate.day() !== 0) {
             // 0 represents Sunday

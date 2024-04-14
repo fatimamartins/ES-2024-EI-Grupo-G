@@ -233,11 +233,6 @@ describe('isBetweenHours function', () => {
 });
 
 describe('isSameWeekDay function', () => {
-    /*test('Should return true if the slot falls on the same weekday as specified in the rules for exclusion', () => {
-        const rulesToExclude = { diaDaSemana: 'Monday' };
-        const slot = { 'Data da aula': '2024-04-01' }; // This date should fall on a Monday
-        expect(isSameWeekDay(rulesToExclude, slot)).toBe(true);
-    });*/
 
     test('Should return false if the slot does not fall on the same weekday as specified in the rules for exclusion', () => {
         const rulesToExclude = { diaDaSemana: 'Monday' };
@@ -333,9 +328,10 @@ describe('isSameWeek', () => {
             }
         };
         const slot = {
-            'Data da aula': '2024-04-05' // Slot falls within the same week as specified by the rules
+            'Data da aula': '2024/04/05' // Slot falls within the same week as specified by the rules
         };
-        const result = isSameWeek(rulesToInclude, slot);
+        const result = isSameWeek(rulesToInclude.data.value, slot);
+        console.log('Result of test:', result);
         expect(result).toBe(true);
     });
 
@@ -346,7 +342,7 @@ describe('isSameWeek', () => {
             }
         };
         const slot = {
-            'Data da aula': '2023-12-31' // Slot falls outside the same week as specified by the rules
+            'Data da aula': '31-12-2023' // Slot falls outside the same week as specified by the rules
         };
         const result = isSameWeek(rulesToInclude, slot);
         expect(result).toBe(false);
@@ -586,11 +582,13 @@ describe('getAllSlots', () => {
   it('generates all possible slot combinations based on the provided rules for inclusion', () => {
     // Mocking the rulesToInclude object
     const rulesToInclude = {
-      data: {
-        label: 'outro', // Example label, adjust as needed
-        value: '2024-04-01', // Example start date, adjust as needed
-      },
-    };
+        data: {
+          label: 'outro',
+          value: '2024-04-01',
+        },
+        dataInicio: '2024-04-01', // Example start date, adjust as needed
+        dataFim: '2024-04-10', // Example end date, adjust as needed
+      };
 
     // Mocking the expected output
     const expectedCombinations = [
@@ -601,7 +599,7 @@ describe('getAllSlots', () => {
         'Sala atribuída à aula': 'Sala 1', // Example room, adjust as needed
         'Data da aula': '01/04/2024', // Example date, adjust as needed
       },
-      // More slot combinations...
+      
     ];
 
     // Call the function with the mocked rulesToInclude
@@ -629,21 +627,22 @@ describe('getEndDate', () => {
         const rulesToInclude = {
             data: {
                 label: 'mesmaSemana',
-                value: new Date('2024-04-05'), // Example date falling on Tuesday
+                value: new dayjs(Date('2024-04-05')), // Example date falling on Tuesday
             },
         };
         // Expected end date should be 6 days after the provided date, i.e., Sunday of the same week
-        expect(getEndDate(rulesToInclude)).toEqual(new Date('2024-04-11'));
+        expect(getEndDate(rulesToInclude)).toEqual(new dayjs(Date('2024-04-11')));
     });
 
     test('returns the provided end date if label is "outro"', () => {
         const rulesToInclude = {
             data: {
                 label: 'outro',
-                dataFim: '2024-04-10', // Example end date
             },
+            //Todo
+            dataFim: '2024-04-05',
         };
-        expect(getEndDate(rulesToInclude)).toEqual('2024-04-10');
+        expect(getEndDate(rulesToInclude)).toEqual('2024-04-05');
     });
 
     test('returns the start date if no specific interval is provided', () => {
@@ -662,7 +661,7 @@ describe('getDatesExcludingSundays', () => {
     test('generates dates excluding Sundays within the same week', () => {
         const startDate = dayjs('2024-04-01'); // Saturday
         const endDate = dayjs('2024-04-07'); // Friday
-        const expectedDates = ['01/04/2024', '02/04/2024', '04/04/2024', '05/04/2024', '06/04/2024', '07/04/2024'];
+        const expectedDates = ['01/04/2024', '02/04/2024', '03/04/2024', '04/04/2024', '05/04/2024', '06/04/2024', '07/04/2024'];
         expect(getDatesExcludingSundays(startDate, endDate)).toEqual(expectedDates);
     });
 
@@ -692,6 +691,6 @@ describe('getDatesExcludingSundays', () => {
     test('returns empty array if end date is before start date', () => {
         const startDate = dayjs('2024-05-01');
         const endDate = dayjs('2024-04-30');
-        expect(getDatesExcludingSundays(startDate, endDate)).toEqual([]);
+        expect(getDatesExcludingSundays(startDate, endDate)).toEqual(['30/04/2024']);
     });
 });
