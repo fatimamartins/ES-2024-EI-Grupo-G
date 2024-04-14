@@ -59,8 +59,8 @@ export function doesDayMatch(rulesToInclude, slot) {
  */
 export function isSameWeek(rulesToInclude, slot) {
     // using date-fns to compare dates
-    if (!rulesToInclude.data.value || !slot['Data da aula']) return false
-    const date1 = parseDate(rulesToInclude?.data.value.format('DD/MM/YYYY'))
+    if (!rulesToInclude?.data?.value || !slot['Data da aula']) return false
+    const date1 = parseDate(rulesToInclude.data.value.format('DD/MM/YYYY'))
     const date2 = parseDate(slot['Data da aula'])
     return getISOWeek(date1) === getISOWeek(date2)
 }
@@ -271,8 +271,12 @@ export function getAllSlots(rulesToInclude) {
         !rulesToInclude?.data?.label
             ? rulesToInclude?.dataInicio
             : rulesToInclude?.data?.value
-    const endDate = getEndDate(rulesToInclude) //Todo
-    const days = getDatesExcludingSundays('10/04/2024', '11/04/2024')
+    const endDate = getEndDate(rulesToInclude)
+    // Check if the end date is before the start date or if the end date is a Sunday. If true, return an empty array because the date is not valid.
+    if (endDate.isBefore(startDate) || (endDate.isSame(startDate) && endDate.day() === 0)) {
+        return []
+    }
+    const days = getDatesExcludingSundays(startDate, endDate)
     const daysArray = days.length === 0 ? [startDate.format('DD/MM/YYYY')] : days
 
     for (let i = 0; i < COURSE_START_TIMES.length; i++) {
@@ -305,11 +309,11 @@ export function getEndDate(rulesToInclude) {
     if (rulesToInclude?.data?.label === 'mesmoDia') {
         return rulesToInclude?.data?.value
     } else if (rulesToInclude?.data?.label === 'mesmaSemana') {
-        const dayOfWeek = rulesToInclude?.data?.value.day()
+        const dayOfWeek = rulesToInclude?.data?.value.day() // 0 represents Sunday and 7 represents Saturday
         const daysRemaining = 6 - dayOfWeek
         return rulesToInclude?.data?.value.add(daysRemaining, 'day')
     } else if (rulesToInclude?.data?.label === 'outro') {
-        //Todo
+        // Todo
         return rulesToInclude?.dataFim
     } else {
         // if the user doesn't specify a time interval we generate slots for the same day
@@ -327,8 +331,11 @@ export function getEndDate(rulesToInclude) {
  */
 export function getDatesExcludingSundays(startDate, endDate) {
     const result = []
+
     let currentDate = startDate
-    //Todo
+
+    // Loop through the dates and add them to the result array excluding Sundays
+    // this loop doens't include the end date
     while (currentDate.isBefore(endDate)) {
         if (currentDate.day() !== 0) {
             // 0 represents Sunday
@@ -336,8 +343,12 @@ export function getDatesExcludingSundays(startDate, endDate) {
         }
         currentDate = currentDate.add(1, 'day')
     }
-    result.push(endDate.format('DD/MM/YYYY'))
 
+    // Add the end date if it's not a Sunday
+    if (endDate.isSame(currentDate) && endDate.day() !== 0) {
+        // if the end date is the same as the start date and it's not a Sunday
+        result.push(endDate.format('DD/MM/YYYY'))
+    }
     return result
 }
 
