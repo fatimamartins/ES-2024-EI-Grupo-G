@@ -194,18 +194,18 @@ describe('addSemesterWeekNumber function', () => {
 
 describe('parseHour function', () => {
     it('should parse hour string into milliseconds since Unix Epoch', () => {
-        const hourString = '12:30:45'
-        const expectedHourMilliseconds = 12 * 60 * 60 * 1000 + 30 * 60 * 1000 + 45 * 1000 // Calculate expected milliseconds for the time portion only
+        // Input hour string
+        const hourString = '12:30:45';
+        
+        // Expected timestamp for March 31, 2024, at 12:30:45
+        const expectedDate = new Date(2024, 2, 31, 12, 30, 45).getTime();
 
-        const result = parseHour(hourString)
-        const receivedDate = new Date(result)
-        const receivedHourMilliseconds =
-            receivedDate.getUTCHours() * 60 * 60 * 1000 +
-            receivedDate.getUTCMinutes() * 60 * 1000 +
-            receivedDate.getUTCSeconds() * 1000 // Calculate milliseconds for the time portion only from the received date
+        // Call the parseHour function
+        const result = parseHour(hourString);
 
-        expect(receivedHourMilliseconds).toEqual(expectedHourMilliseconds)
-    })
+        // Assert that the result matches the expected timestamp
+        expect(result).toEqual(expectedDate);
+    });
 
     it('should return null if input is not a string', () => {
         const hourString = null

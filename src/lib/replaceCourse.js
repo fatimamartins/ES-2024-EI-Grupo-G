@@ -41,9 +41,9 @@ import {
  * @param {Object} slot - The slot to check.
  * @returns {boolean} - Returns true if the slot matches the rules for inclusion, false otherwise.
  */
-function doesDayMatch(rulesToInclude, slot) {
+export function doesDayMatch(rulesToInclude, slot) {
     // using date-fns to compare dates
-    if (!rulesToInclude.data.value || !slot['Data da aula']) return false
+    if (!rulesToInclude || !rulesToInclude.data || !rulesToInclude.data.value || !slot['Data da aula']) return false
     const date1 = parseDate(rulesToInclude?.data?.value.format('DD/MM/YYYY'))
     const date2 = parseDate(slot['Data da aula'])
     return isSameDay(date1, date2)
@@ -57,10 +57,10 @@ function doesDayMatch(rulesToInclude, slot) {
  * @param {Object} slot - The slot to check.
  * @returns {boolean} - Returns true if the slot falls within the same week as specified by the rules for inclusion, false otherwise.
  */
-function isSameWeek(rulesToInclude, slot) {
+export function isSameWeek(rulesToInclude, slot) {
     // using date-fns to compare dates
-    if (!rulesToInclude.data.value || !slot['Data da aula']) return false
-    const date1 = parseDate(rulesToInclude?.data.value.format('DD/MM/YYYY'))
+    if (!rulesToInclude?.data?.value || !slot['Data da aula']) return false
+    const date1 = parseDate(rulesToInclude.data.value.format('DD/MM/YYYY'))
     const date2 = parseDate(slot['Data da aula'])
     return getISOWeek(date1) === getISOWeek(date2)
 }
@@ -73,7 +73,7 @@ function isSameWeek(rulesToInclude, slot) {
  * @param {Object} slot - The slot to check. This object should include a `date` property.
  * @returns {boolean} - Returns true if the slot's date falls within the specified range, false otherwise.
  */
-function isBetweenDates(rulesToInclude, slot) {
+export function isBetweenDates(rulesToInclude, slot) {
     // using dayjs library
     if (!rulesToInclude.dataInicio || !rulesToInclude.dataFim || !slot['Data da aula']) return false
     const formattedDateTime = dayjs(
@@ -89,7 +89,7 @@ function isBetweenDates(rulesToInclude, slot) {
  * @param {Object} row - The row to check. This object should include a `room` property that specifies the room of the course slot.
  * @returns {boolean} - Returns true if the row's room matches the room specified in the rules for inclusion, false otherwise.
  */
-function hasRoom(rulesToInclude, row) {
+export function hasRoom(rulesToInclude, row) {
     return rulesToInclude.salas.includes(row['Sala atribuída à aula'])
 }
 
@@ -100,7 +100,7 @@ function hasRoom(rulesToInclude, row) {
  * @param {Object} row - The row to check. This object should include a `features` property that specifies the features of the course slot.
  * @returns {boolean} - Returns true if the row's features match any of the features specified in the rules for inclusion, false otherwise.
  */
-function hasFeature(rulesToInclude, row) {
+export function hasFeature(rulesToInclude, row) {
     return rulesToInclude?.caracteristicas?.includes(row['Características da sala pedida para a aula'])
 }
 
@@ -114,7 +114,7 @@ function hasFeature(rulesToInclude, row) {
  * @param {Object} row - The row to check. This object should include a `features` property that specifies the features of the course slot.
  * @returns {boolean} - Returns true if the row's features match any of the features specified in the rules for inclusion, false otherwise.
  */
-function doesStartHourMatch(rulesToExclude, slot) {
+export function doesStartHourMatch(rulesToExclude, slot) {
     if (!rulesToExclude['Hora início da aula'] || !slot['Hora início da aula']) return false
     return rulesToExclude['Hora início da aula'] === slot['Hora início da aula']
 }
@@ -127,7 +127,7 @@ function doesStartHourMatch(rulesToExclude, slot) {
  * @param {Object} slot - The slot to check. This object should include a `Hora fim da aula` property that specifies the end hour of the slot.
  * @returns {boolean} - Returns true if the slot's end hour matches the end hour specified in the rules for exclusion, false otherwise.
  */
-function doesEndHourMatch(rulesToExclude, slot) {
+export function doesEndHourMatch(rulesToExclude, slot) {
     if (!rulesToExclude['Hora fim da aula'] || !slot['Hora fim da aula']) return false
     return rulesToExclude['Hora fim da aula'] === slot['Hora fim da aula']
 }
@@ -140,7 +140,7 @@ function doesEndHourMatch(rulesToExclude, slot) {
  * @param {Object} slot - The slot to check. This object should include `Hora início da aula` and `Hora fim da aula` properties that specify the time of the slot.
  * @returns {boolean} - Returns true if the slot's time falls within the specified range, false otherwise.
  */
-function isBetweenHours(rulesToExclude, slot) {
+export function isBetweenHours(rulesToExclude, slot) {
     if (
         !rulesToExclude['Hora início da aula'] ||
         !rulesToExclude['Hora fim da aula'] ||
@@ -166,7 +166,7 @@ function isBetweenHours(rulesToExclude, slot) {
  * @param {Object} slot - The slot to check. This object should include a `Data da aula` property that specifies the date of the slot.
  * @returns {boolean} - Returns true if the slot's date falls on the same weekday as specified in the rules for exclusion, false otherwise.
  */
-function isSameWeekDay(rulesToExclude, slot) {
+export function isSameWeekDay(rulesToExclude, slot) {
     if (!rulesToExclude.diaDaSemana || !slot['Data da aula']) return false
     const day1Index = WEEKDAYS.indexOf(rulesToExclude?.diaDaSemana) + 1
     const day2Index = getDay(parseDate(slot?.data)) // getDay returns 0 for Sunday but our WEEKDAYS array starts at Monday
@@ -182,7 +182,7 @@ function isSameWeekDay(rulesToExclude, slot) {
  * @param {Object} slot - The slot to check. This object should include a `Hora início da aula` property that specifies the start hour of the slot.
  * @returns {boolean} - Returns true if the slot's start hour falls within the same shift as specified in the rules for exclusion, false otherwise.
  */
-function isSameShift(rulesToExclude, slot) {
+export function isSameShift(rulesToExclude, slot) {
     if (!rulesToExclude.turno || !slot['Hora início da aula']) return false
     if (rulesToExclude.turno === 'Manhã') {
         return MORNING_SHIFT.includes(slot['Hora início da aula'])
@@ -204,7 +204,7 @@ function isSameShift(rulesToExclude, slot) {
  * @param {Object} rulesToInclude - The rules for inclusion. This object may include `salas`, `caracteristicas`, and `data` properties.
  * @returns {Array} - Returns an array of filter functions to be applied.
  */
-function getFiltersIncludeToApply(rulesToInclude) {
+export function getFiltersIncludeToApply(rulesToInclude) {
     const filters = []
     if (rulesToInclude?.salas?.length > 0) {
         filters.push(hasRoom)
@@ -231,7 +231,7 @@ function getFiltersIncludeToApply(rulesToInclude) {
  * @param {Object} rulesToExclude - The rules for exclusion. This object may include various properties depending on the exclusion rules.
  * @returns {Array} - Returns an array of filter functions to be applied.
  */
-function getFiltersExcludeToApply(rulesToExclude) {
+export function getFiltersExcludeToApply(rulesToExclude) {
     const filters = []
     if (rulesToExclude?.['Hora início da aula'] && !rulesToExclude?.['Hora fim da aula']) {
         filters.push(doesStartHourMatch)
@@ -263,7 +263,7 @@ function getFiltersExcludeToApply(rulesToExclude) {
  * @param {Object} rulesToExclude - The rules for exclusion. This object may include various properties depending on the exclusion rules.
  * @returns {Array} - Returns an array of filter functions to be applied.
  */
-function getAllSlots(rulesToInclude) {
+export function getAllSlots(rulesToInclude) {
     const combinations = []
     const startDate =
         rulesToInclude?.data?.label === 'outro' ||
@@ -272,6 +272,10 @@ function getAllSlots(rulesToInclude) {
             ? rulesToInclude?.dataInicio
             : rulesToInclude?.data?.value
     const endDate = getEndDate(rulesToInclude)
+    // Check if the end date is before the start date or if the end date is a Sunday. If true, return an empty array because the date is not valid.
+    if (endDate.isBefore(startDate) || (endDate.isSame(startDate) && endDate.day() === 0)) {
+        return []
+    }
     const days = getDatesExcludingSundays(startDate, endDate)
     const daysArray = days.length === 0 ? [startDate.format('DD/MM/YYYY')] : days
 
@@ -301,14 +305,15 @@ function getAllSlots(rulesToInclude) {
  * @param {Object} rulesToInclude - The rules for inclusion. This object may include `data`, `dataInicio`, and `dataFim` properties that specify the date range.
  * @returns {string} - Returns the end date in 'DD/MM/YYYY' format.
  */
-function getEndDate(rulesToInclude) {
+export function getEndDate(rulesToInclude) {
     if (rulesToInclude?.data?.label === 'mesmoDia') {
         return rulesToInclude?.data?.value
     } else if (rulesToInclude?.data?.label === 'mesmaSemana') {
-        const dayOfWeek = rulesToInclude?.data?.value.day()
+        const dayOfWeek = rulesToInclude?.data?.value.day() // 0 represents Sunday and 7 represents Saturday
         const daysRemaining = 6 - dayOfWeek
         return rulesToInclude?.data?.value.add(daysRemaining, 'day')
     } else if (rulesToInclude?.data?.label === 'outro') {
+        // Todo
         return rulesToInclude?.dataFim
     } else {
         // if the user doesn't specify a time interval we generate slots for the same day
@@ -324,10 +329,13 @@ function getEndDate(rulesToInclude) {
  * @param {string} endDate - The end date in 'DD/MM/YYYY' format.
  * @returns {Array} - Returns an array of dates in 'DD/MM/YYYY' format, excluding Sundays.
  */
-function getDatesExcludingSundays(startDate, endDate) {
+export function getDatesExcludingSundays(startDate, endDate) {
     const result = []
+
     let currentDate = startDate
 
+    // Loop through the dates and add them to the result array excluding Sundays
+    // this loop doens't include the end date
     while (currentDate.isBefore(endDate)) {
         if (currentDate.day() !== 0) {
             // 0 represents Sunday
@@ -335,8 +343,12 @@ function getDatesExcludingSundays(startDate, endDate) {
         }
         currentDate = currentDate.add(1, 'day')
     }
-    result.push(endDate.format('DD/MM/YYYY'))
 
+    // Add the end date if it's not a Sunday
+    if (endDate.isSame(currentDate) && endDate.day() !== 0) {
+        // if the end date is the same as the start date and it's not a Sunday
+        result.push(endDate.format('DD/MM/YYYY'))
+    }
     return result
 }
 
@@ -349,7 +361,7 @@ function getDatesExcludingSundays(startDate, endDate) {
  * @param {Object} slot - The course slot for which to generate an identifier. This object may include various properties depending on the structure of a course slot.
  * @returns {string} - Returns a unique identifier for the given course slot.
  */
-function mkId(entry) {
+export function mkId(entry) {
     return `${entry['Data da aula']}-${entry['Hora início da aula']}-${entry['Hora fim da aula']}-${entry['Sala atribuída à aula']}`
 }
 
@@ -360,7 +372,7 @@ function mkId(entry) {
  * @param {Array} slots - An array of course slots. Each slot is an object that may include various properties depending on the structure of a course slot.
  * @returns {Object} - Returns a map where each key is a unique identifier for a course slot, and each value is the corresponding schedule.
  */
-function mkSheduleMap(appointments) {
+export function mkSheduleMap(appointments) {
     const map = new Map()
     appointments.forEach((appointment) => {
         const id = mkId(appointment)
@@ -378,7 +390,7 @@ function mkSheduleMap(appointments) {
  * @param {Object} scheduleMap - A map where each key is a unique identifier for a course slot, and each value is the corresponding schedule.
  * @returns {Array} - Returns a new array of slots, excluding those that are already scheduled.
  */
-function removeSheduledSlots(map, slots) {
+export function removeSheduledSlots(map, slots) {
     return slots.reduce((acc, slot) => {
         const id = mkId(slot)
         return map.has(id) ? acc : [...acc, slot]
