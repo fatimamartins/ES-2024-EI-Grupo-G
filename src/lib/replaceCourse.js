@@ -100,8 +100,10 @@ export function hasRoom(rulesToInclude, row) {
  * @param {Object} row - The row to check. This object should include a `features` property that specifies the features of the course slot.
  * @returns {boolean} - Returns true if the row's features match any of the features specified in the rules for inclusion, false otherwise.
  */
-export function hasFeature(rulesToInclude, row) {
-    return rulesToInclude?.caracteristicas?.includes(row['Características da sala pedida para a aula'])
+function hasFeature(rulesToInclude, slot, rooms) {
+    const selectedRoom = rooms.find((room) => room['Nome sala'] === slot['Sala atribuída à aula'])
+    // if selectedRoom includes the features specified in the rulesToInclude, return true
+    return rulesToInclude?.caracteristicas?.map((caracteristica) => selectedRoom[caracteristica] === 'X')
 }
 
 // Exclusion filters
@@ -148,13 +150,14 @@ export function isBetweenHours(rulesToExclude, slot) {
         !slot['Hora fim da aula']
     )
         return false
-    const slotStartHour = parseHour(slot['Hora início da aula'])
-    const slotEndHour = parseHour(slot['Hora fim da aula'])
-    const appointmentStartHour = parseHour(rulesToExclude['Hora início da aula'])
-    const appointmentEndHour = parseHour(rulesToExclude['Hora fim da aula'])
+    const slotStartHour = parseHour(slot['Hora início da aula']) // 8
+    const slotEndHour = parseHour(slot['Hora fim da aula']) // 22
+    const appointmentStartHour = parseHour(rulesToExclude['Hora início da aula']) // 17:30
+    const appointmentEndHour = parseHour(rulesToExclude['Hora fim da aula']) // 19:30
     return (
-        (slotStartHour >= appointmentStartHour && slotStartHour <= appointmentEndHour) ||
-        (slotEndHour <= appointmentEndHour && slotEndHour >= appointmentStartHour)
+        (slotStartHour >= appointmentStartHour && slotStartHour < appointmentEndHour) ||
+        (slotEndHour <= appointmentEndHour && slotEndHour > appointmentStartHour) ||
+        (slotStartHour < appointmentStartHour && slotEndHour > appointmentEndHour)
     )
 }
 
@@ -283,19 +286,29 @@ export function getAllSlots(rulesToInclude) {
         for (let e = 0; e < COURSE_END_TIMES.length; e++) {
             for (let j = 0; j < ROOMS.length; j++) {
                 for (let k = 0; k < daysArray.length; k++) {
+                    // Verificar a duração da aula
                     if (COURSE_START_TIMES[i] < COURSE_END_TIMES[e]) {
-                        combinations.push({
-                            'Hora início da aula': COURSE_START_TIMES[i],
-                            'Hora fim da aula': COURSE_END_TIMES[e],
-                            'Sala atribuída à aula': ROOMS[j],
-                            'Data da aula': daysArray[k],
-                        })
+                        const slotTime = getSlotTime(COURSE_START_TIMES[i], COURSE_END_TIMES[e])
+                        if (slotTime === rulesToInclude?.duracao) {
+                            combinations.push({
+                                'Hora início da aula': COURSE_START_TIMES[i],
+                                'Hora fim da aula': COURSE_END_TIMES[e],
+                                'Sala atribuída à aula': ROOMS[j],
+                                'Data da aula': daysArray[k],
+                            })
+                        }
                     }
                 }
             }
         }
     }
     return combinations
+}
+
+function getSlotTime(start, end) {
+    const startHour = parseHour(start)
+    const endHour = parseHour(end)
+    return endHour - startHour
 }
 
 /**
@@ -308,6 +321,8 @@ export function getAllSlots(rulesToInclude) {
 export function getEndDate(rulesToInclude) {
     if (rulesToInclude?.data?.label === 'mesmoDia') {
         return rulesToInclude?.data?.value
+    } else if (rulesToInclude?.data?.label === 'proximosDias') {
+        return rulesToInclude?.data?.value
     } else if (rulesToInclude?.data?.label === 'mesmaSemana') {
         const dayOfWeek = rulesToInclude?.data?.value.day() // 0 represents Sunday and 7 represents Saturday
         const daysRemaining = 6 - dayOfWeek
@@ -316,7 +331,6 @@ export function getEndDate(rulesToInclude) {
         // Todo
         return rulesToInclude?.dataFim
     } else {
-        // if the user doesn't specify a time interval we generate slots for the same day
         return rulesToInclude?.dataInicio
     }
 }
@@ -397,6 +411,26 @@ export function removeSheduledSlots(map, slots) {
     }, [])
 }
 
+/**
+ * @function isOverlapping
+ * `isOverlapping` is a function that returns true if the slot overlaps with the schedule
+ *
+ * @param {Object} slot - The slot to check. This object should include `Hora início da aula` and `Hora fim da aula` properties that specify the time of the slot.
+ * @param {Array} schedule - An array of course slots. Each slot is an object that may include various properties depending on the structure of a course slot.
+ * @returns {boolean} - Returns true if the slot's time overlaps with the schedule, false otherwise.
+ */
+function isOverlapping(slot, schedule) {
+    return schedule.some((appointment) => {
+        if (
+            appointment['Data da aula'] === slot['Data da aula'] &&
+            appointment['Sala atribuída à aula'] === slot['Sala atribuída à aula']
+        ) {
+            return isBetweenHours(appointment, slot)
+        }
+        return false
+    })
+}
+
 // Lookup function which returns the available slots
 /**
  * @function lookupSlots
@@ -406,7 +440,7 @@ export function removeSheduledSlots(map, slots) {
  * @param {string} course - The course for which to retrieve the slots.
  * @returns {Array} - Returns an array of slots associated with the given course.
  */
-export function lookupSlots(rulesToInclude, rulesToExclude, schedule) {
+export function lookupSlots(rulesToInclude, rulesToExclude, schedule, rooms) {
     // Get all available slots for a given interval of time
     const allSlots = getAllSlots(rulesToInclude)
 
@@ -419,12 +453,15 @@ export function lookupSlots(rulesToInclude, rulesToExclude, schedule) {
     // Filter the slots that match the inclusion filters
     const filtersIncludeToApply = getFiltersIncludeToApply(rulesToInclude)
     const filteredSlots = slotsWithoutExclusionRules.filter((slot) =>
-        filtersIncludeToApply.every((filter) => filter(rulesToInclude, slot))
+        filtersIncludeToApply.every((filter) => filter(rulesToInclude, slot, rooms))
     )
 
+    // Convert the schedule array into a map for easier access
     const scheduleMap = mkSheduleMap(schedule)
 
+    // Remove slots that are already in the schedule
     const slotsWithoutScheduleClasses = removeSheduledSlots(scheduleMap, filteredSlots)
 
-    return slotsWithoutScheduleClasses
+    // Remove slots that overlap (time wise) with the schedule appointments
+    return slotsWithoutScheduleClasses.filter((slot) => !isOverlapping(slot, schedule))
 }

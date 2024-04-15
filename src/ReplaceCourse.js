@@ -126,12 +126,20 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
 /**
  * @module constants
  */
-import { COURSE_END_TIMES, COURSE_START_TIMES, DAY_PERIODS, ROOMS, ROOM_FEATURES, WEEKDAYS } from './constants'
+import {
+    COURSE_DURATION,
+    COURSE_END_TIMES,
+    COURSE_START_TIMES,
+    DAY_PERIODS,
+    ROOMS,
+    ROOM_FEATURES,
+    WEEKDAYS,
+} from './constants'
 
 /**
  * @module utils
  */
-import { getFormattedDateTime } from './utils'
+import { getCourseDurationToMilliseconds, getFormattedDateTime } from './utils'
 
 /**
  * @module atoms/schedule
@@ -142,6 +150,8 @@ import { atomSchedule } from './atoms/schedule'
  * @module lib/replaceCourse
  */
 import { lookupSlots } from './lib/replaceCourse'
+import { atomRooms } from './atoms/rooms'
+import SlotsTable from './SlotsTable'
 
 /**
  * @constant
@@ -157,9 +167,11 @@ const style = {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: 900,
+    height: 600,
     bgcolor: 'background.paper',
     boxShadow: 20,
     p: 4,
+    overflow: 'scroll',
 }
 
 /** @constant {number} ITEM_HEIGHT - The height of each item in the select menu. */
@@ -184,6 +196,7 @@ const MenuProps = {
  */
 const ReplaceCourse = () => {
     const schedule = useAtomValue(atomSchedule)
+    const rooms = useAtomValue(atomRooms)
     const selectedCourse = useAtomValue(atomModalReplaceCourse)
     const setOpen = useSetAtom(atomModalReplaceCourse) // function to open/close the modal with the rules to replace a course
     const [rulesToInclude, setRulesToInclude] = React.useState(null) // rules to replace a course
@@ -194,11 +207,21 @@ const ReplaceCourse = () => {
         selectedCourse?.['Hora início da aula'],
         "yyyy-MM-dd'T'HH:mm"
     )
+
     React.useEffect(() => {
         if (rulesToInclude === null && selectedCourse) {
             setRulesToInclude({
                 curso: selectedCourse.Curso,
                 turma: selectedCourse.Turma,
+                duracao: getCourseDurationToMilliseconds(
+                    selectedCourse['Hora início da aula'],
+                    selectedCourse['Hora fim da aula']
+                ),
+                salas: [selectedCourse['Sala atribuída à aula']],
+                data: {
+                    label: 'mesmoDia',
+                    value: dayjs(formattedDateTime, { timeZone: 'GMT' }),
+                },
             })
         }
 
@@ -372,10 +395,39 @@ const ReplaceCourse = () => {
                                 renderValue={(selected) => selected.join(', ')}
                                 MenuProps={MenuProps}
                             >
-                                {ROOM_FEATURES.map((feature) => (
-                                    <MenuItem key={feature} value={feature}>
-                                        <Checkbox checked={rulesToInclude?.caracteristicas?.indexOf(feature) > -1} />
-                                        <ListItemText primary={feature} />
+                                {rooms?.length > 0 ? (
+                                    ROOM_FEATURES.map((feature) => (
+                                        <MenuItem key={feature} value={feature}>
+                                            <Checkbox
+                                                checked={rulesToInclude?.caracteristicas?.indexOf(feature) > -1}
+                                            />
+                                            <ListItemText primary={feature} />
+                                        </MenuItem>
+                                    ))
+                                ) : (
+                                    <MenuItem value="Nenhuma característica disponível">
+                                        <p>
+                                            Nenhuma característica disponível. <br />
+                                            Carregue <strong>CaracterizaçãoDasSalas.csv</strong>
+                                        </p>
+                                    </MenuItem>
+                                )}
+                            </Select>
+                        </FormControl>
+                        <FormControl sx={{ minWidth: 150, marginLeft: 2 }}>
+                            <InputLabel id="label4">Duração</InputLabel>
+                            <Select
+                                labelId="label4"
+                                id="select4"
+                                value={rulesToInclude?.duracao || ''}
+                                label="Duração"
+                                onChange={(e) => {
+                                    setRulesToInclude({ ...rulesToInclude, duracao: e.target.value })
+                                }}
+                            >
+                                {COURSE_DURATION.map((time, index) => (
+                                    <MenuItem key={time.key} value={time.value}>
+                                        {time.key}
                                     </MenuItem>
                                 ))}
                             </Select>
@@ -389,7 +441,7 @@ const ReplaceCourse = () => {
                             row
                             aria-labelledby="radio-buttons-group-label"
                             name="radio-buttons-group"
-                            defaultValue={'nenhuma'}
+                            defaultValue={rulesToInclude?.data?.label || 'mesmoDia'}
                             onChange={(e) => {
                                 setRulesToInclude({
                                     ...rulesToInclude,
@@ -400,7 +452,6 @@ const ReplaceCourse = () => {
                                 })
                             }}
                         >
-                            <FormControlLabel value="nenhuma" control={<Radio />} label="nenhuma" />
                             <FormControlLabel value="mesmoDia" control={<Radio />} label="no mesmo dia" />
                             <FormControlLabel value="mesmaSemana" control={<Radio />} label="na mesma semana" />
                             <FormControlLabel value="outro" control={<Radio />} label="outro" />
@@ -436,28 +487,20 @@ const ReplaceCourse = () => {
                             </LocalizationProvider>
                         </Stack>
                     )}
-                    <Stack direction="row" justifyContent="end" mt={4}>
+                    <Stack direction="row" justifyContent="end" alignItems="center" mt={4}>
                         {slots.length === 0 && <Button onClick={handleCancel}>Cancelar</Button>}
                         <Button
                             variant="contained"
                             style={{ marginLeft: '15px', width: '180px' }}
                             onClick={() => {
-                                const slots = lookupSlots(rulesToInclude, rulesToExclude, schedule)
+                                const slots = lookupSlots(rulesToInclude, rulesToExclude, schedule, rooms)
                                 setSlots(slots)
                             }}
                         >
                             Procurar slots
                         </Button>
                     </Stack>
-                    {slots.length > 0 && (
-                        // Inserir aqui tabela com slots: slots.map().....
-                        <Stack direction="row" justifyContent="end" mt={4}>
-                            <Button onClick={handleCancel}>Cancelar</Button>
-                            <Button variant="contained" style={{ marginLeft: '15px', width: '180px' }}>
-                                Inserir alterações
-                            </Button>
-                        </Stack>
-                    )}
+                    {slots.length > 0 && <SlotsTable slots={slots} handleCancel={handleCancel} />}
                 </Box>
             </Modal>
         </div>
