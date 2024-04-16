@@ -194,7 +194,7 @@ const MenuProps = {
  *
  * @returns {JSX.Element} The ReplaceCourse component.
  */
-const ReplaceCourse = () => {
+const ReplaceCourse = ({ tableRef }) => {
     const schedule = useAtomValue(atomSchedule)
     const rooms = useAtomValue(atomRooms)
     const selectedCourse = useAtomValue(atomModalReplaceCourse)
@@ -500,7 +500,14 @@ const ReplaceCourse = () => {
                             Procurar slots
                         </Button>
                     </Stack>
-                    {slots.length > 0 && <SlotsTable slots={slots} handleCancel={handleCancel} />}
+                    {slots.length > 0 && (
+                        <SlotsTable
+                            tableRef={tableRef}
+                            selectedCourse={selectedCourse}
+                            slots={slots}
+                            handleCancel={handleCancel}
+                        />
+                    )}
                 </Box>
             </Modal>
         </div>

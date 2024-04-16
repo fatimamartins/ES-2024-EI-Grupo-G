@@ -11,10 +11,9 @@ import * as React from 'react'
  * @external jotai
  * @see {@link https://jotai.pmnd.rs/}
  */
-import { useSetAtom } from 'jotai'
 import { DataGrid } from '@mui/x-data-grid'
 import { Button, Stack } from '@mui/material'
-import { atomSeletedSlotToReplaceCourse } from './atoms/selectedSlotToReplaceCourse'
+import { isSameDate, getDayOfTheWeek, getWeek, getSemesterWeek } from './utils'
 
 const columns = [
     {
@@ -33,8 +32,7 @@ const columns = [
  *
  * @returns {JSX.Element} The SlotsTable component.
  */
-const SlotsTable = ({ slots, handleCancel }) => {
-    const setSlot = useSetAtom(atomSeletedSlotToReplaceCourse)
+const SlotsTable = ({ tableRef, selectedCourse, slots, handleCancel }) => {
     const [selectedSlot, setSelectedSlot] = React.useState(null)
     const [selectionModel, setSelectionModel] = React.useState([])
 
@@ -68,7 +66,29 @@ const SlotsTable = ({ slots, handleCancel }) => {
                 <Button onClick={handleCancel}>Cancelar</Button>
                 <Button
                     onClick={() => {
-                        setSlot(selectedSlot)
+                        if (isSameDate(selectedCourse['Data da aula'], selectedSlot['Data da aula'])) {
+                            tableRef.current.updateRow(selectedCourse.id, {
+                                'Data da aula': selectedSlot['Data da aula'],
+                                'Hora início da aula': selectedSlot['Hora início da aula'],
+                                'Hora fim da aula': selectedSlot['Hora fim da aula'],
+                                'Salas atribuída à aula': selectedSlot['Sala atribuída à aula'],
+                            })
+                        } else {
+                            tableRef.current.updateRow(selectedCourse.id, {
+                                'Data da aula': selectedSlot['Data da aula'],
+                                'Hora início da aula': selectedSlot['Hora início da aula'],
+                                'Hora fim da aula': selectedSlot['Hora fim da aula'],
+                                'Salas atribuída à aula': selectedSlot['Sala atribuída à aula'],
+                                'Dia da semana': getDayOfTheWeek(selectedSlot['Data da aula']),
+                                'Semana do ano': getWeek(selectedSlot['Data da aula']),
+                                'Semana do semestre': getSemesterWeek(
+                                    selectedCourse['Data da aula'],
+                                    selectedCourse['Semana do semestre'],
+                                    selectedSlot['Data da aula']
+                                ),
+                            })
+                        }
+                        tableRef.current.selectRow(selectedCourse.id)
                         handleCancel()
                     }}
                     variant="contained"
