@@ -11,10 +11,8 @@ import * as React from 'react'
  * @external jotai
  * @see {@link https://jotai.pmnd.rs/}
  */
-import { useSetAtom } from 'jotai'
 import { DataGrid } from '@mui/x-data-grid'
 import { Button, Stack } from '@mui/material'
-import { atomSeletedSlotToReplaceCourse } from './atoms/selectedSlotToReplaceCourse'
 
 const columns = [
     {
@@ -33,8 +31,7 @@ const columns = [
  *
  * @returns {JSX.Element} The SlotsTable component.
  */
-const SlotsTable = ({ slots, handleCancel }) => {
-    const setSlot = useSetAtom(atomSeletedSlotToReplaceCourse)
+const SlotsTable = ({ tableRef, selectedCourse, slots, handleCancel }) => {
     const [selectedSlot, setSelectedSlot] = React.useState(null)
     const [selectionModel, setSelectionModel] = React.useState([])
 
@@ -68,7 +65,13 @@ const SlotsTable = ({ slots, handleCancel }) => {
                 <Button onClick={handleCancel}>Cancelar</Button>
                 <Button
                     onClick={() => {
-                        setSlot(selectedSlot)
+                        tableRef.current.updateRow(selectedCourse.id, {
+                            'Hora início da aula': selectedSlot['Hora início da aula'],
+                            'Hora fim da aula': selectedSlot['Hora fim da aula'],
+                            'Salas atribuída à aula': selectedSlot['Sala atribuída à aula'],
+                            // TODO Alterar semana do ano, semana do semestre e dia da semana.se data for alterada
+                        })
+                        tableRef.current.selectRow(selectedCourse.id)
                         handleCancel()
                     }}
                     variant="contained"
