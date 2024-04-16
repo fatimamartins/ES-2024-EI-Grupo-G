@@ -13,6 +13,7 @@ import * as React from 'react'
  */
 import { DataGrid } from '@mui/x-data-grid'
 import { Button, Stack } from '@mui/material'
+import { isSameDate, getDayOfTheWeek, getWeek, getSemesterWeek } from './utils'
 
 const columns = [
     {
@@ -65,12 +66,28 @@ const SlotsTable = ({ tableRef, selectedCourse, slots, handleCancel }) => {
                 <Button onClick={handleCancel}>Cancelar</Button>
                 <Button
                     onClick={() => {
-                        tableRef.current.updateRow(selectedCourse.id, {
-                            'Hora início da aula': selectedSlot['Hora início da aula'],
-                            'Hora fim da aula': selectedSlot['Hora fim da aula'],
-                            'Salas atribuída à aula': selectedSlot['Sala atribuída à aula'],
-                            // TODO Alterar semana do ano, semana do semestre e dia da semana.se data for alterada
-                        })
+                        if (isSameDate(selectedCourse['Data da aula'], selectedSlot['Data da aula'])) {
+                            tableRef.current.updateRow(selectedCourse.id, {
+                                'Data da aula': selectedSlot['Data da aula'],
+                                'Hora início da aula': selectedSlot['Hora início da aula'],
+                                'Hora fim da aula': selectedSlot['Hora fim da aula'],
+                                'Salas atribuída à aula': selectedSlot['Sala atribuída à aula'],
+                            })
+                        } else {
+                            tableRef.current.updateRow(selectedCourse.id, {
+                                'Data da aula': selectedSlot['Data da aula'],
+                                'Hora início da aula': selectedSlot['Hora início da aula'],
+                                'Hora fim da aula': selectedSlot['Hora fim da aula'],
+                                'Salas atribuída à aula': selectedSlot['Sala atribuída à aula'],
+                                'Dia da semana': getDayOfTheWeek(selectedSlot['Data da aula']),
+                                'Semana do ano': getWeek(selectedSlot['Data da aula']),
+                                'Semana do semestre': getSemesterWeek(
+                                    selectedCourse['Data da aula'],
+                                    selectedCourse['Semana do semestre'],
+                                    selectedSlot['Data da aula']
+                                ),
+                            })
+                        }
                         tableRef.current.selectRow(selectedCourse.id)
                         handleCancel()
                     }}
