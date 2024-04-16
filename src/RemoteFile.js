@@ -50,7 +50,8 @@ export default function RemoteFile({ id }) {
             }
             const csvText = await response.text()
             const result = Papa.parse(csvText, { header: true })
-            setData(result.data)
+            const dataWithIndex = result.data.map((item, index) => ({ id: index, ...item }))
+            setData(dataWithIndex)
         } catch (error) {
             console.error('Error fetching CSV:', error)
         }

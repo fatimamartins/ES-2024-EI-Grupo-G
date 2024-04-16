@@ -31,7 +31,8 @@ export default function CsvReader({ id }) {
      * @param {Object} fileInfo - Information about the loaded file.
      */
     const handleFileLoaded = (data, fileInfo) => {
-        setData(data)
+        const dataWithIndex = data.map((item, index) => ({ id: index, ...item }))
+        setData(dataWithIndex)
     }
 
     return (
