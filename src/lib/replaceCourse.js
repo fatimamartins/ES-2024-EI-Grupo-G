@@ -305,7 +305,7 @@ export function getAllSlots(rulesToInclude) {
                             combinations.push({
                                 'Hora início da aula': COURSE_START_TIMES[i],
                                 'Hora fim da aula': COURSE_END_TIMES[e],
-                                'Sala atribuída à aula': ROOMS[j],
+                                'Sala atribuída à aula': roomsToIterate[j],
                                 'Data da aula': daysArray[k],
                             })
                         }
