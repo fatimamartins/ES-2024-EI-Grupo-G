@@ -29,21 +29,22 @@ const TargetDate = ({ rules, setRules, options, dateTime, defaultValue }) => {
                     ))}
                 </RadioGroup>
             </FormControl>
-            {rules?.data?.label === 'outro' && (
-                <Stack direction="row">
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DemoContainer components={['DateTimePicker']} sx={{ width: 350 }}>
-                            <DateTimePicker
-                                label="Início"
-                                format="DD-MM-YYYY HH:mm"
-                                views={['day', 'month', 'year', 'hours', 'minutes']}
-                                value={rules?.dataInicio || dayjs(dateTime, { timeZone: 'GMT' })}
-                                onChange={(e) => {
-                                    setRules({ ...rules, dataInicio: e })
-                                }}
-                            />
-                        </DemoContainer>
-                    </LocalizationProvider>
+
+            <Stack direction="row" mt={1}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DemoContainer components={['DateTimePicker']} sx={{ width: 350 }}>
+                        <DateTimePicker
+                            label="Início"
+                            format="DD-MM-YYYY HH:mm"
+                            views={['day', 'month', 'year', 'hours', 'minutes']}
+                            value={rules?.dataInicio || dayjs(dateTime, { timeZone: 'GMT' })}
+                            onChange={(e) => {
+                                setRules({ ...rules, dataInicio: e })
+                            }}
+                        />
+                    </DemoContainer>
+                </LocalizationProvider>
+                {rules?.data?.label === 'outro' && (
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DemoContainer components={['DateTimePicker']} sx={{ width: 350, marginLeft: 2 }}>
                             <DateTimePicker
@@ -55,8 +56,8 @@ const TargetDate = ({ rules, setRules, options, dateTime, defaultValue }) => {
                             />
                         </DemoContainer>
                     </LocalizationProvider>
-                </Stack>
-            )}
+                )}
+            </Stack>
         </div>
     )
 }
