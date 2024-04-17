@@ -311,6 +311,14 @@ export default function ScheduleTable() {
                     layout: 'fitColumns',
                     selectable: true,
                 }}
+                events={{
+                    rowClick: function (e, row) {
+                        row.toggleSelect()
+                    },
+                    rowUpdated: function (row) {
+                        row.toggleSelect()
+                    },
+                }}
             />
             <ReplaceCourse tableRef={tableRef} />
             <CourseSlotsModal tableRef={tableRef} />

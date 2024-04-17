@@ -288,7 +288,7 @@ export function getAllSlots(rulesToInclude) {
     const days = getDatesExcludingSundays(startDate, endDate)
     const daysArray = days.length === 0 ? [startDate.format('DD/MM/YYYY')] : days
 
-    // Check if the rules include specific rooms. If so use those rooms to generate posible slots
+    // Check if the rules include specific rooms. If so use those rooms to generate possible slots
     const roomsToIterate = rulesToInclude?.salas?.length > 0 ? rulesToInclude.salas : ROOMS
 
     // TODO validar se selecionou caracteristicas pois estas definem as salas

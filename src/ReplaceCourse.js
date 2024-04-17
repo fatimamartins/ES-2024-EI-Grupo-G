@@ -200,7 +200,6 @@ const ReplaceCourse = ({ tableRef }) => {
                 ),
             })
         }
-        tableRef.current.selectRow(selectedCourse.id)
         handleCancel()
     }
 
