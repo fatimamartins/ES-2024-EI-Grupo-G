@@ -148,12 +148,13 @@ export function isBetweenHours(rulesToExclude, slot) {
         !rulesToExclude['Hora fim da aula'] ||
         !slot['Hora início da aula'] ||
         !slot['Hora fim da aula']
-    )
+    ) {
         return false
-    const slotStartHour = parseHour(slot['Hora início da aula']) // 8
-    const slotEndHour = parseHour(slot['Hora fim da aula']) // 22
-    const appointmentStartHour = parseHour(rulesToExclude['Hora início da aula']) // 17:30
-    const appointmentEndHour = parseHour(rulesToExclude['Hora fim da aula']) // 19:30
+    }
+    const slotStartHour = parseHour(slot['Hora início da aula'])
+    const slotEndHour = parseHour(slot['Hora fim da aula'])
+    const appointmentStartHour = parseHour(rulesToExclude['Hora início da aula'])
+    const appointmentEndHour = parseHour(rulesToExclude['Hora fim da aula'])
     return (
         (slotStartHour >= appointmentStartHour && slotStartHour < appointmentEndHour) ||
         (slotEndHour <= appointmentEndHour && slotEndHour > appointmentStartHour) ||
@@ -254,6 +255,11 @@ export function getFiltersExcludeToApply(rulesToExclude) {
     if (rulesToExclude?.salas?.length > 0) {
         filters.push(hasRoom)
     }
+    if (rulesToExclude?.aulasSelecionadas?.length > 0) {
+        // verificar se existe aulas selecionadas
+        // criar função para verificar se a aula selecionada é a mesma
+        // remover slots que têm o mesmo horario ou estão contidos
+    }
     return filters
 }
 
@@ -282,14 +288,20 @@ export function getAllSlots(rulesToInclude) {
     const days = getDatesExcludingSundays(startDate, endDate)
     const daysArray = days.length === 0 ? [startDate.format('DD/MM/YYYY')] : days
 
+    // Check if the rules include specific rooms. If so use those rooms to generate posible slots
+    const roomsToIterate = rulesToInclude?.salas?.length > 0 ? rulesToInclude.salas : ROOMS
+
+    // TODO validar se selecionou caracteristicas pois estas definem as salas
+
     for (let i = 0; i < COURSE_START_TIMES.length; i++) {
         for (let e = 0; e < COURSE_END_TIMES.length; e++) {
-            for (let j = 0; j < ROOMS.length; j++) {
+            for (let j = 0; j < roomsToIterate.length; j++) {
                 for (let k = 0; k < daysArray.length; k++) {
                     // Verificar a duração da aula
                     if (COURSE_START_TIMES[i] < COURSE_END_TIMES[e]) {
                         const slotTime = getSlotTime(COURSE_START_TIMES[i], COURSE_END_TIMES[e])
-                        if (slotTime === rulesToInclude?.duracao) {
+                        if (slotTime === rulesToInclude.duracao) {
+                            // é obrigatório ter a duração da aula
                             combinations.push({
                                 'Hora início da aula': COURSE_START_TIMES[i],
                                 'Hora fim da aula': COURSE_END_TIMES[e],
@@ -324,11 +336,10 @@ export function getEndDate(rulesToInclude) {
     } else if (rulesToInclude?.data?.label === 'proximosDias') {
         return rulesToInclude?.data?.value
     } else if (rulesToInclude?.data?.label === 'mesmaSemana') {
-        const dayOfWeek = rulesToInclude?.data?.value.day() // 0 represents Sunday and 7 represents Saturday
+        const dayOfWeek = rulesToInclude?.data?.value.day() // 0 represents Sunday and 6 represents Saturday
         const daysRemaining = 6 - dayOfWeek
         return rulesToInclude?.data?.value.add(daysRemaining, 'day')
     } else if (rulesToInclude?.data?.label === 'outro') {
-        // Todo
         return rulesToInclude?.dataFim
     } else {
         return rulesToInclude?.dataInicio
@@ -443,6 +454,7 @@ function isOverlapping(slot, schedule) {
 export function lookupSlots(rulesToInclude, rulesToExclude, schedule, rooms) {
     // Get all available slots for a given interval of time
     const allSlots = getAllSlots(rulesToInclude)
+    console.log('🚀 ~ lookupSlots ~ allSlots:', allSlots)
 
     // Remove all slots that match the exclusion filters
     const filtersExcludeToApply = getFiltersExcludeToApply(rulesToExclude)

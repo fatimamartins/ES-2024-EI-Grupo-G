@@ -116,7 +116,7 @@ export default function MultipleSelectCheckmarks({ tableRef }) {
     }, [tableRef, tabulatorFilter])
 
     return (
-        <div>
+        <Stack mt={6} mb={4}>
             <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2 }}>
                 <Typography>OR</Typography>
                 <Switch
@@ -212,6 +212,6 @@ export default function MultipleSelectCheckmarks({ tableRef }) {
                     })}
                 </Stack>
             )}
-        </div>
+        </Stack>
     )
 }

@@ -80,7 +80,7 @@ export default function MultipleSelectCheckmarks({ tableRef }) {
     }
 
     return (
-        <Stack direction={'row'} mb={1} justifyContent="flex-end">
+        <Stack direction={'row'}>
             <FormControl sx={{ width: 350 }}>
                 <InputLabel id="multiple-checkbox-label">Colunas visíveis</InputLabel>
                 <Select
