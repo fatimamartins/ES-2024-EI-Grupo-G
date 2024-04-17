@@ -1,5 +1,5 @@
 import React from 'react'
-import { Checkbox, FormControl, InputLabel, ListItemText, MenuItem, Select } from '@mui/material'
+import { Checkbox, FormControl, InputLabel, ListItemText, MenuItem, Select, Tooltip } from '@mui/material'
 import { ROOMS } from '../constants'
 
 /** @constant {number} ITEM_HEIGHT - The height of each item in the select menu. */
@@ -19,25 +19,34 @@ const Rooms = ({ rules, setRules, left }) => {
     return (
         <FormControl sx={{ width: 375, marginLeft: left }}>
             <InputLabel id="multiple-checkbox-label1">Salas</InputLabel>
-            <Select
-                labelId="multiple-checkbox-label1"
-                id="multiple-checkbox1"
-                multiple
-                value={rules?.salas || []}
-                onChange={(e) => {
-                    setRules({ ...rules, salas: e.target.value })
-                }}
-                label="Salas"
-                renderValue={(selected) => selected.join(', ')}
-                MenuProps={MenuProps}
+            <Tooltip
+                title={
+                    rules?.caracteristicas?.length > 0
+                        ? 'Pode filtrar por salas apenas se não tiver selecionado características.'
+                        : ''
+                }
             >
-                {ROOMS.map((room, index) => (
-                    <MenuItem key={index} value={room}>
-                        <Checkbox checked={rules?.salas?.indexOf(room) > -1} />
-                        <ListItemText primary={room} />
-                    </MenuItem>
-                ))}
-            </Select>
+                <Select
+                    labelId="multiple-checkbox-label1"
+                    id="multiple-checkbox1"
+                    multiple
+                    value={rules?.salas || []}
+                    onChange={(e) => {
+                        setRules({ ...rules, salas: e.target.value })
+                    }}
+                    label="Salas"
+                    renderValue={(selected) => selected.join(', ')}
+                    MenuProps={MenuProps}
+                    disabled={rules?.caracteristicas ? rules?.caracteristicas?.length > 0 : false}
+                >
+                    {ROOMS.map((room, index) => (
+                        <MenuItem key={index} value={room}>
+                            <Checkbox checked={rules?.salas?.indexOf(room) > -1} />
+                            <ListItemText primary={room} />
+                        </MenuItem>
+                    ))}
+                </Select>
+            </Tooltip>
         </FormControl>
     )
 }
