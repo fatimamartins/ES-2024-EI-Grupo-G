@@ -30,9 +30,11 @@ import TimeOfDay from './slotsModalComponents/TimeOfDay'
 import RoomFeatures from './slotsModalComponents/RoomFeatures'
 import TargetDate from './slotsModalComponents/TargetDate'
 import Rooms from './slotsModalComponents/Rooms'
-import { lookupSlots } from './lib/replaceCourse'
+import { getNextWeekDate, lookupSlots } from './lib/replaceCourse'
 import SlotsTable from './SlotsTable'
 import { atomRooms } from './atoms/rooms'
+import { getDayOfTheWeek, parseDate } from './utils'
+import { getWeek } from 'date-fns'
 
 /**
  * @constant
@@ -175,7 +177,6 @@ const CourseSlotsModal = ({ tableRef }) => {
                                 style={{ marginLeft: '15px', width: '180px' }}
                                 onClick={() => {
                                     const newSlots = lookupSlots(rulesToInclude, rulesToExclude, schedule, rooms)
-                                    console.log('🚀 ~ CourseSlotsModal ~ newSlots:', newSlots)
                                     setSlots(newSlots)
                                 }}
                             >
@@ -183,7 +184,9 @@ const CourseSlotsModal = ({ tableRef }) => {
                             </Button>
                         )}
                     </Stack>
-                    {slots.length > 0 && (
+                    {(selectedSlots
+                        ? slots.length > 0 && selectedSlots.length < rulesToInclude.numeroAulas
+                        : slots.length > 0) && (
                         <div>
                             <Typography variant="subtitle2" mt={3}>
                                 Selecione a slot para a aula {selectedSlots.length + 1}/{rulesToInclude.numeroAulas}
@@ -195,8 +198,22 @@ const CourseSlotsModal = ({ tableRef }) => {
                                 handleSelection={(selectedSlot) => {
                                     const aulasSelecionadas = [...selectedSlots, selectedSlot]
                                     setSelectedSlots(aulasSelecionadas)
+                                    // if the user wants to select the slot with a week apart from the previous slot then we change the "dateInicio" of the rulesToInclude to the next week and use the algorithm to find the slots within the given week date
+                                    const rulesToIncludeWithNewDate =
+                                        rulesToInclude.data === 'umaEmCadaSemana'
+                                            ? {
+                                                  ...rulesToInclude,
+                                                  dataInicio: getNextWeekDate(
+                                                      selectedSlot['Data da aula'],
+                                                      rulesToInclude.dataInicio.format('HH:mm:ss') // keep the time
+                                                  ),
+                                              }
+                                            : rulesToInclude
+                                    // update the rulesToInclude with the new date
+                                    setRulesToInclude(rulesToIncludeWithNewDate)
+                                    // find the slots for the week with the new date
                                     const newSlots = lookupSlots(
-                                        rulesToInclude,
+                                        { ...rulesToIncludeWithNewDate, data: 'mesmaSemana' },
                                         { ...rulesToExclude, aulasSelecionadas },
                                         [...schedule, ...aulasSelecionadas],
                                         rooms
@@ -217,6 +234,30 @@ const CourseSlotsModal = ({ tableRef }) => {
                             {slot['Data da aula']} - {slot['Hora início da aula']} - {slot['Hora fim da aula']}
                         </Typography>
                     ))}
+                    {slots.length > 0 && selectedSlots.length === rulesToInclude?.numeroAulas && (
+                        <Stack flexDirection="row" justifyContent="flex-end">
+                            <Button onClick={handleCancel}>Cancelar</Button>
+                            <Button
+                                onClick={() => {
+                                    const slotsAsTableRows = selectedSlots.map((slot) => ({
+                                        'Unidade Curricular': rulesToInclude.unidadeCurricular,
+                                        'Data da aula': slot['Data da aula'],
+                                        'Hora início da aula': slot['Hora início da aula'],
+                                        'Hora fim da aula': slot['Hora fim da aula'],
+                                        'Sala atribuída à aula': slot['Sala atribuída à aula'],
+                                        'Dia da semana': getDayOfTheWeek(slot['Data da aula']),
+                                        'Semana do ano': getWeek(parseDate(slot['Data da aula'])),
+                                    }))
+                                    tableRef.current.updateOrAddData(slotsAsTableRows)
+                                    handleCancel()
+                                }}
+                                variant="contained"
+                                style={{ marginLeft: '15px', width: '180px' }}
+                            >
+                                Inserir alterações
+                            </Button>
+                        </Stack>
+                    )}
                 </Box>
             </Modal>
         </div>

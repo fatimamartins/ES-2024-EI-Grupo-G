@@ -66,9 +66,12 @@ const SlotsTable = ({ slots, handleCancel, handleSelection, buttonTitle, top }) 
                 <Button
                     onClick={() => {
                         handleSelection(selectedSlot)
+                        setSelectedSlot(null)
+                        setSelectionModel([])
                     }}
                     variant="contained"
                     style={{ marginLeft: '15px', width: '180px' }}
+                    disabled={!selectedSlot}
                 >
                     {buttonTitle}
                 </Button>

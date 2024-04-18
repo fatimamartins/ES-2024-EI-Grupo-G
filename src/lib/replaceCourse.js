@@ -19,8 +19,8 @@
  * This module exports constants used throughout the application.
  * Here, AFTERNOON_SHIFT, COURSE_END_TIMES, COURSE_START_TIMES, MORNING_SHIFT, NIGHT_SHIFT, ROOMS, and WEEKDAYS are imported for use in the application.
  */
-import { getDay } from 'date-fns'
-import { parseDate, parseHour } from '../utils'
+import { addWeeks, format, getDay, startOfWeek } from 'date-fns'
+import { getFormattedDateTime, parseDate, parseHour } from '../utils'
 import {
     AFTERNOON_SHIFT,
     COURSE_END_TIMES,
@@ -30,6 +30,7 @@ import {
     ROOMS,
     WEEKDAYS,
 } from '../constants'
+import dayjs from 'dayjs'
 
 // Inclusion filters
 
@@ -463,6 +464,13 @@ function isOverlapping(slot, schedule) {
         }
         return false
     })
+}
+
+export function getNextWeekDate(date, time) {
+    const currentWeekStartDate = startOfWeek(parseDate(date), { weekStartsOn: 1 }) // Assuming Monday is the start of the week (change as needed)
+    // Add 1 week to get the start date of the next week
+    const nextWeekStartDate = format(addWeeks(currentWeekStartDate, 1), 'dd/MM/yyyy')
+    return dayjs(getFormattedDateTime(nextWeekStartDate, time, "yyyy-MM-dd'T'HH:mm"))
 }
 
 // Lookup function which returns the available slots

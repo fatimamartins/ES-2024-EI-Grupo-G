@@ -79,6 +79,7 @@ import {
     getFormattedDateTime,
     getSemesterWeek,
     isSameDate,
+    parseDate,
 } from './utils'
 
 /**
@@ -166,21 +167,26 @@ const ReplaceCourse = ({ tableRef }) => {
     }
 
     const updateTable = (selectedSlot) => {
+        console.log(
+            "🚀 ~ updateTable ~ selectedSlot['Data da aula']:",
+            getWeek(parseDate(selectedSlot['Data da aula']))
+        )
+
         if (isSameDate(selectedCourse['Data da aula'], selectedSlot['Data da aula'])) {
             tableRef.current.updateRow(selectedCourse.id, {
                 'Data da aula': selectedSlot['Data da aula'],
                 'Hora início da aula': selectedSlot['Hora início da aula'],
                 'Hora fim da aula': selectedSlot['Hora fim da aula'],
-                'Salas atribuída à aula': selectedSlot['Sala atribuída à aula'],
+                'Sala atribuída à aula': selectedSlot['Sala atribuída à aula'],
             })
         } else {
             tableRef.current.updateRow(selectedCourse.id, {
                 'Data da aula': selectedSlot['Data da aula'],
                 'Hora início da aula': selectedSlot['Hora início da aula'],
                 'Hora fim da aula': selectedSlot['Hora fim da aula'],
-                'Salas atribuída à aula': selectedSlot['Sala atribuída à aula'],
+                'Sala atribuída à aula': selectedSlot['Sala atribuída à aula'],
                 'Dia da semana': getDayOfTheWeek(selectedSlot['Data da aula']),
-                'Semana do ano': getWeek(selectedSlot['Data da aula']),
+                'Semana do ano': getWeek(parseDate(selectedSlot['Data da aula'])),
                 'Semana do semestre': getSemesterWeek(
                     selectedCourse['Data da aula'],
                     selectedCourse['Semana do semestre'],
