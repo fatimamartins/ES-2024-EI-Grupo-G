@@ -254,11 +254,6 @@ export function getFiltersExcludeToApply(rulesToExclude) {
     if (rulesToExclude?.salas?.length > 0) {
         filters.push(hasRoom)
     }
-    if (rulesToExclude?.aulasSelecionadas?.length > 0) {
-        // verificar se existe aulas selecionadas
-        // criar função para verificar se a aula selecionada é a mesma
-        // remover slots que têm o mesmo horario ou estão contidos
-    }
     return filters
 }
 
@@ -502,6 +497,8 @@ export function lookupSlots(rulesToInclude, rulesToExclude, schedule, rooms, sel
     const slotsWithoutScheduleClasses = removeSheduledSlots(scheduleMap, slotsWithoutExclusionRules)
 
     // Remove slots that overlap (time wise) with the schedule appointments exepct for the selected lesson
-    const scheduleWithoutSelectedLesson = schedule.filter((appointment) => appointment.id !== selectedLessonID)
+    const scheduleWithoutSelectedLesson = selectedLessonID
+        ? schedule.filter((appointment) => appointment.id !== selectedLessonID)
+        : schedule
     return slotsWithoutScheduleClasses.filter((slot) => !isOverlapping(slot, scheduleWithoutSelectedLesson))
 }

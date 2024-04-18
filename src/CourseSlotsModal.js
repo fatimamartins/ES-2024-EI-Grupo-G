@@ -72,7 +72,6 @@ const CourseSlotsModal = ({ tableRef }) => {
     const [rulesToExclude, setRulesToExclude] = React.useState(null)
     const [slots, setSlots] = React.useState([]) // list of possible slots
     const [selectedSlots, setSelectedSlots] = React.useState([]) // list of selected slots for the course
-
     const handleCancel = () => {
         setValue({ isOpen: false, slots: [] })
         setRulesToInclude(null)
@@ -85,7 +84,7 @@ const CourseSlotsModal = ({ tableRef }) => {
         if (isOpen) {
             setRulesToInclude({
                 data: 'mesmaSemana',
-                dataInicio: dayjs(),
+                dataInicio: dayjs().set('hour', 9).set('minute', 0).set('second', 0).set('millisecond', 0),
             })
         }
     }, [isOpen])
@@ -115,7 +114,6 @@ const CourseSlotsModal = ({ tableRef }) => {
                                 sx={{ width: 380 }}
                                 value={rulesToInclude?.unidadeCurricular}
                                 onChange={(event, newValue) => {
-                                    console.log('🚀 ~ CourseSlotsModal ~ value:', newValue)
                                     setRulesToInclude({ ...rulesToInclude, unidadeCurricular: newValue })
                                 }}
                                 renderInput={(params) => <TextField {...params} label="Unidade Curricular" />}
@@ -177,6 +175,7 @@ const CourseSlotsModal = ({ tableRef }) => {
                                 style={{ marginLeft: '15px', width: '180px' }}
                                 onClick={() => {
                                     const newSlots = lookupSlots(rulesToInclude, rulesToExclude, schedule, rooms)
+                                    console.log('🚀 ~ CourseSlotsModal ~ newSlots:', newSlots)
                                     setSlots(newSlots)
                                 }}
                             >
@@ -199,11 +198,10 @@ const CourseSlotsModal = ({ tableRef }) => {
                                     const newSlots = lookupSlots(
                                         rulesToInclude,
                                         { ...rulesToExclude, aulasSelecionadas },
-                                        schedule,
+                                        [...schedule, ...aulasSelecionadas],
                                         rooms
                                     )
-                                    // setSlots(newSlots)
-                                    console.log('🚀 ~ CourseSlotsModal ~ newSlots:', newSlots)
+                                    setSlots(newSlots)
                                 }}
                                 buttonTitle="Escolher slot"
                             />
