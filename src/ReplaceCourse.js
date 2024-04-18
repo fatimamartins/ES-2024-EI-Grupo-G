@@ -167,11 +167,6 @@ const ReplaceCourse = ({ tableRef }) => {
     }
 
     const updateTable = (selectedSlot) => {
-        console.log(
-            "🚀 ~ updateTable ~ selectedSlot['Data da aula']:",
-            getWeek(parseDate(selectedSlot['Data da aula']))
-        )
-
         if (isSameDate(selectedCourse['Data da aula'], selectedSlot['Data da aula'])) {
             tableRef.current.updateRow(selectedCourse.id, {
                 'Data da aula': selectedSlot['Data da aula'],
@@ -210,69 +205,71 @@ const ReplaceCourse = ({ tableRef }) => {
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
-                    <h3>Slots para alocação de uma aula de substituição</h3>
-                    <Typography variant="body1" color="primary" mb={2} mt={1}>
-                        Regras de alocação de uma aula de substituição
-                    </Typography>
-                    <Typography variant="subtitle2">Excluir</Typography>
-                    <Stack direction="row" mt={2}>
-                        <BeginningOfLesson rules={rulesToExclude} setRules={setRulesToExclude} />
-                        <EndingOfLesson rules={rulesToExclude} setRules={setRulesToExclude} />
-                        <WeekDay rules={rulesToExclude} setRules={setRulesToExclude} />
-                        <TimeOfDay rules={rulesToExclude} setRules={setRulesToExclude} />
-                        <Rooms rules={rulesToExclude} setRules={setRulesToExclude} left={2} />
-                    </Stack>
-                    <Typography variant="subtitle2" mt={3}>
-                        Incluir
-                    </Typography>
-                    <Stack direction="row" mt={2}>
-                        <Rooms rules={rulesToInclude} setRules={setRulesToInclude} />
-                        <RoomFeatures rules={rulesToInclude} setRules={setRulesToInclude} />
-                        <DurationOfLesson rules={rulesToInclude} setRules={setRulesToInclude} />
-                    </Stack>
-                    <Typography variant="subtitle2" mt={3}>
-                        Data pretendida para substituição
-                    </Typography>
-                    <TargetDate
-                        rules={rulesToInclude}
-                        setRules={setRulesToInclude}
-                        options={[
-                            { value: 'mesmoDia', label: 'no mesmo dia' },
-                            { value: 'mesmaSemana', label: 'na mesma semana' },
-                            { value: 'outro', label: 'outro' },
-                        ]}
-                        defaultValue="mesmoDia"
-                    />
-                    <Stack direction="row" justifyContent="end" alignItems="center" mt={4}>
-                        {slots.length === 0 && <Button onClick={handleCancel}>Cancelar</Button>}
-                        <Button
-                            variant="contained"
-                            style={{ marginLeft: '15px', width: '180px' }}
-                            onClick={() => {
-                                const slots = lookupSlots(
-                                    rulesToInclude,
-                                    rulesToExclude,
-                                    schedule,
-                                    rooms,
-                                    selectedCourse.id
-                                )
-                                setSlots(slots)
-                            }}
-                        >
-                            Procurar slots
-                        </Button>
-                    </Stack>
-                    {slots.length > 0 && (
-                        <SlotsTable
-                            tableRef={tableRef}
-                            selectedCourse={selectedCourse}
-                            slots={slots}
-                            handleCancel={handleCancel}
-                            handleSelection={(selectedSlot) => updateTable(selectedSlot)}
-                            buttonTitle="Inserir alterações"
-                            top={20}
+                    <form>
+                        <h3>Slots para alocação de uma aula de substituição</h3>
+                        <Typography variant="body1" color="primary" mb={2} mt={1}>
+                            Regras de alocação de uma aula de substituição
+                        </Typography>
+                        <Typography variant="subtitle2">Excluir</Typography>
+                        <Stack direction="row" mt={2} mb={2}>
+                            <BeginningOfLesson rules={rulesToExclude} setRules={setRulesToExclude} />
+                            <EndingOfLesson rules={rulesToExclude} setRules={setRulesToExclude} />
+                            <WeekDay rules={rulesToExclude} setRules={setRulesToExclude} />
+                            <TimeOfDay rules={rulesToExclude} setRules={setRulesToExclude} />
+                        </Stack>
+                        <Rooms rules={rulesToExclude} setRules={setRulesToExclude} />
+                        <Typography variant="subtitle2" mt={3}>
+                            Incluir
+                        </Typography>
+                        <Stack direction="row" mt={2}>
+                            <Rooms rules={rulesToInclude} setRules={setRulesToInclude} />
+                            <RoomFeatures rules={rulesToInclude} setRules={setRulesToInclude} />
+                            <DurationOfLesson rules={rulesToInclude} setRules={setRulesToInclude} />
+                        </Stack>
+                        <Typography variant="subtitle2" mt={3}>
+                            Data pretendida para substituição
+                        </Typography>
+                        <TargetDate
+                            rules={rulesToInclude}
+                            setRules={setRulesToInclude}
+                            options={[
+                                { value: 'mesmoDia', label: 'no mesmo dia' },
+                                { value: 'mesmaSemana', label: 'na mesma semana' },
+                                { value: 'outro', label: 'outro' },
+                            ]}
+                            defaultValue="mesmoDia"
                         />
-                    )}
+                        <Stack direction="row" justifyContent="end" alignItems="center" mt={4}>
+                            {slots.length === 0 && <Button onClick={handleCancel}>Cancelar</Button>}
+                            <Button
+                                variant="contained"
+                                style={{ marginLeft: '15px', width: '180px' }}
+                                onClick={() => {
+                                    const slots = lookupSlots(
+                                        rulesToInclude,
+                                        rulesToExclude,
+                                        schedule,
+                                        rooms,
+                                        selectedCourse.id
+                                    )
+                                    setSlots(slots)
+                                }}
+                            >
+                                Procurar slots
+                            </Button>
+                        </Stack>
+                        {slots.length > 0 && (
+                            <SlotsTable
+                                tableRef={tableRef}
+                                selectedCourse={selectedCourse}
+                                slots={slots}
+                                handleCancel={handleCancel}
+                                handleSelection={(selectedSlot) => updateTable(selectedSlot)}
+                                buttonTitle="Inserir alterações"
+                                top={20}
+                            />
+                        )}
+                    </form>
                 </Box>
             </Modal>
         </div>

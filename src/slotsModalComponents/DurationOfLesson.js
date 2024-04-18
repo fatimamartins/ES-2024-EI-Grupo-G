@@ -8,6 +8,7 @@ const DurationOfLesson = ({ rules, setRules }) => {
             <InputLabel id="label4">Duração</InputLabel>
             <Select
                 labelId="label4"
+                required
                 id="select4"
                 value={rules?.duracao || ''}
                 label="Duração"

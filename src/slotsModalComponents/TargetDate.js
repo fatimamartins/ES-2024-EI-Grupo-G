@@ -28,9 +28,10 @@ const TargetDate = ({ rules, setRules, options, defaultValue }) => {
 
             <Stack direction="row" mt={1}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DemoContainer components={['DateTimePicker']} sx={{ width: 350 }}>
+                    <DemoContainer components={['DateTimePicker']}>
                         <DateTimePicker
                             label="Início"
+                            required
                             format="DD-MM-YYYY HH:mm"
                             views={['day', 'month', 'year', 'hours', 'minutes']}
                             value={rules?.dataInicio || null}
