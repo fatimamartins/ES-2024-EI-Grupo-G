@@ -86,9 +86,13 @@ export default function ScheduleTable() {
             formatter: (cell, formatterParams, onRendered) => {
                 return renderToString(<FindReplaceIcon style={{ fill: '#1976d2' }} />)
             },
-            width: 10,
+            width: 30,
             cellClick: function (e, cell) {
-                setOpen(cell.getRow().getData())
+                if (rooms.length === 0) {
+                    window.alert('Carregue o ficheiro de salas')
+                } else {
+                    setOpen(cell.getRow().getData())
+                }
             },
         },
         {
