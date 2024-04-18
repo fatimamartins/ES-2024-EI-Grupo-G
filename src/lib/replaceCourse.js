@@ -19,9 +19,8 @@
  * This module exports constants used throughout the application.
  * Here, AFTERNOON_SHIFT, COURSE_END_TIMES, COURSE_START_TIMES, MORNING_SHIFT, NIGHT_SHIFT, ROOMS, and WEEKDAYS are imported for use in the application.
  */
-import { getDay, getISOWeek, isSameDay } from 'date-fns'
-import { getFormattedDateTime, parseDate, parseHour } from '../utils'
-import dayjs from 'dayjs'
+import { getDay } from 'date-fns'
+import { parseDate, parseHour } from '../utils'
 import {
     AFTERNOON_SHIFT,
     COURSE_END_TIMES,
@@ -34,53 +33,53 @@ import {
 
 // Inclusion filters
 
-/**
- * @function doesDayMatch
- * This function checks if a given slot matches the rules for inclusion. It uses date-fns to compare dates.
- * @param {Object} rulesToInclude - The rules for inclusion.
- * @param {Object} slot - The slot to check.
- * @returns {boolean} - Returns true if the slot matches the rules for inclusion, false otherwise.
- */
-export function doesDayMatch(rulesToInclude, slot) {
-    // using date-fns to compare dates
-    if (!rulesToInclude || !rulesToInclude.data || !rulesToInclude.data.value || !slot['Data da aula']) return false
-    const date1 = parseDate(rulesToInclude?.data?.value.format('DD/MM/YYYY'))
-    const date2 = parseDate(slot['Data da aula'])
-    return isSameDay(date1, date2)
-}
+// /**
+//  * @function doesDayMatch
+//  * This function checks if a given slot matches the rules for inclusion. It uses date-fns to compare dates.
+//  * @param {Object} rulesToInclude - The rules for inclusion.
+//  * @param {Object} slot - The slot to check.
+//  * @returns {boolean} - Returns true if the slot matches the rules for inclusion, false otherwise.
+//  */
+// export function doesDayMatch(rulesToInclude, slot) {
+//     // using date-fns to compare dates
+//     if (!rulesToInclude || !rulesToInclude.data || !rulesToInclude.data.value || !slot['Data da aula']) return false
+//     const date1 = parseDate(rulesToInclude?.data?.value.format('DD/MM/YYYY'))
+//     const date2 = parseDate(slot['Data da aula'])
+//     return isSameDay(date1, date2)
+// }
 
-/**
- * @function isSameWeek
- * This function that checks if a given slot falls within the same week as specified by the rules for inclusion.
- * It uses date-fns to compare weeks.
- * @param {Object} rulesToInclude - The rules for inclusion.
- * @param {Object} slot - The slot to check.
- * @returns {boolean} - Returns true if the slot falls within the same week as specified by the rules for inclusion, false otherwise.
- */
-export function isSameWeek(rulesToInclude, slot) {
-    // using date-fns to compare dates
-    if (!rulesToInclude?.data?.value || !slot['Data da aula']) return false
-    const date1 = parseDate(rulesToInclude.data.value.format('DD/MM/YYYY'))
-    const date2 = parseDate(slot['Data da aula'])
-    return getISOWeek(date1) === getISOWeek(date2)
-}
+// /**
+//  * @function isSameWeek
+//  * This function that checks if a given slot falls within the same week as specified by the rules for inclusion.
+//  * It uses date-fns to compare weeks.
+//  * @param {Object} rulesToInclude - The rules for inclusion.
+//  * @param {Object} slot - The slot to check.
+//  * @returns {boolean} - Returns true if the slot falls within the same week as specified by the rules for inclusion, false otherwise.
+//  */
+// export function isSameWeek(rulesToInclude, slot) {
+//     // using date-fns to compare dates
+//     if (!rulesToInclude?.data?.value || !slot['Data da aula']) return false
+//     const date1 = parseDate(rulesToInclude.data.value.format('DD/MM/YYYY'))
+//     const date2 = parseDate(slot['Data da aula'])
+//     return getISOWeek(date1) === getISOWeek(date2)
+// }
 
-/**
- * @function isBetweenDates
- * `isBetweenDates` is a function that checks if a given slot falls within the date range specified by the rules for inclusion.
- * It uses date-fns to compare dates.
- * @param {Object} rulesToInclude - The rules for inclusion. This object should include a `startDate` and `endDate` that define the range.
- * @param {Object} slot - The slot to check. This object should include a `date` property.
- * @returns {boolean} - Returns true if the slot's date falls within the specified range, false otherwise.
- */
-export function isBetweenDates(rulesToInclude, slot) {
-    // using dayjs library
-    if (!rulesToInclude.dataInicio || !rulesToInclude.dataFim || !slot['Data da aula']) return false
-    const formattedDateTime = dayjs(
-        getFormattedDateTime(slot['Data da aula'], slot['Hora início da aula'], "yyyy-MM-dd'T'HH:mm")
-    )
-    return dayjs(formattedDateTime).isBetween(rulesToInclude.dataInicio, rulesToInclude.dataFim, 'day', '[]')
-}
+// /**
+//  * @function isBetweenDates
+//  * `isBetweenDates` is a function that checks if a given slot falls within the date range specified by the rules for inclusion.
+//  * It uses date-fns to compare dates.
+//  * @param {Object} rulesToInclude - The rules for inclusion. This object should include a `startDate` and `endDate` that define the range.
+//  * @param {Object} slot - The slot to check. This object should include a `date` property.
+//  * @returns {boolean} - Returns true if the slot's date falls within the specified range, false otherwise.
+//  */
+// export function isBetweenDates(rulesToInclude, slot) {
+//     // using dayjs library
+//     if (!rulesToInclude.dataInicio || !rulesToInclude.dataFim || !slot['Data da aula']) return false
+//     const formattedDateTime = dayjs(
+//         getFormattedDateTime(slot['Data da aula'], slot['Hora início da aula'], "yyyy-MM-dd'T'HH:mm")
+//     )
+//     return dayjs(formattedDateTime).isBetween(rulesToInclude.dataInicio, rulesToInclude.dataFim, 'day', '[]')
+// }
 
 /**
  * @function hasRoom
@@ -93,18 +92,18 @@ export function hasRoom(rulesToInclude, row) {
     return rulesToInclude.salas.includes(row['Sala atribuída à aula'])
 }
 
-/**
- * @function hasFeature
- * `hasFeature` is a function that checks if a given row (representing a course slot) matches the feature specified in the rules for inclusion.
- * @param {Object} rulesToInclude - The rules for inclusion. This object should include a `features` property that specifies the features to check for.
- * @param {Object} row - The row to check. This object should include a `features` property that specifies the features of the course slot.
- * @returns {boolean} - Returns true if the row's features match any of the features specified in the rules for inclusion, false otherwise.
- */
-function hasFeature(rulesToInclude, slot, rooms) {
-    const selectedRoom = rooms.find((room) => room['Nome sala'] === slot['Sala atribuída à aula'])
-    // if selectedRoom includes the features specified in the rulesToInclude, return true
-    return rulesToInclude?.caracteristicas?.map((caracteristica) => selectedRoom[caracteristica] === 'X')
-}
+// /**
+//  * @function hasFeature
+//  * `hasFeature` is a function that checks if a given row (representing a course slot) matches the feature specified in the rules for inclusion.
+//  * @param {Object} rulesToInclude - The rules for inclusion. This object should include a `features` property that specifies the features to check for.
+//  * @param {Object} row - The row to check. This object should include a `features` property that specifies the features of the course slot.
+//  * @returns {boolean} - Returns true if the row's features match any of the features specified in the rules for inclusion, false otherwise.
+//  */
+// function hasFeature(rulesToInclude, slot, rooms) {
+//     const selectedRoom = rooms.find((room) => room['Nome sala'] === slot['Sala atribuída à aula'])
+//     // if selectedRoom includes the features specified in the rulesToInclude, return true
+//     return rulesToInclude?.caracteristicas?.filter((caracteristica) => selectedRoom[caracteristica] === 'X').length > 0
+// }
 
 // Exclusion filters
 
@@ -201,32 +200,32 @@ export function isSameShift(rulesToExclude, slot) {
 
 // Functions to determine which filters to should be applied
 
-/**
- * @function getFiltersIncludeToApply
- * `getFiltersIncludeToApply` is a function that generates an array of filter functions based on the rules for inclusion.
- *
- * @param {Object} rulesToInclude - The rules for inclusion. This object may include `salas`, `caracteristicas`, and `data` properties.
- * @returns {Array} - Returns an array of filter functions to be applied.
- */
-export function getFiltersIncludeToApply(rulesToInclude) {
-    const filters = []
-    if (rulesToInclude?.salas?.length > 0) {
-        filters.push(hasRoom)
-    }
-    if (rulesToInclude?.caracteristicas?.length > 0) {
-        filters.push(hasFeature)
-    }
-    if (rulesToInclude?.data?.label === 'mesmoDia') {
-        filters.push(doesDayMatch)
-    }
-    if (rulesToInclude?.data?.label === 'mesmaSemana') {
-        filters.push(isSameWeek)
-    }
-    if (rulesToInclude?.data?.label === 'outro') {
-        filters.push(isBetweenDates)
-    }
-    return filters
-}
+// /**
+//  * @function getFiltersIncludeToApply
+//  * `getFiltersIncludeToApply` is a function that generates an array of filter functions based on the rules for inclusion.
+//  *
+//  * @param {Object} rulesToInclude - The rules for inclusion. This object may include `salas`, `caracteristicas`, and `data` properties.
+//  * @returns {Array} - Returns an array of filter functions to be applied.
+//  */
+// export function getFiltersIncludeToApply(rulesToInclude) {
+//     const filters = []
+//     // if (rulesToInclude?.salas?.length > 0) {
+//     //     filters.push(hasRoom)
+//     // }
+//     // if (rulesToInclude?.caracteristicas?.length > 0) {
+//     //     filters.push(hasFeature)
+//     // }
+//     // if (rulesToInclude?.data?.label === 'mesmoDia') {
+//     //     filters.push(doesDayMatch)
+//     // }
+//     // if (rulesToInclude?.data?.label === 'mesmaSemana') {
+//     //     filters.push(isSameWeek)
+//     // }
+//     // if (rulesToInclude?.data?.label === 'outro') {
+//     //     filters.push(isBetweenDates)
+//     // }
+//     return filters
+// }
 
 /**
  * @function getFiltersExcludeToApply
@@ -272,41 +271,39 @@ export function getFiltersExcludeToApply(rulesToExclude) {
  * @param {Object} rulesToExclude - The rules for exclusion. This object may include various properties depending on the exclusion rules.
  * @returns {Array} - Returns an array of filter functions to be applied.
  */
-export function getAllSlots(rulesToInclude) {
+export function getAllSlots(rulesToInclude, rooms) {
     const combinations = []
-    const startDate =
-        rulesToInclude?.data?.label === 'outro' ||
-        rulesToInclude?.data?.label === 'nenhuma' ||
-        !rulesToInclude?.data?.label
-            ? rulesToInclude?.dataInicio
-            : rulesToInclude?.data?.value
+
+    // 1. Get the time range to iterate over based on the rules to include
+    const startTimeRange = getStartTime(rulesToInclude)
+    const endTimeRange = getEndTime(rulesToInclude)
+    // 2. Get the rooms to iterate based on the rules to include. If no rules are specified, iterate over all rooms.
+    const roomsToIterate = getRoomsToIterate(rulesToInclude, rooms)
+
+    // 3. Get the date range to iterate over based on the rules to include
+    const startDate = rulesToInclude?.dataInicio
     const endDate = getEndDate(rulesToInclude)
     // Check if the end date is before the start date or if the end date is a Sunday. If true, return an empty array because the date is not valid.
     if (endDate.isBefore(startDate) || (endDate.isSame(startDate) && endDate.day() === 0)) {
         return []
     }
     const days = getDatesExcludingSundays(startDate, endDate)
-    const daysArray = days.length === 0 ? [startDate.format('DD/MM/YYYY')] : days
+    const dateRange = days.length === 0 ? [startDate.format('DD/MM/YYYY')] : days
 
-    // Check if the rules include specific rooms. If so use those rooms to generate possible slots
-    const roomsToIterate = rulesToInclude?.salas?.length > 0 ? rulesToInclude.salas : ROOMS
-
-    // TODO validar se selecionou caracteristicas pois estas definem as salas
-
-    for (let i = 0; i < COURSE_START_TIMES.length; i++) {
-        for (let e = 0; e < COURSE_END_TIMES.length; e++) {
+    for (let i = 0; i < startTimeRange.length; i++) {
+        for (let e = 0; e < endTimeRange.length; e++) {
             for (let j = 0; j < roomsToIterate.length; j++) {
-                for (let k = 0; k < daysArray.length; k++) {
+                for (let k = 0; k < dateRange.length; k++) {
                     // Verificar a duração da aula
-                    if (COURSE_START_TIMES[i] < COURSE_END_TIMES[e]) {
-                        const slotTime = getSlotTime(COURSE_START_TIMES[i], COURSE_END_TIMES[e])
+                    if (startTimeRange[i] < endTimeRange[e]) {
+                        const slotTime = getSlotTime(startTimeRange[i], endTimeRange[e])
                         if (slotTime === rulesToInclude.duracao) {
                             // é obrigatório ter a duração da aula
                             combinations.push({
-                                'Hora início da aula': COURSE_START_TIMES[i],
-                                'Hora fim da aula': COURSE_END_TIMES[e],
+                                'Hora início da aula': startTimeRange[i],
+                                'Hora fim da aula': endTimeRange[e],
                                 'Sala atribuída à aula': roomsToIterate[j],
-                                'Data da aula': daysArray[k],
+                                'Data da aula': dateRange[k],
                             })
                         }
                     }
@@ -323,6 +320,40 @@ function getSlotTime(start, end) {
     return endHour - startHour
 }
 
+function getRoomsWithSelectedFeature(rulesToInclude, rooms) {
+    return rooms.filter((room) =>
+        rulesToInclude?.caracteristicas?.some((caracteristica) => room[caracteristica] === 'X')
+    )
+}
+
+function getRoomsToIterate(rulesToInclude, rooms) {
+    // The application only allows filtering by rooms if no features are selected and vice versa.
+    // So if the user has selected rooms, return those rooms. If the user has selected features, return the rooms that have those features.
+    if (rulesToInclude?.salas?.length > 0) {
+        return rulesToInclude.salas
+    } else if (rulesToInclude?.caracteristicas?.length > 0) {
+        return getRoomsWithSelectedFeature(rulesToInclude, rooms).map((room) => room['Nome sala'])
+    } else {
+        return ROOMS
+    }
+}
+
+function getStartTime(rulesToInclude) {
+    if (rulesToInclude?.dataInicio) {
+        const selectedStartTime = rulesToInclude?.dataInicio.format('HH:mm:ss')
+        return COURSE_START_TIMES.filter((time) => time >= selectedStartTime)
+    }
+    return COURSE_START_TIMES
+}
+
+function getEndTime(rulesToInclude) {
+    if (rulesToInclude?.dataFim) {
+        const selectedEndTime = rulesToInclude?.dataFim.format('HH:mm:ss')
+        return COURSE_END_TIMES.filter((time) => time <= selectedEndTime)
+    }
+    return COURSE_END_TIMES
+}
+
 /**
  * @function getEndDate
  * `getEndDate` is a function that calculates the end date for a given set of rules for inclusion.
@@ -331,17 +362,14 @@ function getSlotTime(start, end) {
  * @returns {string} - Returns the end date in 'DD/MM/YYYY' format.
  */
 export function getEndDate(rulesToInclude) {
-    if (rulesToInclude?.data?.label === 'mesmoDia') {
-        return rulesToInclude?.data?.value
-    } else if (rulesToInclude?.data?.label === 'proximosDias') {
-        return rulesToInclude?.data?.value
-    } else if (rulesToInclude?.data?.label === 'mesmaSemana') {
-        const dayOfWeek = rulesToInclude?.data?.value.day() // 0 represents Sunday and 6 represents Saturday
+    if (rulesToInclude?.data === 'mesmaSemana') {
+        const dayOfWeek = rulesToInclude?.dataInicio.day() // 0 represents Sunday and 6 represents Saturday
         const daysRemaining = 6 - dayOfWeek
-        return rulesToInclude?.data?.value.add(daysRemaining, 'day')
-    } else if (rulesToInclude?.data?.label === 'outro') {
+        return rulesToInclude?.dataInicio.add(daysRemaining, 'day')
+    } else if (rulesToInclude?.data === 'outro') {
         return rulesToInclude?.dataFim
     } else {
+        // rulesToInclude?.data === 'mesmoDia' or no data specified
         return rulesToInclude?.dataInicio
     }
 }
@@ -451,10 +479,9 @@ function isOverlapping(slot, schedule) {
  * @param {string} course - The course for which to retrieve the slots.
  * @returns {Array} - Returns an array of slots associated with the given course.
  */
-export function lookupSlots(rulesToInclude, rulesToExclude, schedule, rooms) {
-    // Get all available slots for a given interval of time
-    const allSlots = getAllSlots(rulesToInclude)
-    console.log('🚀 ~ lookupSlots ~ allSlots:', allSlots)
+export function lookupSlots(rulesToInclude, rulesToExclude, schedule, rooms, selectedLessonID) {
+    // Get all available slots based on the rules to include
+    const allSlots = getAllSlots(rulesToInclude, rooms)
 
     // Remove all slots that match the exclusion filters
     const filtersExcludeToApply = getFiltersExcludeToApply(rulesToExclude)
@@ -462,18 +489,19 @@ export function lookupSlots(rulesToInclude, rulesToExclude, schedule, rooms) {
         (slot) => !filtersExcludeToApply.some((filter) => filter(rulesToExclude, slot))
     )
 
-    // Filter the slots that match the inclusion filters
-    const filtersIncludeToApply = getFiltersIncludeToApply(rulesToInclude)
-    const filteredSlots = slotsWithoutExclusionRules.filter((slot) =>
-        filtersIncludeToApply.every((filter) => filter(rulesToInclude, slot, rooms))
-    )
+    // // Filter the slots that match the inclusion filters
+    // const filtersIncludeToApply = getFiltersIncludeToApply(rulesToInclude)
+    // const filteredSlots = slotsWithoutExclusionRules.filter((slot) =>
+    //     filtersIncludeToApply.every((filter) => filter(rulesToInclude, slot, rooms))
+    // )
 
     // Convert the schedule array into a map for easier access
     const scheduleMap = mkSheduleMap(schedule)
 
     // Remove slots that are already in the schedule
-    const slotsWithoutScheduleClasses = removeSheduledSlots(scheduleMap, filteredSlots)
+    const slotsWithoutScheduleClasses = removeSheduledSlots(scheduleMap, slotsWithoutExclusionRules)
 
-    // Remove slots that overlap (time wise) with the schedule appointments
-    return slotsWithoutScheduleClasses.filter((slot) => !isOverlapping(slot, schedule))
+    // Remove slots that overlap (time wise) with the schedule appointments exepct for the selected lesson
+    const scheduleWithoutSelectedLesson = schedule.filter((appointment) => appointment.id !== selectedLessonID)
+    return slotsWithoutScheduleClasses.filter((slot) => !isOverlapping(slot, scheduleWithoutSelectedLesson))
 }

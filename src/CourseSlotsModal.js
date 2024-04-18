@@ -22,7 +22,6 @@ import { atomModalSlotsClass } from './atoms/modalSlotsClass'
 import { Autocomplete, Box, Button, FormControl, Modal, Stack, TextField, Typography } from '@mui/material'
 import { atomSchedule } from './atoms/schedule'
 import dayjs from 'dayjs'
-import { getFormattedDateTime } from './utils'
 import DurationOfLesson from './slotsModalComponents/DurationOfLesson'
 import BeginningOfLesson from './slotsModalComponents/BeginingOfLesson'
 import EndingOfLesson from './slotsModalComponents/EndingOfLesson'
@@ -69,7 +68,6 @@ const CourseSlotsModal = ({ tableRef }) => {
     const setValue = useSetAtom(atomModalSlotsClass)
     const courses = new Set()
     schedule.map((item) => courses.add(item['Unidade Curricular']))
-    const formattedDateTime = getFormattedDateTime(dayjs().format('DD/MM/YYYY'), '09:00:00', "yyyy-MM-dd'T'HH:mm")
     const [rulesToInclude, setRulesToInclude] = React.useState(null)
     const [rulesToExclude, setRulesToExclude] = React.useState(null)
     const [slots, setSlots] = React.useState([]) // list of possible slots
@@ -84,17 +82,13 @@ const CourseSlotsModal = ({ tableRef }) => {
     }
 
     React.useEffect(() => {
-        if (formattedDateTime && isOpen) {
+        if (isOpen) {
             setRulesToInclude({
-                data: {
-                    label: 'mesmaSemana',
-                    value: dayjs(formattedDateTime, { timeZone: 'GMT' }),
-                },
-                dataInicio: dayjs(formattedDateTime, { timeZone: 'GMT' }),
-                dataFim: dayjs(formattedDateTime, { timeZone: 'GMT' }),
+                data: 'mesmaSemana',
+                dataInicio: dayjs(),
             })
         }
-    }, [formattedDateTime, isOpen])
+    }, [isOpen])
 
     return (
         <div>
@@ -174,7 +168,6 @@ const CourseSlotsModal = ({ tableRef }) => {
                             { value: 'outro', label: 'outro' },
                         ]}
                         defaultValue="umaEmCadaSemana"
-                        dateTime={formattedDateTime}
                     />
                     <Stack direction="row" justifyContent="end" alignItems="center" mt={4}>
                         {slots.length === 0 && <Button onClick={handleCancel}>Cancelar</Button>}

@@ -147,26 +147,14 @@ const ReplaceCourse = ({ tableRef }) => {
     React.useEffect(() => {
         if (rulesToInclude === null && selectedCourse) {
             setRulesToInclude({
-                // curso: selectedCourse.Curso,
-                // turma: selectedCourse.Turma,
                 duracao: getCourseDurationToMilliseconds(
                     selectedCourse['Hora início da aula'],
                     selectedCourse['Hora fim da aula']
                 ),
                 salas: [selectedCourse['Sala atribuída à aula']],
-                data: {
-                    label: 'mesmoDia',
-                    value: dayjs(formattedDateTime, { timeZone: 'GMT' }),
-                },
-            })
-        }
-
-        if (formattedDateTime && !rulesToInclude?.dataInicio) {
-            setRulesToInclude((old) => ({
-                ...old,
+                data: 'mesmoDia',
                 dataInicio: dayjs(formattedDateTime, { timeZone: 'GMT' }),
-                dataFim: dayjs(formattedDateTime, { timeZone: 'GMT' }),
-            }))
+            })
         }
     }, [formattedDateTime, rulesToInclude, selectedCourse])
 
@@ -248,7 +236,6 @@ const ReplaceCourse = ({ tableRef }) => {
                             { value: 'outro', label: 'outro' },
                         ]}
                         defaultValue="mesmoDia"
-                        dateTime={formattedDateTime}
                     />
                     <Stack direction="row" justifyContent="end" alignItems="center" mt={4}>
                         {slots.length === 0 && <Button onClick={handleCancel}>Cancelar</Button>}
@@ -256,7 +243,13 @@ const ReplaceCourse = ({ tableRef }) => {
                             variant="contained"
                             style={{ marginLeft: '15px', width: '180px' }}
                             onClick={() => {
-                                const slots = lookupSlots(rulesToInclude, rulesToExclude, schedule, rooms)
+                                const slots = lookupSlots(
+                                    rulesToInclude,
+                                    rulesToExclude,
+                                    schedule,
+                                    rooms,
+                                    selectedCourse.id
+                                )
                                 setSlots(slots)
                             }}
                         >
