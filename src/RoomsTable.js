@@ -23,6 +23,11 @@ import { useAtomValue } from 'jotai'
 import { atomRooms } from './atoms/rooms'
 import { ROOM_FEATURES, TYPE_FILTER_COMPARISON, ROOMS } from './constants'
 import { atomSchedule } from './atoms/schedule'
+import dayjs from 'dayjs'
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
 
 /**
  * @constant {Object[]} defaultColumns - The default columns for the table.
@@ -130,33 +135,41 @@ export default function RoomsTable() {
     const [logicOperator, setLogicOperator] = React.useState('AND')
     const [type, setType] = React.useState('=') // type of filter comparison. Example: =, <, >, <=, >=, !=  like starts ends
     const [filters, setFilters] = React.useState([])
-    const [startTime, setStartTime] = React.useState('')
-    const [endTime, setEndTime] = React.useState('')
-    const [selectedDate, setSelectedDate] = React.useState('')
+    // const [startTime, setStartTime] = React.useState('')
+    // const [endTime, setEndTime] = React.useState('')
+    // const [selectedDate, setSelectedDate] = React.useState('')
     const [availableDecision, setAvailableDecision] = React.useState('Disponível')
     const [tabulatorFilter, setTabulatorFilter] = React.useState([])
+    const [startDateTime, setStartDateTime] = React.useState(dayjs())
+    const [endDateTime, setEndDateTime] = React.useState(dayjs())
 
     const addFilter = () => {
-        setFilters([
-            ...filters,
-            {
-                title: defaultFilterFields.find((f) => f === selectedField),
-                field: selectedField,
-                value,
-                logic: logicOperator,
-                type,
-            },
-        ])
-        // if selectedField is 'Tipo de sala' then field is equal to value (room type) and value is equal to 'X'
-        const newFilter =
-            selectedField === 'Tipo de sala'
-                ? { field: value, type: '=', value: 'X' }
-                : { field: selectedField, type, value }
+        if (startDateTime && endDateTime && startDateTime.diff(endDateTime) !== 0) {
+            // If both startDateTime and endDateTime are available, apply time-based filtering
+            filterRoomsByTime()
+        }
+        if (selectedField && value) {
+            setFilters([
+                ...filters,
+                {
+                    title: defaultFilterFields.find((f) => f === selectedField),
+                    field: selectedField,
+                    value,
+                    logic: logicOperator,
+                    type,
+                },
+            ])
+            // if selectedField is 'Tipo de sala' then field is equal to value (room type) and value is equal to 'X'
+            const newFilter =
+                selectedField === 'Tipo de sala'
+                    ? { field: value, type: '=', value: 'X' }
+                    : { field: selectedField, type, value }
 
-        updateTabulatorFilter(newFilter) // update tabulator filter
-        setSelectedField('') // reset all states
-        setValue('')
-        setType('=')
+            updateTabulatorFilter(newFilter) // update tabulator filter
+            setSelectedField('') // reset all states
+            setValue('')
+            setType('=')
+        }
     }
 
     const updateTabulatorFilter = (newFilter) => {
@@ -181,16 +194,9 @@ export default function RoomsTable() {
         setType('=')
         setValue('')
         setSelectedField('')
-        setTabulatorFilter([])
-    }
-
-    const clearRoomFilter = () => {
-        tableRef?.current.clearFilter()
-        setFilters([]) // clear all filters
         setAvailableDecision('Disponível')
-        setStartTime('')
-        setEndTime('')
-        setSelectedDate('')
+        setStartDateTime(dayjs())
+        setEndDateTime(dayjs())
         setTabulatorFilter([])
     }
 
@@ -230,11 +236,12 @@ export default function RoomsTable() {
     }, [tabulatorFilter])
 
     const filterRoomsByTime = () => {
-        if (startTime && endTime && selectedDate) {
-            const formattedStartTime = startTime.includes(':') ? startTime + ':00' : startTime
-            const formattedEndTime = endTime.includes(':') ? endTime + ':00' : endTime
+        if (startDateTime && endDateTime) {
+            const formattedStartTime = startDateTime.format('HH:mm') + ':00'
+            const formattedEndTime = endDateTime.format('HH:mm') + ':00'
+            const formattedDate = startDateTime.format('DD/MM/YYYY')
 
-            const formattedDate = selectedDate.split('-').reverse().join('/') // Formatar a data para dd/mm/aaaa
+            // Devo validar se amabas as datas coincidem ou se forem datas diferentes deve resultar na mesma?
 
             if (availableDecision === 'Ocupado') {
                 const availableRooms = defaultScheduleData.filter((item) => {
@@ -256,6 +263,14 @@ export default function RoomsTable() {
                     type: '=',
                     value: roomId.trim(), // Remove espaços em branco no início e no final da string
                 }))
+
+                if (availableRoomIds.length === 0) {
+                    roomFilters.push({
+                        field: 'Nome sala',
+                        type: '=',
+                        value: '', // Add an empty string as a value
+                    })
+                }
 
                 updateTabulatorFilter(roomFilters)
             } else if (availableDecision === 'Disponível') {
@@ -282,10 +297,15 @@ export default function RoomsTable() {
                     value: roomId.trim(), // Remove espaços em branco no início e no final da string
                 }))
 
+                if (availableRoomsNotOccupied.length === 0) {
+                    roomFilters.push({
+                        field: 'Nome sala',
+                        type: '=',
+                        value: '', // Add an empty string as a value
+                    })
+                }
+
                 updateTabulatorFilter(roomFilters)
-                setStartTime('')
-                setEndTime('')
-                setSelectedDate('')
             }
         }
     }
@@ -417,39 +437,32 @@ export default function RoomsTable() {
                 <Typography>Disponível</Typography>
             </Stack>
             <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2, mb: 2 }}>
-                <TextField
-                    type="time"
-                    sx={{ ml: 1, width: 150 }}
-                    label="Hora de início"
-                    value={startTime}
-                    onChange={(event) => setStartTime(event.target.value)}
-                />
-
-                <TextField
-                    type="time"
-                    sx={{ ml: 1, width: 150 }}
-                    label="Hora de fim"
-                    value={endTime}
-                    onChange={(event) => setEndTime(event.target.value)}
-                />
-                <TextField
-                    id="date"
-                    label="Data"
-                    type="date"
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
-                    value={selectedDate}
-                    onChange={(event) => setSelectedDate(event.target.value)}
-                    sx={{ ml: 1, width: 150 }}
-                />
-
-                <Button variant="contained" onClick={filterRoomsByTime} sx={{ ml: 1 }}>
-                    Filtrar por horário
-                </Button>
-                <Button variant="text" onClick={clearRoomFilter}>
-                    Limpar filtro
-                </Button>
+                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
+                    <DemoContainer components={['DateTimePicker']} sx={{ width: 350 }}>
+                        <DateTimePicker
+                            label="Início"
+                            format="DD-MM-YYYY HH:mm"
+                            views={['day', 'month', 'year', 'hours', 'minutes']}
+                            value={startDateTime}
+                            onChange={(newValue) => {
+                                setStartDateTime(newValue)
+                            }}
+                        />
+                    </DemoContainer>
+                </LocalizationProvider>
+                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
+                    <DemoContainer components={['DateTimePicker']} sx={{ width: 350, marginLeft: 2 }}>
+                        <DateTimePicker
+                            label="Fim"
+                            format="DD-MM-YYYY HH:mm"
+                            views={['day', 'month', 'year', 'hours', 'minutes']}
+                            value={endDateTime}
+                            onChange={(newValue) => {
+                                setEndDateTime(newValue)
+                            }}
+                        />
+                    </DemoContainer>
+                </LocalizationProvider>
             </Stack>
             <ReactTabulator
                 onRef={(r) => (tableRef.current = r.current)}
