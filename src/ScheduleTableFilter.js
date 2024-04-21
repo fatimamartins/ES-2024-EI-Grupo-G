@@ -120,7 +120,7 @@ export default function MultipleSelectCheckmarks({ tableRef }) {
             <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2 }}>
                 <Typography>OR</Typography>
                 <Switch
-                    defaultChecked
+                    checked={logicOperator === 'AND'}
                     inputProps={{ 'aria-label': 'ant design' }}
                     onChange={(e, c) => setLogicOperator(c ? 'AND' : 'OR')}
                 />

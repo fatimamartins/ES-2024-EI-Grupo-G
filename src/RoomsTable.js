@@ -135,13 +135,12 @@ export default function RoomsTable() {
     const [logicOperator, setLogicOperator] = React.useState('AND')
     const [type, setType] = React.useState('=') // type of filter comparison. Example: =, <, >, <=, >=, !=  like starts ends
     const [filters, setFilters] = React.useState([])
-    // const [startTime, setStartTime] = React.useState('')
-    // const [endTime, setEndTime] = React.useState('')
-    // const [selectedDate, setSelectedDate] = React.useState('')
     const [availableDecision, setAvailableDecision] = React.useState('Disponível')
     const [tabulatorFilter, setTabulatorFilter] = React.useState([])
     const [startDateTime, setStartDateTime] = React.useState(dayjs())
     const [endDateTime, setEndDateTime] = React.useState(dayjs())
+    console.log('filtro local', filters)
+    console.log('tabulator', tabulatorFilter)
 
     const addFilter = () => {
         if (startDateTime && endDateTime && startDateTime.diff(endDateTime) !== 0) {
@@ -249,28 +248,39 @@ export default function RoomsTable() {
                     const itemEndTime = item['Hora fim da aula']
                     const itemDate = item['Data da aula']
 
-                    return (
-                        itemStartTime >= formattedStartTime &&
-                        itemEndTime <= formattedEndTime &&
-                        itemDate === formattedDate
-                    )
+                    const overlaps =
+                        (itemStartTime <= formattedStartTime && itemEndTime > formattedStartTime) ||
+                        (itemStartTime < formattedEndTime && itemEndTime >= formattedEndTime) ||
+                        (itemStartTime >= formattedStartTime && itemEndTime <= formattedEndTime)
+
+                    const onDate = itemDate === formattedDate
+
+                    return overlaps && onDate
                 })
 
                 const availableRoomIds = availableRooms.map((item) => item['Sala atribuída à aula'])
 
-                const roomFilters = availableRoomIds.map((roomId) => ({
-                    field: 'Nome sala',
-                    type: '=',
-                    value: roomId.trim(), // Remove espaços em branco no início e no final da string
-                }))
+                const roomFilters = availableRoomIds.map((roomId) => {
+                    const newFilter = {
+                        title: 'Nome sala',
+                        field: 'Nome sala',
+                        isTimeFilter: true,
+                        type: '=',
+                        value: roomId.trim(), // Remove espaços em branco no início e no final da string
+                    }
 
-                if (availableRoomIds.length === 0) {
+                    return newFilter
+                })
+
+                setFilters([...filters, ...roomFilters])
+
+                /* if (availableRoomIds.length === 0) {
                     roomFilters.push({
                         field: 'Nome sala',
                         type: '=',
                         value: '', // Add an empty string as a value
                     })
-                }
+                } */
 
                 updateTabulatorFilter(roomFilters)
             } else if (availableDecision === 'Disponível') {
@@ -279,11 +289,14 @@ export default function RoomsTable() {
                     const itemEndTime = item['Hora fim da aula']
                     const itemDate = item['Data da aula']
 
-                    return (
-                        itemStartTime >= formattedStartTime &&
-                        itemEndTime <= formattedEndTime &&
-                        itemDate === formattedDate
-                    )
+                    const overlaps =
+                        (itemStartTime <= formattedStartTime && itemEndTime > formattedStartTime) ||
+                        (itemStartTime < formattedEndTime && itemEndTime >= formattedEndTime) ||
+                        (itemStartTime >= formattedStartTime && itemEndTime <= formattedEndTime)
+
+                    const onDate = itemDate === formattedDate
+
+                    return overlaps && onDate
                 })
 
                 const availableRoomIds = availableRooms.map((item) => item['Sala atribuída à aula'].trim())
@@ -315,7 +328,7 @@ export default function RoomsTable() {
             <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2 }}>
                 <Typography>OR</Typography>
                 <Switch
-                    defaultChecked
+                    checked={logicOperator === 'AND'}
                     inputProps={{ 'aria-label': 'ant design' }}
                     onChange={(e, c) => setLogicOperator(c ? 'AND' : 'OR')}
                 />
@@ -397,47 +410,49 @@ export default function RoomsTable() {
             </Stack>
             {filters && filters.length > 0 && (
                 <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2 }}>
-                    {filters.map((filter, index) => {
-                        if (index === 0) {
-                            return (
-                                <Button
-                                    key={index}
-                                    variant="outlined"
-                                    endIcon={<Cancel />}
-                                    onClick={(e) => deleteFilter(index)}
-                                >
-                                    {filters[0].title}: {filters[0].value}
-                                </Button>
-                            )
-                        } else {
-                            return (
-                                <Stack direction="row" alignItems="center" key={index}>
-                                    {filter.logic ? filter.logic : ''}
+                    {filters
+                        .filter((item) => !item.isTimeFilter)
+                        .map((filter, index) => {
+                            if (index === 0) {
+                                return (
                                     <Button
+                                        key={index}
                                         variant="outlined"
                                         endIcon={<Cancel />}
                                         onClick={(e) => deleteFilter(index)}
-                                        sx={{ ml: 1 }}
                                     >
-                                        {filter.title}: {filter.value}
+                                        {filters[0].title}: {filters[0].value}
                                     </Button>
-                                </Stack>
-                            )
-                        }
-                    })}
+                                )
+                            } else {
+                                return (
+                                    <Stack direction="row" alignItems="center" key={index}>
+                                        {filter.logic ? filter.logic : ''}
+                                        <Button
+                                            variant="outlined"
+                                            endIcon={<Cancel />}
+                                            onClick={(e) => deleteFilter(index)}
+                                            sx={{ ml: 1 }}
+                                        >
+                                            {filter.title}: {filter.value}
+                                        </Button>
+                                    </Stack>
+                                )
+                            }
+                        })}
                 </Stack>
             )}
             <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2 }}>
                 <Typography>Ocupado</Typography>
                 <Switch
-                    defaultChecked
+                    checked={availableDecision === 'Disponível'}
                     inputProps={{ 'aria-label': 'ant design' }}
                     onChange={(e, c) => setAvailableDecision(c ? 'Disponível' : 'Ocupado')}
                 />
                 <Typography>Disponível</Typography>
             </Stack>
             <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2, mb: 2 }}>
-                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DemoContainer components={['DateTimePicker']} sx={{ width: 350 }}>
                         <DateTimePicker
                             label="Início"
@@ -450,7 +465,7 @@ export default function RoomsTable() {
                         />
                     </DemoContainer>
                 </LocalizationProvider>
-                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DemoContainer components={['DateTimePicker']} sx={{ width: 350, marginLeft: 2 }}>
                         <DateTimePicker
                             label="Fim"
