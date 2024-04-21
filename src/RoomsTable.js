@@ -304,19 +304,27 @@ export default function RoomsTable() {
                 // Filter out occupied rooms from available rooms
                 const availableRoomsNotOccupied = ROOMS.filter((room) => !availableRoomIds.includes(room))
 
-                const roomFilters = availableRoomsNotOccupied.map((roomId) => ({
-                    field: 'Nome sala',
-                    type: '=',
-                    value: roomId.trim(), // Remove espaços em branco no início e no final da string
-                }))
+                const roomFilters = availableRoomsNotOccupied.map((roomId) => {
+                    const newFilter = {
+                        title: 'Nome sala',
+                        field: 'Nome sala',
+                        isTimeFilter: true,
+                        type: '=',
+                        value: roomId.trim(), // Remove espaços em branco no início e no final da string
+                    }
 
-                if (availableRoomsNotOccupied.length === 0) {
+                    return newFilter
+                })
+
+                setFilters([...filters, ...roomFilters])
+
+                /* if (availableRoomsNotOccupied.length === 0) {
                     roomFilters.push({
                         field: 'Nome sala',
                         type: '=',
                         value: '', // Add an empty string as a value
                     })
-                }
+                } */
 
                 updateTabulatorFilter(roomFilters)
             }
