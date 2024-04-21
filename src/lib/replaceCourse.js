@@ -505,8 +505,11 @@ export function lookupSlots(rulesToInclude, rulesToExclude, schedule, rooms, sel
     const slotsWithoutScheduleClasses = removeSheduledSlots(scheduleMap, slotsWithoutExclusionRules)
 
     // Remove slots that overlap (time wise) with the schedule appointments exepct for the selected lesson
-    const scheduleWithoutSelectedLesson = selectedLessonID
-        ? schedule.filter((appointment) => appointment.id !== selectedLessonID)
-        : schedule
+    const scheduleWithoutSelectedLesson =
+        selectedLessonID !== undefined
+            ? schedule.filter((appointment) => {
+                  return appointment.id !== selectedLessonID
+              })
+            : schedule
     return slotsWithoutScheduleClasses.filter((slot) => !isOverlapping(slot, scheduleWithoutSelectedLesson))
 }

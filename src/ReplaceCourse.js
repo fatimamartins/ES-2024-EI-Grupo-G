@@ -192,6 +192,12 @@ const ReplaceCourse = ({ tableRef }) => {
         handleCancel()
     }
 
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        const slots = lookupSlots(rulesToInclude, rulesToExclude, schedule, rooms, selectedCourse.id)
+        setSlots(slots)
+    }
+
     return (
         <div>
             <Modal
@@ -205,7 +211,7 @@ const ReplaceCourse = ({ tableRef }) => {
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
-                    <form>
+                    <form onSubmit={handleSubmit}>
                         <h3>Slots para alocação de uma aula de substituição</h3>
                         <Typography variant="body1" color="primary" mb={2} mt={1}>
                             Regras de alocação de uma aula de substituição
@@ -241,20 +247,7 @@ const ReplaceCourse = ({ tableRef }) => {
                         />
                         <Stack direction="row" justifyContent="end" alignItems="center" mt={4}>
                             {slots.length === 0 && <Button onClick={handleCancel}>Cancelar</Button>}
-                            <Button
-                                variant="contained"
-                                style={{ marginLeft: '15px', width: '180px' }}
-                                onClick={() => {
-                                    const slots = lookupSlots(
-                                        rulesToInclude,
-                                        rulesToExclude,
-                                        schedule,
-                                        rooms,
-                                        selectedCourse.id
-                                    )
-                                    setSlots(slots)
-                                }}
-                            >
+                            <Button type="submit" variant="contained" style={{ marginLeft: '15px', width: '180px' }}>
                                 Procurar slots
                             </Button>
                         </Stack>

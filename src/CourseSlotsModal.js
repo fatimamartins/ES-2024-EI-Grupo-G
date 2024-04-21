@@ -35,6 +35,7 @@ import SlotsTable from './SlotsTable'
 import { atomRooms } from './atoms/rooms'
 import { getDayOfTheWeek, parseDate } from './utils'
 import { getWeek } from 'date-fns'
+import Shift from './slotsModalComponents/Shift'
 
 /**
  * @constant
@@ -68,8 +69,9 @@ const CourseSlotsModal = ({ tableRef }) => {
     const schedule = useAtomValue(atomSchedule)
     const rooms = useAtomValue(atomRooms)
     const setValue = useSetAtom(atomModalSlotsClass)
-    const courses = new Set()
-    schedule.map((item) => courses.add(item['Unidade Curricular']))
+    const [courses, setCourses] = React.useState(null)
+    const [shifts, setShifts] = React.useState(null)
+    const [degree, setDegree] = React.useState(null)
     const [rulesToInclude, setRulesToInclude] = React.useState(null)
     const [rulesToExclude, setRulesToExclude] = React.useState(null)
     const [slots, setSlots] = React.useState([]) // list of possible slots
@@ -83,6 +85,28 @@ const CourseSlotsModal = ({ tableRef }) => {
     }
 
     React.useEffect(() => {
+        if (schedule?.length > 0) {
+            const set = new Set()
+            schedule.map((item) => set.add(item['Unidade Curricular']))
+            setCourses([...set])
+        }
+    }, [schedule, setCourses])
+
+    React.useEffect(() => {
+        // get shifts after choosing a course
+        if (rulesToInclude?.unidadeCurricular) {
+            const set = new Set()
+            schedule.forEach((item) => {
+                if (item['Unidade Curricular'] === rulesToInclude?.unidadeCurricular) set.add(item.Turno)
+            })
+            setShifts([...set])
+            const item = schedule.find((item) => item['Unidade Curricular'] === rulesToInclude?.unidadeCurricular)
+            // save the degree of the course chosen to be used when inserting the slots in schedule
+            setDegree(item.Curso)
+        }
+    }, [rulesToInclude?.unidadeCurricular, schedule])
+
+    React.useEffect(() => {
         if (isOpen) {
             setRulesToInclude({
                 data: 'mesmaSemana',
@@ -92,6 +116,7 @@ const CourseSlotsModal = ({ tableRef }) => {
     }, [isOpen])
 
     const handleSubmit = (e) => {
+        e.preventDefault()
         const newSlots = lookupSlots(rulesToInclude, rulesToExclude, schedule, rooms)
         setSlots(newSlots)
     }
@@ -118,7 +143,7 @@ const CourseSlotsModal = ({ tableRef }) => {
                                     // value={rulesToInclude?.unidadeCurricular}
                                     // disablePortal
                                     id="combo-box-demo"
-                                    options={[...courses]}
+                                    options={courses}
                                     sx={{ width: 380 }}
                                     value={rulesToInclude?.unidadeCurricular}
                                     onChange={(event, newValue) => {
@@ -133,6 +158,9 @@ const CourseSlotsModal = ({ tableRef }) => {
                                     // }}
                                 />
                             </FormControl>
+                            {rulesToInclude?.unidadeCurricular && shifts?.length > 0 && (
+                                <Shift options={shifts} rules={rulesToInclude} setRules={setRulesToInclude} />
+                            )}
                             <TextField
                                 sx={{ width: 180, marginLeft: 2 }}
                                 variant="outlined"
@@ -246,7 +274,9 @@ const CourseSlotsModal = ({ tableRef }) => {
                                 <Button
                                     onClick={() => {
                                         const slotsAsTableRows = selectedSlots.map((slot) => ({
+                                            Curso: degree,
                                             'Unidade Curricular': rulesToInclude.unidadeCurricular,
+                                            Turno: rulesToInclude.turno,
                                             'Data da aula': slot['Data da aula'],
                                             'Hora início da aula': slot['Hora início da aula'],
                                             'Hora fim da aula': slot['Hora fim da aula'],

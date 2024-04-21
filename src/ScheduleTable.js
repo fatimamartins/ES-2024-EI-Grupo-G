@@ -72,7 +72,6 @@ import AddIcon from '@mui/icons-material/Add'
 export default function ScheduleTable() {
     const defaultData = useAtomValue(atomSchedule)
     const dataWithWeekAndSemesterNumber = addSemesterWeekNumber(addWeekNumber(defaultData))
-    console.log('🚀 ~ ScheduleTable ~ dataWithWeekAndSemesterNumber:', dataWithWeekAndSemesterNumber)
     const rooms = useAtomValue(atomRooms)
     const tableRef = React.useRef(null)
     const setOpen = useSetAtom(atomModalReplaceCourse) // function to open/close the modal with the rules to replace a course
