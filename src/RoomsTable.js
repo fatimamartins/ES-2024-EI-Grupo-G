@@ -23,7 +23,6 @@ import { useAtomValue } from 'jotai'
 import { atomRooms } from './atoms/rooms'
 import { ROOM_FEATURES, TYPE_FILTER_COMPARISON, ROOMS } from './constants'
 import { atomSchedule } from './atoms/schedule'
-import dayjs from 'dayjs'
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
@@ -114,6 +113,7 @@ const defaultFilterFields = [
     'Capacidade Exame',
     'Nº características',
     'Tipo de sala',
+    'Data e disponibilidade',
 ]
 
 /**
@@ -135,19 +135,26 @@ export default function RoomsTable() {
     const [logicOperator, setLogicOperator] = React.useState('AND')
     const [type, setType] = React.useState('=') // type of filter comparison. Example: =, <, >, <=, >=, !=  like starts ends
     const [filters, setFilters] = React.useState([])
+    const [timeFilterResult, setTimeFilterResult] = React.useState([])
     const [availableDecision, setAvailableDecision] = React.useState('Disponível')
     const [tabulatorFilter, setTabulatorFilter] = React.useState([])
-    const [startDateTime, setStartDateTime] = React.useState(dayjs())
-    const [endDateTime, setEndDateTime] = React.useState(dayjs())
-    console.log('filtro local', filters)
-    console.log('tabulator', tabulatorFilter)
+    const [startDateTime, setStartDateTime] = React.useState(null)
+    const [endDateTime, setEndDateTime] = React.useState(null)
 
     const addFilter = () => {
-        if (startDateTime && endDateTime && startDateTime.diff(endDateTime) !== 0) {
-            // If both startDateTime and endDateTime are available, apply time-based filtering
-            filterRoomsByTime()
+        // If both startDateTime and endDateTime are available, apply time-based filtering
+        if (
+            selectedField === 'Data e disponibilidade' &&
+            startDateTime &&
+            endDateTime &&
+            startDateTime.diff(endDateTime) !== 0
+        ) {
+            const roomsToFilter = filterRoomsByTime() // get rooms to filter
+            setLogicOperator('AND') // the time filter is always "AND" with the other filters
+            setTimeFilterResult(roomsToFilter) // we can only have one time filter
+            updateTabulatorFilter(roomsToFilter)
         }
-        if (selectedField && value) {
+        if (selectedField !== 'Data e disponibilidade' && value) {
             setFilters([
                 ...filters,
                 {
@@ -165,9 +172,6 @@ export default function RoomsTable() {
                     : { field: selectedField, type, value }
 
             updateTabulatorFilter(newFilter) // update tabulator filter
-            setSelectedField('') // reset all states
-            setValue('')
-            setType('=')
         }
     }
 
@@ -184,28 +188,48 @@ export default function RoomsTable() {
                 ? setTabulatorFilter([...newFilterArr, [...previousFilter, newFilter]])
                 : setTabulatorFilter([...newFilterArr, [previousFilter, newFilter]])
         }
+        // reset all states
+        setSelectedField('')
+        setValue('')
+        setType('=')
+        setEndDateTime(null)
+        setStartDateTime(null)
     }
 
     const clear = () => {
         tableRef?.current.clearFilter()
-        setFilters([]) // clear all filters
+        setFilters([])
         setLogicOperator('AND')
         setType('=')
         setValue('')
         setSelectedField('')
-        setAvailableDecision('Disponível')
-        setStartDateTime(dayjs())
-        setEndDateTime(dayjs())
         setTabulatorFilter([])
+        // time filters fields
+        setAvailableDecision('Disponível')
+        setStartDateTime(null)
+        setEndDateTime(null)
+        setTimeFilterResult([])
     }
 
+    // const deleteTimeFilter = () => {
+    //     setAvailableDecision('Disponível')
+    //     setStartDateTime(null)
+    //     setEndDateTime(null)
+    //     setTimeFilterResult([])
+    //     setTabulatorFilter(filters)
+    // }
+
     const deleteFilter = (indexToRemove) => {
+        let tabulatorNewFilter = []
         if (filters.length === 1) {
-            clear()
+            setFilters([])
+            setLogicOperator('AND')
+            setType('=')
+            setValue('')
+            setSelectedField('')
         } else {
             const newFilters = [...filters.slice(0, indexToRemove), ...filters.slice(indexToRemove + 1)]
             setFilters(newFilters)
-            let tabulatorNewFilter = []
             newFilters.forEach((f) => {
                 const newFilter =
                     f.title === 'Tipo de sala'
@@ -224,8 +248,10 @@ export default function RoomsTable() {
                         : (tabulatorNewFilter = [...newFilterArr, [previousFilter, newFilter]])
                 }
             })
-            setTabulatorFilter(tabulatorNewFilter)
         }
+        timeFilterResult.length !== 0
+            ? setTabulatorFilter([...tabulatorNewFilter, timeFilterResult])
+            : setTabulatorFilter(tabulatorNewFilter)
     }
 
     React.useEffect(() => {
@@ -260,7 +286,7 @@ export default function RoomsTable() {
 
                 const availableRoomIds = availableRooms.map((item) => item['Sala atribuída à aula'])
 
-                const roomFilters = availableRoomIds.map((roomId) => {
+                return availableRoomIds.map((roomId) => {
                     const newFilter = {
                         title: 'Nome sala',
                         field: 'Nome sala',
@@ -272,7 +298,7 @@ export default function RoomsTable() {
                     return newFilter
                 })
 
-                setFilters([...filters, ...roomFilters])
+                // setFilters([...filters, ...roomFilters])
 
                 /* if (availableRoomIds.length === 0) {
                     roomFilters.push({
@@ -282,7 +308,8 @@ export default function RoomsTable() {
                     })
                 } */
 
-                updateTabulatorFilter(roomFilters)
+                // updateTabulatorFilter(roomFilters)
+                // setTabulatorFilter([...tabulatorFilter, ...roomFilters])
             } else if (availableDecision === 'Disponível') {
                 const availableRooms = defaultScheduleData.filter((item) => {
                     const itemStartTime = item['Hora início da aula']
@@ -304,7 +331,7 @@ export default function RoomsTable() {
                 // Filter out occupied rooms from available rooms
                 const availableRoomsNotOccupied = ROOMS.filter((room) => !availableRoomIds.includes(room))
 
-                const roomFilters = availableRoomsNotOccupied.map((roomId) => {
+                return availableRoomsNotOccupied.map((roomId) => {
                     const newFilter = {
                         title: 'Nome sala',
                         field: 'Nome sala',
@@ -316,7 +343,7 @@ export default function RoomsTable() {
                     return newFilter
                 })
 
-                setFilters([...filters, ...roomFilters])
+                // setFilters([...filters, ...roomFilters])
 
                 /* if (availableRoomsNotOccupied.length === 0) {
                     roomFilters.push({
@@ -326,30 +353,26 @@ export default function RoomsTable() {
                     })
                 } */
 
-                updateTabulatorFilter(roomFilters)
+                // updateTabulatorFilter(roomFilters)
+                // setTabulatorFilter([...tabulatorFilter, ...roomFilters])
             }
         }
     }
 
+    console.log('filtro local', filters)
+    console.log('tabulator', tabulatorFilter)
+    console.log('🚀 timeFilterResult:', timeFilterResult)
+
     return (
         <div>
-            <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2 }}>
-                <Typography>OR</Typography>
-                <Switch
-                    checked={logicOperator === 'AND'}
-                    inputProps={{ 'aria-label': 'ant design' }}
-                    onChange={(e, c) => setLogicOperator(c ? 'AND' : 'OR')}
-                />
-                <Typography>AND</Typography>
-            </Stack>
-            <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2, mb: 2 }}>
+            <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 8, mb: 3 }}>
                 <FormControl sx={{ width: 350 }}>
-                    <InputLabel id="simple-select-label1">Campo a filtrar</InputLabel>
+                    <InputLabel id="simple-select-label1">Tipo de filtro</InputLabel>
                     <Select
                         labelId="simple-select-label1"
                         id="simple-select1"
                         value={selectedField}
-                        label="Campo a filtrar"
+                        label="Tipo de filtro"
                         onChange={(event) => setSelectedField(event.target.value)}
                     >
                         {defaultFilterFields.map((col, index) => {
@@ -361,36 +384,27 @@ export default function RoomsTable() {
                         })}
                     </Select>
                 </FormControl>
-                <FormControl sx={{ width: 100 }}>
-                    <InputLabel id="simple-select-label2">Tipo</InputLabel>
-                    <Select
-                        labelId="simple-select-label2"
-                        id="simple-select2"
-                        value={type}
-                        label="Tipo"
-                        onChange={(event) => setType(event.target.value)}
-                    >
-                        {TYPE_FILTER_COMPARISON.map((t, index) => {
-                            return (
-                                <MenuItem key={index} value={t}>
-                                    {t}
-                                </MenuItem>
-                            )
-                        })}
-                    </Select>
-                </FormControl>
-                {selectedField !== 'Tipo de sala' ? (
-                    <TextField
-                        sx={{ ml: 1, width: 350 }}
-                        id="outlined-basic"
-                        placeholder="valor"
-                        variant="outlined"
-                        value={value}
-                        onChange={(event) => {
-                            setValue(event.target.value)
-                        }}
-                    />
-                ) : (
+                {selectedField !== 'Data e disponibilidade' && (
+                    <FormControl sx={{ width: 90 }}>
+                        <InputLabel id="simple-select-label2">Tipo</InputLabel>
+                        <Select
+                            labelId="simple-select-label2"
+                            id="simple-select2"
+                            value={type}
+                            label="Tipo"
+                            onChange={(event) => setType(event.target.value)}
+                        >
+                            {TYPE_FILTER_COMPARISON.map((t, index) => {
+                                return (
+                                    <MenuItem key={index} value={t}>
+                                        {t}
+                                    </MenuItem>
+                                )
+                            })}
+                        </Select>
+                    </FormControl>
+                )}
+                {selectedField === 'Tipo de sala' && (
                     <FormControl sx={{ ml: 1, width: 350 }}>
                         <Select
                             sx={{ height: 65 }}
@@ -409,7 +423,71 @@ export default function RoomsTable() {
                         </Select>
                     </FormControl>
                 )}
-                <Button variant="contained" onClick={addFilter} sx={{ ml: 1 }}>
+                {selectedField === 'Data e disponibilidade' && (
+                    <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2, mb: 2 }}>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DemoContainer components={['DateTimePicker']} sx={{ width: 350 }}>
+                                <DateTimePicker
+                                    label="Início"
+                                    format="DD-MM-YYYY HH:mm"
+                                    views={['day', 'month', 'year', 'hours', 'minutes']}
+                                    value={startDateTime}
+                                    onChange={(newValue) => {
+                                        setStartDateTime(newValue)
+                                    }}
+                                />
+                            </DemoContainer>
+                        </LocalizationProvider>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DemoContainer components={['DateTimePicker']} sx={{ width: 350, marginLeft: 2 }}>
+                                <DateTimePicker
+                                    label="Fim"
+                                    format="DD-MM-YYYY HH:mm"
+                                    views={['day', 'month', 'year', 'hours', 'minutes']}
+                                    value={endDateTime}
+                                    onChange={(newValue) => {
+                                        setEndDateTime(newValue)
+                                    }}
+                                />
+                            </DemoContainer>
+                        </LocalizationProvider>
+                        <Stack direction="row" alignItems="center">
+                            <Typography>Ocupado</Typography>
+                            <Switch
+                                checked={availableDecision === 'Disponível'}
+                                inputProps={{ 'aria-label': 'ant design' }}
+                                onChange={(e, c) => setAvailableDecision(c ? 'Disponível' : 'Ocupado')}
+                            />
+                            <Typography>Disponível</Typography>
+                        </Stack>
+                    </Stack>
+                )}
+                {selectedField !== 'Tipo de sala' && selectedField !== 'Data e disponibilidade' && (
+                    <TextField
+                        sx={{ ml: 1, width: 350 }}
+                        id="outlined-basic"
+                        placeholder="valor"
+                        variant="outlined"
+                        value={value}
+                        onChange={(event) => {
+                            setValue(event.target.value)
+                        }}
+                    />
+                )}
+                {selectedField !== 'Data e disponibilidade' && (
+                    <Stack direction="row" alignItems="center">
+                        <Typography>OR</Typography>
+                        <Switch
+                            checked={logicOperator === 'AND'}
+                            inputProps={{ 'aria-label': 'ant design' }}
+                            onChange={(e, c) => setLogicOperator(c ? 'AND' : 'OR')}
+                        />
+                        <Typography>AND</Typography>
+                    </Stack>
+                )}
+            </Stack>
+            <Stack flexDirection="row" justifyContent="end" marginBottom={4}>
+                <Button variant="contained" onClick={addFilter}>
                     Adicionar filtro
                 </Button>
                 <Button variant="text" onClick={clear}>
@@ -417,7 +495,7 @@ export default function RoomsTable() {
                 </Button>
             </Stack>
             {filters && filters.length > 0 && (
-                <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2 }}>
+                <Stack direction="row" spacing={1} alignItems="center" marginBottom={4} sx={{ mt: 2 }}>
                     {filters
                         .filter((item) => !item.isTimeFilter)
                         .map((filter, index) => {
@@ -450,43 +528,6 @@ export default function RoomsTable() {
                         })}
                 </Stack>
             )}
-            <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2 }}>
-                <Typography>Ocupado</Typography>
-                <Switch
-                    checked={availableDecision === 'Disponível'}
-                    inputProps={{ 'aria-label': 'ant design' }}
-                    onChange={(e, c) => setAvailableDecision(c ? 'Disponível' : 'Ocupado')}
-                />
-                <Typography>Disponível</Typography>
-            </Stack>
-            <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2, mb: 2 }}>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DemoContainer components={['DateTimePicker']} sx={{ width: 350 }}>
-                        <DateTimePicker
-                            label="Início"
-                            format="DD-MM-YYYY HH:mm"
-                            views={['day', 'month', 'year', 'hours', 'minutes']}
-                            value={startDateTime}
-                            onChange={(newValue) => {
-                                setStartDateTime(newValue)
-                            }}
-                        />
-                    </DemoContainer>
-                </LocalizationProvider>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DemoContainer components={['DateTimePicker']} sx={{ width: 350, marginLeft: 2 }}>
-                        <DateTimePicker
-                            label="Fim"
-                            format="DD-MM-YYYY HH:mm"
-                            views={['day', 'month', 'year', 'hours', 'minutes']}
-                            value={endDateTime}
-                            onChange={(newValue) => {
-                                setEndDateTime(newValue)
-                            }}
-                        />
-                    </DemoContainer>
-                </LocalizationProvider>
-            </Stack>
             <ReactTabulator
                 onRef={(r) => (tableRef.current = r.current)}
                 data={defaultData}
