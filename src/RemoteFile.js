@@ -23,7 +23,7 @@ import { atomRooms } from './atoms/rooms'
  * @returns {JSX.Element} The rendered RemoteFile component.
  */
 export default function RemoteFile({ id }) {
-    const setData = useSetAtom(id === 'scheduleReader' ? atomSchedule : atomRooms)
+    const setData = useSetAtom(id === 'scheduleFile' ? atomSchedule : atomRooms)
     /**
      * fileName - The name of the file to be fetched.
      * @type {string}
@@ -49,8 +49,27 @@ export default function RemoteFile({ id }) {
                 throw new Error('Failed to fetch CSV')
             }
             const csvText = await response.text()
-            const result = Papa.parse(csvText, { header: true })
-            const dataWithIndex = result.data.map((item, index) => ({ id: index, ...item }))
+            const { data } = Papa.parse(csvText, { header: true })
+            const dataWithIndex = data.map((item, index) => {
+                if (id === 'scheduleFile') {
+                    const parseInscritos = parseInt(item['Inscritos no turno'])
+                    return { ...item, id: index, 'Inscritos no turno': parseInscritos }
+                } else if (id === 'roomsFile') {
+                    const parseNormal = parseInt(item['Capacidade Normal'])
+                    const parseExame = parseInt(item['Capacidade Exame'])
+                    const parseCaracteristicas = parseInt(item['Nº características'])
+
+                    return {
+                        ...item,
+                        id: index,
+                        'Capacidade Normal': parseNormal,
+                        'Capacidade Exame': parseExame,
+                        'Nº características': parseCaracteristicas,
+                    }
+                }
+                return { ...item, id: index }
+            })
+            console.log('🚀 ~ dataWithIndex ~ dataWithIndex:', dataWithIndex)
             setData(dataWithIndex)
         } catch (error) {
             console.error('Error fetching CSV:', error)
