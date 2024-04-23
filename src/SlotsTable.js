@@ -13,7 +13,6 @@ import * as React from 'react'
  */
 import { DataGrid } from '@mui/x-data-grid'
 import { Button, Stack } from '@mui/material'
-import { isSameDate, getDayOfTheWeek, getWeek, getSemesterWeek } from './utils'
 
 const columns = [
     {
@@ -32,12 +31,12 @@ const columns = [
  *
  * @returns {JSX.Element} The SlotsTable component.
  */
-const SlotsTable = ({ tableRef, selectedCourse, slots, handleCancel }) => {
+const SlotsTable = ({ slots, handleCancel, handleSelection, buttonTitle, top }) => {
     const [selectedSlot, setSelectedSlot] = React.useState(null)
     const [selectionModel, setSelectionModel] = React.useState([])
 
     return (
-        <div style={{ width: '100%', marginTop: '20px' }}>
+        <div style={{ width: '100%', marginTop: top }}>
             <DataGrid
                 rows={slots.map((slot, index) => ({ id: index, ...slot }))}
                 columns={columns}
@@ -66,35 +65,15 @@ const SlotsTable = ({ tableRef, selectedCourse, slots, handleCancel }) => {
                 <Button onClick={handleCancel}>Cancelar</Button>
                 <Button
                     onClick={() => {
-                        if (isSameDate(selectedCourse['Data da aula'], selectedSlot['Data da aula'])) {
-                            tableRef.current.updateRow(selectedCourse.id, {
-                                'Data da aula': selectedSlot['Data da aula'],
-                                'Hora início da aula': selectedSlot['Hora início da aula'],
-                                'Hora fim da aula': selectedSlot['Hora fim da aula'],
-                                'Salas atribuída à aula': selectedSlot['Sala atribuída à aula'],
-                            })
-                        } else {
-                            tableRef.current.updateRow(selectedCourse.id, {
-                                'Data da aula': selectedSlot['Data da aula'],
-                                'Hora início da aula': selectedSlot['Hora início da aula'],
-                                'Hora fim da aula': selectedSlot['Hora fim da aula'],
-                                'Salas atribuída à aula': selectedSlot['Sala atribuída à aula'],
-                                'Dia da semana': getDayOfTheWeek(selectedSlot['Data da aula']),
-                                'Semana do ano': getWeek(selectedSlot['Data da aula']),
-                                'Semana do semestre': getSemesterWeek(
-                                    selectedCourse['Data da aula'],
-                                    selectedCourse['Semana do semestre'],
-                                    selectedSlot['Data da aula']
-                                ),
-                            })
-                        }
-                        tableRef.current.selectRow(selectedCourse.id)
-                        handleCancel()
+                        handleSelection(selectedSlot)
+                        setSelectedSlot(null)
+                        setSelectionModel([])
                     }}
                     variant="contained"
                     style={{ marginLeft: '15px', width: '180px' }}
+                    disabled={!selectedSlot}
                 >
-                    Inserir alterações
+                    {buttonTitle}
                 </Button>
             </Stack>
         </div>
