@@ -19,7 +19,7 @@ import { addSemesterWeekNumber, addWeekNumber, sortWeekDays } from './utils'
  */
 import MultipleSelectCheckmarks from './MultipleSelectCheckmarks'
 /** @module @mui/material */
-import { Button, Stack } from '@mui/material'
+import { Button, Stack, Tooltip } from '@mui/material'
 /**
  * Custom schedule table filter component.
  * @module ScheduleTableFilter
@@ -54,6 +54,10 @@ import { ROOM_FEATURES, ROOMS } from './constants'
  */
 import { atomSchedule } from './atoms/schedule'
 import ReplaceCourse from './ReplaceCourse'
+import { atomRooms } from './atoms/rooms'
+import { atomModalSlotsClass } from './atoms/modalSlotsClass'
+import CourseSlotsModal from './CourseSlotsModal'
+import AddIcon from '@mui/icons-material/Add'
 
 /**
  * This is the ScheduleTable component of the application.
@@ -68,8 +72,10 @@ import ReplaceCourse from './ReplaceCourse'
 export default function ScheduleTable() {
     const defaultData = useAtomValue(atomSchedule)
     const dataWithWeekAndSemesterNumber = addSemesterWeekNumber(addWeekNumber(defaultData))
+    const rooms = useAtomValue(atomRooms)
     const tableRef = React.useRef(null)
     const setOpen = useSetAtom(atomModalReplaceCourse) // function to open/close the modal with the rules to replace a course
+    const setModalSlotsToOpen = useSetAtom(atomModalSlotsClass)
 
     /**
      * @constant {Object[]} defaultColumns - The default columns for the table.
@@ -80,9 +86,13 @@ export default function ScheduleTable() {
             formatter: (cell, formatterParams, onRendered) => {
                 return renderToString(<FindReplaceIcon style={{ fill: '#1976d2' }} />)
             },
-            width: 10,
+            width: 30,
             cellClick: function (e, cell) {
-                setOpen(cell.getRow().getData())
+                if (rooms.length === 0) {
+                    window.alert('Carregue o ficheiro de salas')
+                } else {
+                    setOpen(cell.getRow().getData())
+                }
             },
         },
         {
@@ -268,8 +278,30 @@ export default function ScheduleTable() {
 
     return (
         <div>
-            <MultipleSelectCheckmarks tableRef={tableRef} />
             <ScheduleTableFilter tableRef={tableRef} />
+            <Stack flexDirection="row" justifyContent="space-between" alignItems="center" mb={2}>
+                <MultipleSelectCheckmarks tableRef={tableRef} />
+                <Tooltip
+                    title={
+                        defaultData.length === 0 || rooms.length === 0
+                            ? 'Verifique se os ficheiros salas e horario estão carregados'
+                            : ''
+                    }
+                >
+                    <span>
+                        <Button
+                            variant="contained"
+                            id="slots-uc"
+                            disabled={defaultData.length === 0 || rooms.length === 0}
+                            onClick={() => setModalSlotsToOpen({ isOpen: true, slots: [] })}
+                            style={defaultData.length === 0 || rooms.length === 0 ? { pointerEvents: 'none' } : {}}
+                            startIcon={<AddIcon />}
+                        >
+                            Aulas UC
+                        </Button>
+                    </span>
+                </Tooltip>
+            </Stack>
             <ReactTabulator
                 onRef={(r) => (tableRef.current = r.current)}
                 data={dataWithWeekAndSemesterNumber}
@@ -283,8 +315,20 @@ export default function ScheduleTable() {
                     layout: 'fitColumns',
                     selectable: true,
                 }}
+                events={{
+                    rowClick: function (e, row) {
+                        row.toggleSelect()
+                    },
+                    rowUpdated: function (row) {
+                        row.toggleSelect()
+                    },
+                    rowAdded: function (row) {
+                        row.toggleSelect()
+                    },
+                }}
             />
             <ReplaceCourse tableRef={tableRef} />
+            <CourseSlotsModal tableRef={tableRef} />
             <Stack direction={'row'} mt={2} mb={5} justifyContent={'flex-end'}>
                 <Button
                     variant="text"
