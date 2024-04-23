@@ -215,12 +215,10 @@ export default function RoomsTable() {
                 ? setTabulatorFilter([...newFilterArr, [...previousFilter, newFilter]])
                 : setTabulatorFilter([...newFilterArr, [previousFilter, newFilter]])
         }
-        // reset all states
+        // reset table fields filter
         setSelectedField('')
         setValue('')
         setType('=')
-        setEndDateTime(null)
-        setStartDateTime(null)
     }
 
     const clear = () => {
@@ -238,13 +236,14 @@ export default function RoomsTable() {
         setTimeFilterResult([])
     }
 
-    // const deleteTimeFilter = () => {
-    //     setAvailableDecision('Disponível')
-    //     setStartDateTime(null)
-    //     setEndDateTime(null)
-    //     setTimeFilterResult([])
-    //     setTabulatorFilter(filters)
-    // }
+    const deleteTimeFilter = () => {
+        setAvailableDecision('Disponível')
+        setStartDateTime(null)
+        setEndDateTime(null)
+        setTimeFilterResult([])
+        setSelectedField('')
+        setTabulatorFilter(filters)
+    }
 
     const deleteFilter = (indexToRemove) => {
         let tabulatorNewFilter = []
@@ -317,7 +316,6 @@ export default function RoomsTable() {
                     const newFilter = {
                         title: 'Nome sala',
                         field: 'Nome sala',
-                        isTimeFilter: true,
                         type: '=',
                         value: roomId.trim(), // Remove espaços em branco no início e no final da string
                     }
@@ -362,7 +360,6 @@ export default function RoomsTable() {
                     const newFilter = {
                         title: 'Nome sala',
                         field: 'Nome sala',
-                        isTimeFilter: true,
                         type: '=',
                         value: roomId.trim(), // Remove espaços em branco no início e no final da string
                     }
@@ -553,6 +550,16 @@ export default function RoomsTable() {
                                 )
                             }
                         })}
+                </Stack>
+            )}
+            {timeFilterResult && timeFilterResult.length > 0 && (
+                <Stack direction="row" spacing={1} alignItems="center" marginBottom={4} sx={{ mt: 2 }}>
+                    <Button variant="outlined" endIcon={<Cancel />} onClick={deleteTimeFilter}>
+                        {availableDecision} {'  '} {'  '}
+                        {startDateTime.format('DD/MM/YYYY HH:mm')}
+                        {'  '} - {'  '}
+                        {endDateTime.format('DD/MM/YYYY HH:mm')}
+                    </Button>
                 </Stack>
             )}
             <ReactTabulator
