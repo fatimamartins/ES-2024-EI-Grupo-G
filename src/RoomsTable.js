@@ -317,19 +317,6 @@ export default function RoomsTable() {
 
                     return newFilter
                 })
-
-                // setFilters([...filters, ...roomFilters])
-
-                /* if (availableRoomIds.length === 0) {
-                    roomFilters.push({
-                        field: 'Nome sala',
-                        type: '=',
-                        value: '', // Add an empty string as a value
-                    })
-                } */
-
-                // updateTabulatorFilter(roomFilters)
-                // setTabulatorFilter([...tabulatorFilter, ...roomFilters])
             } else if (availableDecision === 'Disponível') {
                 const availableRooms = defaultScheduleData.filter((item) => {
                     const itemStartTime = item['Hora início da aula']
@@ -361,19 +348,6 @@ export default function RoomsTable() {
 
                     return newFilter
                 })
-
-                // setFilters([...filters, ...roomFilters])
-
-                /* if (availableRoomsNotOccupied.length === 0) {
-                    roomFilters.push({
-                        field: 'Nome sala',
-                        type: '=',
-                        value: '', // Add an empty string as a value
-                    })
-                } */
-
-                // updateTabulatorFilter(roomFilters)
-                // setTabulatorFilter([...tabulatorFilter, ...roomFilters])
             }
         }
     }
@@ -397,9 +371,16 @@ export default function RoomsTable() {
                         onChange={(event) => setSelectedField(event.target.value)}
                     >
                         {defaultFilterFields.map((col, index) => {
+                            const isTimeFilterDisabled = timeFilterResult.length > 0 && col === 'Data e disponibilidade'
                             return (
-                                <MenuItem key={index} value={col}>
-                                    <ListItemText primary={col} />
+                                <MenuItem key={index} value={col} disabled={isTimeFilterDisabled}>
+                                    <ListItemText
+                                        primary={
+                                            isTimeFilterDisabled
+                                                ? col + ' <>Este filtro só pode ser utilizado uma vez<>'
+                                                : col
+                                        }
+                                    />
                                 </MenuItem>
                             )
                         })}
