@@ -1,33 +1,177 @@
+/**
+ * @file ReplaceCourse
+ */
+
+/**
+ * @external React
+ * @see {@link https://reactjs.org/}
+ */
 import * as React from 'react'
+
+/**
+ * @external jotai
+ * @see {@link https://jotai.pmnd.rs/}
+ */
 import { useAtomValue, useSetAtom } from 'jotai'
+
+/**
+ * @module atoms/modalReplaceCourse
+ */
 import { atomModalReplaceCourse } from './atoms/modalReplaceCourse'
+
+/**
+ * @external Box
+ * @see {@link https://mui.com/api/box/}
+ */
 import Box from '@mui/material/Box'
+
+/**
+ * @external Button
+ * @see {@link https://mui.com/api/button/}
+ */
 import Button from '@mui/material/Button'
+
+/**
+ * @external Typography
+ * @see {@link https://mui.com/api/typography/}
+ */
 import Typography from '@mui/material/Typography'
+
+/**
+ * @external Modal
+ * @see {@link https://mui.com/api/modal/}
+ */
 import Modal from '@mui/material/Modal'
+
+/**
+ * @external Checkbox
+ * @see {@link https://mui.com/api/checkbox/}
+ */
+/**
+ * @external FormControlLabel
+ * @see {@link https://mui.com/api/form-control-label/}
+ */
+/**
+ * @external ListItemText
+ * @see {@link https://mui.com/api/list-item-text/}
+ */
+/**
+ * @external Radio
+ * @see {@link https://mui.com/api/radio/}
+ */
+/**
+ * @external RadioGroup
+ * @see {@link https://mui.com/api/radio-group/}
+ */
+/**
+ * @external Stack
+ * @see {@link https://mui.com/api/stack/}
+ */
 import { Checkbox, FormControlLabel, ListItemText, Radio, RadioGroup, Stack } from '@mui/material'
+
+/**
+ * @external InputLabel
+ * @see {@link https://mui.com/api/input-label/}
+ */
 import InputLabel from '@mui/material/InputLabel'
+
+/**
+ * @external MenuItem
+ * @see {@link https://mui.com/api/menu-item/}
+ */
 import MenuItem from '@mui/material/MenuItem'
+
+/**
+ * @external FormControl
+ * @see {@link https://mui.com/api/form-control/}
+ */
 import FormControl from '@mui/material/FormControl'
+
+/**
+ * @external Select
+ * @see {@link https://mui.com/api/select/}
+ */
 import Select from '@mui/material/Select'
+
+/**
+ * @external dayjs
+ * @see {@link https://day.js.org/}
+ */
 import dayjs from 'dayjs'
+
+/**
+ * @external DemoContainer
+ * @see {@link https://mui.com/components/date-picker/}
+ */
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo'
+
+/**
+ * @external AdapterDayjs
+ * @see {@link https://mui.com/components/date-picker/}
+ */
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+
+/**
+ * @external LocalizationProvider
+ * @see {@link https://mui.com/components/date-picker/}
+ */
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+
+/**
+ * @external DateTimePicker
+ * @see {@link https://mui.com/components/date-picker/}
+ */
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
-import { COURSE_PERIODS, DAY_PERIODS, ROOMS, ROOM_FEATURES, WEEKDAYS } from './constants'
-import { getFormattedDateTime } from './utils'
+
+/**
+ * @module constants
+ */
+import {
+    COURSE_DURATION,
+    COURSE_END_TIMES,
+    COURSE_START_TIMES,
+    DAY_PERIODS,
+    ROOMS,
+    ROOM_FEATURES,
+    WEEKDAYS,
+} from './constants'
+
+/**
+ * @module utils
+ */
+import { getCourseDurationToMilliseconds, getFormattedDateTime } from './utils'
+
+/**
+ * @module atoms/schedule
+ */
 import { atomSchedule } from './atoms/schedule'
 
+/**
+ * @module lib/replaceCourse
+ */
+import { lookupSlots } from './lib/replaceCourse'
+import { atomRooms } from './atoms/rooms'
+import SlotsTable from './SlotsTable'
+
+/**
+ * @constant
+ * @name style
+ * @type {Object}
+ * @property {string} position - The position property of the style object.
+ * @property {string} top - The top property of the style object.
+ * @description A style object used for positioning a modal at the center of the screen.
+ */
 const style = {
     position: 'absolute',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: 900,
+    height: 600,
     bgcolor: 'background.paper',
     boxShadow: 20,
     p: 4,
+    overflow: 'scroll',
 }
 
 /** @constant {number} ITEM_HEIGHT - The height of each item in the select menu. */
@@ -44,18 +188,58 @@ const MenuProps = {
     },
 }
 
-const ReplaceCourse = () => {
+/**
+ * ReplaceCourse component is responsible for managing the replacement of a course.
+ * It displays a modal with slots and rules for replacing a course.
+ *
+ * @returns {JSX.Element} The ReplaceCourse component.
+ */
+const ReplaceCourse = ({ tableRef }) => {
     const schedule = useAtomValue(atomSchedule)
-    console.log('🚀 ~ ReplaceCourse ~ schedule:', schedule)
+    const rooms = useAtomValue(atomRooms)
     const selectedCourse = useAtomValue(atomModalReplaceCourse)
     const setOpen = useSetAtom(atomModalReplaceCourse) // function to open/close the modal with the rules to replace a course
     const [rulesToInclude, setRulesToInclude] = React.useState(null) // rules to replace a course
     const [rulesToExclude, setRulesToExclude] = React.useState(null)
+    const [slots, setSlots] = React.useState([]) // slots to replace a course
     const formattedDateTime = getFormattedDateTime(
         selectedCourse?.['Data da aula'],
         selectedCourse?.['Hora início da aula'],
         "yyyy-MM-dd'T'HH:mm"
     )
+
+    React.useEffect(() => {
+        if (rulesToInclude === null && selectedCourse) {
+            setRulesToInclude({
+                curso: selectedCourse.Curso,
+                turma: selectedCourse.Turma,
+                duracao: getCourseDurationToMilliseconds(
+                    selectedCourse['Hora início da aula'],
+                    selectedCourse['Hora fim da aula']
+                ),
+                salas: [selectedCourse['Sala atribuída à aula']],
+                data: {
+                    label: 'mesmoDia',
+                    value: dayjs(formattedDateTime, { timeZone: 'GMT' }),
+                },
+            })
+        }
+
+        if (formattedDateTime && !rulesToInclude?.dataInicio) {
+            setRulesToInclude((old) => ({
+                ...old,
+                dataInicio: dayjs(formattedDateTime, { timeZone: 'GMT' }),
+                dataFim: dayjs(formattedDateTime, { timeZone: 'GMT' }),
+            }))
+        }
+    }, [formattedDateTime, rulesToInclude, selectedCourse])
+
+    const handleCancel = () => {
+        setOpen(null)
+        setRulesToInclude(null)
+        setRulesToExclude(null)
+        setSlots([])
+    }
 
     return (
         <div>
@@ -77,17 +261,17 @@ const ReplaceCourse = () => {
                     <Typography variant="subtitle2">Excluir</Typography>
                     <Stack direction="row" mt={2}>
                         <FormControl sx={{ minWidth: 150 }}>
-                            <InputLabel id="simple-select-label1">Período aula</InputLabel>
+                            <InputLabel id="simple-select-label1">Início aula</InputLabel>
                             <Select
                                 labelId="simple-select-label1"
                                 id="simple-select1"
-                                value={rulesToExclude?.hora || ''}
-                                label="Período aula"
+                                value={rulesToExclude?.['Hora início da aula'] || ''}
+                                label="Início aula"
                                 onChange={(e) => {
-                                    setRulesToExclude({ ...rulesToExclude, hora: e.target.value })
+                                    setRulesToExclude({ ...rulesToExclude, 'Hora início da aula': e.target.value })
                                 }}
                             >
-                                {COURSE_PERIODS.map((period, index) => (
+                                {COURSE_START_TIMES.map((period, index) => (
                                     <MenuItem key={index} value={period}>
                                         {period}
                                     </MenuItem>
@@ -95,14 +279,32 @@ const ReplaceCourse = () => {
                             </Select>
                         </FormControl>
                         <FormControl sx={{ minWidth: 150, marginLeft: 2 }}>
-                            <InputLabel id="simple-select-label2">Dia da semana</InputLabel>
+                            <InputLabel id="simple-select-label2">Fim aula</InputLabel>
                             <Select
                                 labelId="simple-select-label2"
                                 id="simple-select2"
-                                value={rulesToExclude?.dia || ''}
+                                value={rulesToExclude?.['Hora fim da aula'] || ''}
+                                label="Fim aula"
+                                onChange={(e) => {
+                                    setRulesToExclude({ ...rulesToExclude, 'Hora fim da aula': e.target.value })
+                                }}
+                            >
+                                {COURSE_END_TIMES.map((period, index) => (
+                                    <MenuItem key={index} value={period}>
+                                        {period}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        <FormControl sx={{ minWidth: 150, marginLeft: 2 }}>
+                            <InputLabel id="simple-select-label3">Dia da semana</InputLabel>
+                            <Select
+                                labelId="simple-select-label3"
+                                id="simple-select3"
+                                value={rulesToExclude?.diaDaSemana || ''}
                                 label="Dia da semana"
                                 onChange={(e) => {
-                                    setRulesToExclude({ ...rulesToExclude, dia: e.target.value })
+                                    setRulesToExclude({ ...rulesToExclude, diaDaSemana: e.target.value })
                                 }}
                             >
                                 {WEEKDAYS.map((day, index) => (
@@ -113,10 +315,10 @@ const ReplaceCourse = () => {
                             </Select>
                         </FormControl>
                         <FormControl sx={{ minWidth: 150, marginLeft: 2 }}>
-                            <InputLabel id="simple-select-label3">Período dia</InputLabel>
+                            <InputLabel id="simple-select-label4">Período dia</InputLabel>
                             <Select
-                                labelId="simple-select-label3"
-                                id="simple-select3"
+                                labelId="simple-select-label4"
+                                id="simple-select4"
                                 value={rulesToExclude?.turno || ''}
                                 label="Período dia"
                                 onChange={(e) => {
@@ -193,10 +395,39 @@ const ReplaceCourse = () => {
                                 renderValue={(selected) => selected.join(', ')}
                                 MenuProps={MenuProps}
                             >
-                                {ROOM_FEATURES.map((feature) => (
-                                    <MenuItem key={feature} value={feature}>
-                                        <Checkbox checked={rulesToInclude?.caracteristicas?.indexOf(feature) > -1} />
-                                        <ListItemText primary={feature} />
+                                {rooms?.length > 0 ? (
+                                    ROOM_FEATURES.map((feature) => (
+                                        <MenuItem key={feature} value={feature}>
+                                            <Checkbox
+                                                checked={rulesToInclude?.caracteristicas?.indexOf(feature) > -1}
+                                            />
+                                            <ListItemText primary={feature} />
+                                        </MenuItem>
+                                    ))
+                                ) : (
+                                    <MenuItem value="Nenhuma característica disponível">
+                                        <p>
+                                            Nenhuma característica disponível. <br />
+                                            Carregue <strong>CaracterizaçãoDasSalas.csv</strong>
+                                        </p>
+                                    </MenuItem>
+                                )}
+                            </Select>
+                        </FormControl>
+                        <FormControl sx={{ minWidth: 150, marginLeft: 2 }}>
+                            <InputLabel id="label4">Duração</InputLabel>
+                            <Select
+                                labelId="label4"
+                                id="select4"
+                                value={rulesToInclude?.duracao || ''}
+                                label="Duração"
+                                onChange={(e) => {
+                                    setRulesToInclude({ ...rulesToInclude, duracao: e.target.value })
+                                }}
+                            >
+                                {COURSE_DURATION.map((time, index) => (
+                                    <MenuItem key={time.key} value={time.value}>
+                                        {time.key}
                                     </MenuItem>
                                 ))}
                             </Select>
@@ -209,10 +440,16 @@ const ReplaceCourse = () => {
                         <RadioGroup
                             row
                             aria-labelledby="radio-buttons-group-label"
-                            defaultValue="mesmoDia"
                             name="radio-buttons-group"
+                            defaultValue={rulesToInclude?.data?.label || 'mesmoDia'}
                             onChange={(e) => {
-                                setRulesToInclude({ ...rulesToInclude, data: e.target.value })
+                                setRulesToInclude({
+                                    ...rulesToInclude,
+                                    data: {
+                                        label: e.target.value,
+                                        value: dayjs(formattedDateTime, { timeZone: 'GMT' }),
+                                    },
+                                })
                             }}
                         >
                             <FormControlLabel value="mesmoDia" control={<Radio />} label="no mesmo dia" />
@@ -220,7 +457,7 @@ const ReplaceCourse = () => {
                             <FormControlLabel value="outro" control={<Radio />} label="outro" />
                         </RadioGroup>
                     </FormControl>
-                    {rulesToInclude?.data === 'outro' && (
+                    {rulesToInclude?.data?.label === 'outro' && (
                         <Stack direction="row">
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <DemoContainer components={['DateTimePicker']} sx={{ width: 350 }}>
@@ -250,16 +487,36 @@ const ReplaceCourse = () => {
                             </LocalizationProvider>
                         </Stack>
                     )}
-                    <Stack direction="row" justifyContent="end" mt={4}>
-                        <Button onClick={() => setOpen(null)}>Cancelar</Button>
-                        <Button variant="contained" style={{ marginLeft: '15px' }}>
-                            Inserir alterações
+                    <Stack direction="row" justifyContent="end" alignItems="center" mt={4}>
+                        {slots.length === 0 && <Button onClick={handleCancel}>Cancelar</Button>}
+                        <Button
+                            variant="contained"
+                            style={{ marginLeft: '15px', width: '180px' }}
+                            onClick={() => {
+                                const slots = lookupSlots(rulesToInclude, rulesToExclude, schedule, rooms)
+                                setSlots(slots)
+                            }}
+                        >
+                            Procurar slots
                         </Button>
                     </Stack>
+                    {slots.length > 0 && (
+                        <SlotsTable
+                            tableRef={tableRef}
+                            selectedCourse={selectedCourse}
+                            slots={slots}
+                            handleCancel={handleCancel}
+                        />
+                    )}
                 </Box>
             </Modal>
         </div>
     )
 }
 
+/**
+ * Represents a class for replacing a course.
+ * @class
+ * @exports ReplaceCourse
+ */
 export default ReplaceCourse

@@ -4,6 +4,7 @@
 
 /** @module react */
 import React from 'react'
+/** @module react-dom */
 import { renderToString } from 'react-dom/server'
 /** @module react-tabulator */
 import { ReactTabulator } from 'react-tabulator'
@@ -24,203 +25,35 @@ import { Button, Stack } from '@mui/material'
  * @module ScheduleTableFilter
  */
 import ScheduleTableFilter from './ScheduleTableFilter'
-import { useAtomValue, useSetAtom } from 'jotai'
-import { atomModalReplaceCourse } from './atoms/modalReplaceCourse'
-import FindReplaceIcon from '@mui/icons-material/FindReplace'
-import { ROOM_FEATURES, ROOMS } from './constants'
-import { atomSchedule } from './atoms/schedule'
-
 /**
- * @constant {Object[]} defaultColumns - The default columns for the table.
+ * @module jotai
+ * Jotai is a primitive and flexible state management library for React.
+ * Here, the useAtomValue and useSetAtom hooks are imported for use in the application.
  */
-const defaultColumns = [
-    {
-        field: 'Substituir',
-        formatter: (cell, formatterParams, onRendered) => {
-            return renderToString(<FindReplaceIcon id="substituirAula" style={{ fill: '#1976d2' }} />)
-        },
-        width: 10,
-    },
-    {
-        title: 'Curso',
-        field: 'Curso',
-        hozAlign: 'left',
-        sorter: 'string',
-        visible: true,
-        editor: 'list',
-        width: 82,
-        editorParams: {
-            valuesLookup: true,
-            valuesLookupField: 'Curso',
-        },
-    },
-    {
-        title: 'UC',
-        field: 'Unidade Curricular',
-        hozAlign: 'left',
-        sorter: 'string',
-        visible: true,
-        width: 62,
-        editor: 'list',
-        editorParams: {
-            valuesLookup: true,
-            valuesLookupField: 'Unidade Curricular',
-        },
-    },
-    {
-        title: 'Turno',
-        field: 'Turno',
-        hozAlign: 'left',
-        sorter: 'string',
-        visible: true,
-        width: 82,
-        editor: 'list',
-        editorParams: {
-            valuesLookup: true,
-            valuesLookupField: 'Turno',
-        },
-    },
-    {
-        title: 'Turma',
-        field: 'Turma',
-        hozAlign: 'left',
-        sorter: 'string',
-        visible: true,
-        width: 87,
-        editor: 'list',
-        editorParams: {
-            valuesLookup: true,
-            valuesLookupField: 'Turma',
-        },
-    },
-    {
-        title: 'Inscritos',
-        field: 'Inscritos no turno',
-        hozAlign: 'left',
-        sorter: 'number',
-        visible: true,
-        width: 102,
-        editor: 'number',
-    },
-    {
-        title: 'Dia',
-        field: 'Dia da semana',
-        hozAlign: 'left',
-        width: 64,
-        sorter: function (a, b) {
-            return sortWeekDays(a, b)
-        },
-        visible: true,
-        editor: 'list',
-        editorParams: {
-            values: { Seg: 'Seg', Ter: 'Ter', Qua: 'Qua', Qui: 'Qui', Sex: 'Sex', Sáb: 'Sáb' },
-            clearable: true,
-        },
-    },
-    {
-        title: 'Início',
-        field: 'Hora início da aula',
-        hozAlign: 'left',
-        visible: true,
-        editor: 'time',
-        width: 79,
-        editorParams: {
-            format: 'HH:mm:ss',
-        },
-    },
-    {
-        title: 'Fim',
-        field: 'Hora fim da aula',
-        hozAlign: 'left',
-        visible: true,
-        width: 66,
-        editor: 'time',
-        editorParams: {
-            format: 'HH:mm:ss',
-        },
-    },
-    {
-        title: 'Data',
-        field: 'Data da aula',
-        hozAlign: 'left',
-        sorter: 'date',
-        visible: true,
-        width: 75,
-        editor: 'date',
-        editorParams: {
-            format: 'dd/MM/yyyy',
-        },
-    },
-    {
-        title: 'Características',
-        field: 'Características da sala pedida para a aula',
-        hozAlign: 'left',
-        sorter: 'string',
-        visible: true,
-        width: 147,
-        editor: 'list',
-        editorParams: {
-            values: ROOM_FEATURES,
-        },
-        validator: function (cell, value) {
-            if (value.trim() === '' && cell.getInitialValue() === '') {
-                return false
-            } else {
-                return true
-            }
-        },
-        mutator: function (value, data, type, params, component) {
-            if (value.trim() === '' && type === 'edit') {
-                return component.getInitialValue()
-            } else {
-                return value
-            }
-        },
-    },
-    {
-        title: 'Sala ',
-        field: 'Sala atribuída à aula',
-        hozAlign: 'left',
-        sorter: 'string',
-        visible: true,
-        width: 75,
-        editor: 'list',
-        editorParams: {
-            values: ROOMS,
-        },
-        validator: function (cell, value) {
-            if (value.trim() === '' && cell.getInitialValue() === '') {
-                return false
-            } else {
-                return true
-            }
-        },
-        mutator: function (value, data, type, params, component) {
-            if (value.trim() === '' && type === 'edit') {
-                return component.getInitialValue()
-            } else {
-                return value
-            }
-        },
-    },
-    {
-        title: 'Sem. ano',
-        field: 'Semana do ano',
-        hozAlign: 'left',
-        sorter: 'number',
-        visible: true,
-        editor: 'number',
-        width: 112,
-    },
-    {
-        title: 'Sem. semestre',
-        field: 'Semana do semestre',
-        hozAlign: 'left',
-        sorter: 'number',
-        visible: true,
-        editor: 'number',
-    },
-]
+import { useAtomValue, useSetAtom } from 'jotai'
+/**
+ * @module atoms/modalReplaceCourse
+ * This module exports the atomModalReplaceCourse atom, which is used for managing the state of the modal for replacing a course in the application.
+ */
+import { atomModalReplaceCourse } from './atoms/modalReplaceCourse'
+/**
+ * @module @mui/icons-material/FindReplace
+ * Material-UI Icons is a set of pre-designed icons following Material Design guidelines.
+ * Here, the FindReplace icon is imported for use in the application.
+ */
+import FindReplaceIcon from '@mui/icons-material/FindReplace'
+/**
+ * @module constants
+ * This module exports constants used throughout the application.
+ * Here, ROOM_FEATURES and ROOMS are imported for use in the application.
+ */
+import { ROOM_FEATURES, ROOMS } from './constants'
+/**
+ * @module atoms/schedule
+ * This module exports the atomSchedule atom, which is used for managing the state of the schedule in the application.
+ */
+import { atomSchedule } from './atoms/schedule'
+import ReplaceCourse from './ReplaceCourse'
 
 /**
  * This is the ScheduleTable component of the application.
@@ -235,9 +68,203 @@ const defaultColumns = [
 export default function ScheduleTable() {
     const defaultData = useAtomValue(atomSchedule)
     const dataWithWeekAndSemesterNumber = addSemesterWeekNumber(addWeekNumber(defaultData))
-    const [columns] = React.useState(defaultColumns)
     const tableRef = React.useRef(null)
     const setOpen = useSetAtom(atomModalReplaceCourse) // function to open/close the modal with the rules to replace a course
+
+    /**
+     * @constant {Object[]} defaultColumns - The default columns for the table.
+     */
+    const columns = [
+        {
+            field: 'Substituir',
+            formatter: (cell, formatterParams, onRendered) => {
+                return renderToString(<FindReplaceIcon style={{ fill: '#1976d2' }} />)
+            },
+            width: 10,
+            cellClick: function (e, cell) {
+                setOpen(cell.getRow().getData())
+            },
+        },
+        {
+            title: 'Curso',
+            field: 'Curso',
+            hozAlign: 'left',
+            sorter: 'string',
+            visible: true,
+            editor: 'list',
+            width: 82,
+            editorParams: {
+                valuesLookup: true,
+                valuesLookupField: 'Curso',
+            },
+        },
+        {
+            title: 'UC',
+            field: 'Unidade Curricular',
+            hozAlign: 'left',
+            sorter: 'string',
+            visible: true,
+            width: 62,
+            editor: 'list',
+            editorParams: {
+                valuesLookup: true,
+                valuesLookupField: 'Unidade Curricular',
+            },
+        },
+        {
+            title: 'Turno',
+            field: 'Turno',
+            hozAlign: 'left',
+            sorter: 'string',
+            visible: true,
+            width: 82,
+            editor: 'list',
+            editorParams: {
+                valuesLookup: true,
+                valuesLookupField: 'Turno',
+            },
+        },
+        {
+            title: 'Turma',
+            field: 'Turma',
+            hozAlign: 'left',
+            sorter: 'string',
+            visible: true,
+            width: 87,
+            editor: 'list',
+            editorParams: {
+                valuesLookup: true,
+                valuesLookupField: 'Turma',
+            },
+        },
+        {
+            title: 'Inscritos',
+            field: 'Inscritos no turno',
+            hozAlign: 'left',
+            sorter: 'number',
+            visible: true,
+            width: 102,
+            editor: 'number',
+        },
+        {
+            title: 'Dia',
+            field: 'Dia da semana',
+            hozAlign: 'left',
+            width: 64,
+            sorter: function (a, b) {
+                return sortWeekDays(a, b)
+            },
+            visible: true,
+            editor: 'list',
+            editorParams: {
+                values: { Seg: 'Seg', Ter: 'Ter', Qua: 'Qua', Qui: 'Qui', Sex: 'Sex', Sáb: 'Sáb' },
+                clearable: true,
+            },
+        },
+        {
+            title: 'Início',
+            field: 'Hora início da aula',
+            hozAlign: 'left',
+            visible: true,
+            editor: 'time',
+            width: 79,
+            editorParams: {
+                format: 'HH:mm:ss',
+            },
+        },
+        {
+            title: 'Fim',
+            field: 'Hora fim da aula',
+            hozAlign: 'left',
+            visible: true,
+            width: 66,
+            editor: 'time',
+            editorParams: {
+                format: 'HH:mm:ss',
+            },
+        },
+        {
+            title: 'Data',
+            field: 'Data da aula',
+            hozAlign: 'left',
+            sorter: 'date',
+            visible: true,
+            width: 75,
+            editor: 'date',
+            editorParams: {
+                format: 'dd/MM/yyyy',
+            },
+        },
+        {
+            title: 'Características',
+            field: 'Características da sala pedida para a aula',
+            hozAlign: 'left',
+            sorter: 'string',
+            visible: true,
+            width: 147,
+            editor: 'list',
+            editorParams: {
+                values: ROOM_FEATURES,
+            },
+            validator: function (cell, value) {
+                if (value && value.trim() === '' && cell.getInitialValue() === '') {
+                    return false
+                } else {
+                    return true
+                }
+            },
+            mutator: function (value, data, type, params, component) {
+                if (value && value.trim() === '' && type === 'edit') {
+                    return component.getInitialValue()
+                } else {
+                    return value
+                }
+            },
+        },
+        {
+            title: 'Sala ',
+            field: 'Sala atribuída à aula',
+            hozAlign: 'left',
+            sorter: 'string',
+            visible: true,
+            width: 75,
+            editor: 'list',
+            editorParams: {
+                values: ROOMS,
+            },
+            validator: function (cell, value) {
+                if (value && value.trim() === '' && cell.getInitialValue() === '') {
+                    return false
+                } else {
+                    return true
+                }
+            },
+            mutator: function (value, data, type, params, component) {
+                if (value && value.trim() === '' && type === 'edit') {
+                    return component.getInitialValue()
+                } else {
+                    return value
+                }
+            },
+        },
+        {
+            title: 'Sem. ano',
+            field: 'Semana do ano',
+            hozAlign: 'left',
+            sorter: 'number',
+            visible: true,
+            editor: 'number',
+            width: 112,
+        },
+        {
+            title: 'Sem. semestre',
+            field: 'Semana do semestre',
+            hozAlign: 'left',
+            sorter: 'number',
+            visible: true,
+            editor: 'number',
+        },
+    ]
 
     return (
         <div>
@@ -254,16 +281,10 @@ export default function ScheduleTable() {
                     movableColumns: true,
                     paginationCounter: 'rows',
                     layout: 'fitColumns',
-                }}
-                events={{
-                    rowClick: (e, row) => {
-                        const className = e.target.getAttribute('id')
-                        if (className === 'substituirAula') {
-                            setOpen(row.getData())
-                        }
-                    },
+                    selectable: true,
                 }}
             />
+            <ReplaceCourse tableRef={tableRef} />
             <Stack direction={'row'} mt={2} mb={5} justifyContent={'flex-end'}>
                 <Button
                     variant="text"
