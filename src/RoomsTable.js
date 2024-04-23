@@ -281,12 +281,6 @@ export default function RoomsTable() {
             : setTabulatorFilter(tabulatorNewFilter)
     }
 
-    React.useEffect(() => {
-        if (tabulatorFilter.length !== 0) {
-            tableRef?.current.setFilter(tabulatorFilter)
-        }
-    }, [tabulatorFilter])
-
     const filterRoomsByTime = () => {
         if (startDateTime && endDateTime) {
             const formattedStartTime = startDateTime.format('HH:mm') + ':00'
@@ -384,9 +378,11 @@ export default function RoomsTable() {
         }
     }
 
-    console.log('filtro local', filters)
-    console.log('tabulator', tabulatorFilter)
-    console.log('🚀 timeFilterResult:', timeFilterResult)
+    React.useEffect(() => {
+        if (tableRef?.current) {
+            tableRef?.current.setFilter(tabulatorFilter)
+        }
+    }, [tabulatorFilter])
 
     return (
         <div>
