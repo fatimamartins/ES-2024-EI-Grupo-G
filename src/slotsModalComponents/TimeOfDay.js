@@ -1,5 +1,18 @@
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
+/**
+ * `TimeOfDay` is a React functional component that renders a form control for selecting a time of day.
+ *
+ * @component
+ * @param {Object} props - The properties passed to the component.
+ * @param {Object} props.rules - An object representing the current rules.
+ * @param {Function} props.setRules - A function to update the rules.
+ *
+ * @example
+ * <TimeOfDay rules={currentRules} setRules={updateRules} />
+ *
+ * @returns {React.Element} The rendered form control.
+ */
 import React from 'react'
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
 import { DAY_PERIODS } from '../constants'
 
 const TimeOfDay = ({ rules, setRules }) => {

@@ -1,8 +1,5 @@
 import {
-    doesDayMatch,
-    isSameWeek,
     hasRoom,
-    hasFeature,
     doesStartHourMatch,
     doesEndHourMatch,
     isBetweenHours,
@@ -10,91 +7,13 @@ import {
     mkSheduleMap,
     mkId,
     isSameShift,
-    // getFiltersIncludeToApply,
     getFiltersExcludeToApply,
-    isBetweenDates,
     getAllSlots,
     getEndDate,
     getDatesExcludingSundays,
 } from '../lib/replaceCourse' // Replace with the correct path to the replaceCourse.js file
 import dayjs from 'dayjs'
 import { getFormattedDateTime } from '../utils'
-
-// describe('doesDayMatch', () => {
-//     it('returns true when slot matches inclusion rules', () => {
-//         // Define inclusion rules
-//         const rulesToInclude = {
-//             data: {
-//                 value: dayjs('2024-04-05'), // Assuming April 5th, 2024
-//             },
-//         }
-
-//         // Define a slot that matches the inclusion rules
-//         const slot = {
-//             'Data da aula': '05/04/2024', // Assuming the same date format
-//         }
-
-//         // Call doesDayMatch function
-//         const result = doesDayMatch(rulesToInclude, slot)
-
-//         // Assert that the result is true
-//         expect(result).toBe(true)
-//     })
-
-//     it('returns false when slot does not match inclusion rules', () => {
-//         // Define inclusion rules
-//         const rulesToInclude = {
-//             data: {
-//                 value: dayjs('2024-04-05'), // Assuming April 5th, 2024
-//             },
-//         }
-
-//         // Define a slot that does not match the inclusion rules
-//         const slot = {
-//             'Data da aula': '06/04/2024', // Assuming a different date
-//         }
-
-//         // Call doesDayMatch function
-//         const result = doesDayMatch(rulesToInclude, slot)
-
-//         // Assert that the result is false
-//         expect(result).toBe(false)
-//     })
-
-//     it('returns false when rulesToInclude data value is not provided', () => {
-//         // Define inclusion rules without data value
-//         const rulesToInclude = {}
-
-//         // Define a slot
-//         const slot = {
-//             'Data da aula': '05/04/2024', // Assuming the same date format
-//         }
-
-//         // Call doesDayMatch function
-//         const result = doesDayMatch(rulesToInclude, slot)
-
-//         // Assert that the result is false
-//         expect(result).toBe(false)
-//     })
-
-//     it('returns false when slot data is not provided', () => {
-//         // Define inclusion rules
-//         const rulesToInclude = {
-//             data: {
-//                 value: dayjs('2024-04-05'), // Assuming April 5th, 2024
-//             },
-//         }
-
-//         // Define a slot without data
-//         const slot = {}
-
-//         // Call doesDayMatch function
-//         const result = doesDayMatch(rulesToInclude, slot)
-
-//         // Assert that the result is false
-//         expect(result).toBe(false)
-//     })
-// })
 
 describe('hasRoom function', () => {
     test("Should return true if the row's room matches the room specified in the rules for inclusion", () => {
@@ -115,50 +34,12 @@ describe('hasRoom function', () => {
         expect(hasRoom(rulesToInclude, row)).toBe(false)
     })
 
-    /*   test('Should return false if rulesToInclude.salas is not provided', () => {
-        const rulesToInclude = {}; // No salas property provided
-        const row = { 'Sala atribuída à aula': 'Room A' }; // Room A should not match any room specified in the undefined rules
-        expect(hasRoom(rulesToInclude, row)).toBe(false);
-    }); */
-
     test("Should return false if row['Sala atribuída à aula'] is not provided", () => {
         const rulesToInclude = { salas: ['Room A', 'Room B'] }
         const row = {} // Missing room property
         expect(hasRoom(rulesToInclude, row)).toBe(false)
     })
 })
-
-// describe('hasFeature function', () => {
-//     test("Should return true if the row's features match any of the features specified in the rules for inclusion", () => {
-//         const rulesToInclude = { caracteristicas: ['Feature A', 'Feature B'] }
-//         const row = { 'Características da sala pedida para a aula': 'Feature A' } // Feature A should match the features specified in the rules
-//         expect(hasFeature(rulesToInclude, row)).toBe(true)
-//     })
-
-//     test("Should return false if the row's features do not match any of the features specified in the rules for inclusion", () => {
-//         const rulesToInclude = { caracteristicas: ['Feature A', 'Feature B'] }
-//         const row = { 'Características da sala pedida para a aula': 'Feature C' } // Feature C does not match any feature specified in the rules
-//         expect(hasFeature(rulesToInclude, row)).toBe(false)
-//     })
-
-//     test('Should return false if rulesToInclude.caracteristicas is empty', () => {
-//         const rulesToInclude = { caracteristicas: [] } // Empty list of features
-//         const row = { 'Características da sala pedida para a aula': 'Feature A' } // Feature A should not match any feature specified in the empty rules
-//         expect(hasFeature(rulesToInclude, row)).toBe(false)
-//     })
-
-//     /*  test('Should return false if rulesToInclude.caracteristicas is not provided', () => {
-//         const rulesToInclude = {}; // No caracteristicas property provided
-//         const row = { 'Características da sala pedida para a aula': 'Feature A' }; // Feature A should not match any feature specified in the undefined rules
-//         expect(hasFeature(rulesToInclude, row)).toBe(false);
-//     });*/
-
-//     test("Should return false if row['Características da sala pedida para a aula'] is not provided", () => {
-//         const rulesToInclude = { caracteristicas: ['Feature A', 'Feature B'] }
-//         const row = {} // Missing features property
-//         expect(hasFeature(rulesToInclude, row)).toBe(false)
-//     })
-// })
 
 describe('doesStartHourMatch function', () => {
     test('Should return true if the start hour of the slot matches the start hour specified in the rules for exclusion', () => {
@@ -331,57 +212,6 @@ describe('mkId function', () => {
     })
 })
 
-// describe('isSameWeek', () => {
-//     it('returns false when rulesToInclude data value is not provided', () => {
-//         const rulesToInclude = {
-//             data: {}, // Placeholder value for data
-//         }
-//         const slot = {
-//             'Data da aula': '2024-01-01', // Slot date doesn't matter for this test
-//         }
-//         const result = isSameWeek(rulesToInclude, slot)
-//         expect(result).toBe(false)
-//     })
-
-//     it('returns false when slot date is not provided', () => {
-//         const rulesToInclude = {
-//             data: {
-//                 value: dayjs('2024-04-05'),
-//             },
-//         }
-//         const slot = {}
-//         const result = isSameWeek(rulesToInclude, slot)
-//         expect(result).toBe(false)
-//     })
-
-//     it('returns true when slot falls within the same week as specified by the rules', () => {
-//         const rulesToInclude = {
-//             data: {
-//                 value: dayjs('2024-04-05'), // Rules specify a date in the first week of the year 2024
-//             },
-//         }
-//         const slot = {
-//             'Data da aula': '05/04/2024', // Slot falls within the same week as specified by the rules
-//         }
-//         const result = isSameWeek(rulesToInclude, slot)
-//         console.log('Result of test:', result)
-//         expect(result).toBe(true)
-//     })
-
-//     it('returns false when slot falls outside the same week as specified by the rules', () => {
-//         const rulesToInclude = {
-//             data: {
-//                 value: dayjs('2024-04-05'), // Rules specify a date in the first week of the year 2024
-//             },
-//         }
-//         const slot = {
-//             'Data da aula': '31-12-2023', // Slot falls outside the same week as specified by the rules
-//         }
-//         const result = isSameWeek(rulesToInclude, slot)
-//         expect(result).toBe(false)
-//     })
-// })
-
 describe('isSameShift', () => {
     it('returns true when slot falls within the same morning shift', () => {
         // Define exclusion rules for morning shift
@@ -487,62 +317,6 @@ describe('isSameShift', () => {
         expect(result).toBe(false)
     })
 })
-
-// describe('getFiltersIncludeToApply', () => {
-//     it('returns an empty array when rulesToInclude is null', () => {
-//         const rulesToInclude = null
-//         const filters = getFiltersIncludeToApply(rulesToInclude)
-//         expect(filters).toEqual([])
-//     })
-
-//     it('returns an empty array when no rules are provided', () => {
-//         const rulesToInclude = {}
-//         const filters = getFiltersIncludeToApply(rulesToInclude)
-//         expect(filters).toEqual([])
-//     })
-
-//     it('returns an array with hasRoom function when salas are provided', () => {
-//         const rulesToInclude = {
-//             salas: ['Room1', 'Room2'],
-//         }
-//         const filters = getFiltersIncludeToApply(rulesToInclude)
-//         expect(filters).toContain(hasRoom)
-//     })
-
-//     it('returns an array with hasFeature function when caracteristicas are provided', () => {
-//         const rulesToInclude = {
-//             caracteristicas: ['Feature1', 'Feature2'],
-//         }
-//         const filters = getFiltersIncludeToApply(rulesToInclude)
-//         expect(filters).toContain(hasFeature)
-//     })
-
-//     it('returns an array with doesDayMatch function when data.label is "mesmoDia"', () => {
-//         const rulesToInclude = {
-//             data: {
-//                 label: 'mesmoDia',
-//             },
-//         }
-//         const filters = getFiltersIncludeToApply(rulesToInclude)
-//         expect(filters).toContain(doesDayMatch)
-//     })
-
-//     it('returns an array with isSameWeek function when data.label is "mesmaSemana"', () => {
-//         const rulesToInclude = {
-//             data: 'mesmaSemana',
-//         }
-//         const filters = getFiltersIncludeToApply(rulesToInclude)
-//         expect(filters).toContain(isSameWeek)
-//     })
-
-//     it('returns an array with isBetweenDates function when data.label is "outro"', () => {
-//         const rulesToInclude = {
-//             data: 'outro',
-//         }
-//         const filters = getFiltersIncludeToApply(rulesToInclude)
-//         expect(filters).toContain(isBetweenDates)
-//     })
-// })
 
 describe('getFiltersExcludeToApply', () => {
     it('returns an empty array when rulesToExclude is null', () => {

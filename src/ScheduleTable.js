@@ -277,74 +277,73 @@ export default function ScheduleTable() {
     ]
 
     return (
-        <div>
-            <ScheduleTableFilter tableRef={tableRef} />
-            <Stack flexDirection="row" justifyContent="space-between" alignItems="center" mb={2}>
-                <MultipleSelectCheckmarks tableRef={tableRef} />
-                <Tooltip
-                    title={
-                        defaultData.length === 0 || rooms.length === 0
-                            ? 'Verifique se os ficheiros salas e horario estão carregados'
-                            : ''
-                    }
-                >
-                    <span>
-                        <Button
-                            variant="contained"
-                            id="slots-uc"
-                            disabled={defaultData.length === 0 || rooms.length === 0}
-                            onClick={() => setModalSlotsToOpen({ isOpen: true, slots: [] })}
-                            style={defaultData.length === 0 || rooms.length === 0 ? { pointerEvents: 'none' } : {}}
-                            startIcon={<AddIcon />}
-                        >
-                            Aulas UC
-                        </Button>
-                    </span>
-                </Tooltip>
-            </Stack>
-            <ReactTabulator
-                onRef={(r) => (tableRef.current = r.current)}
-                data={dataWithWeekAndSemesterNumber}
-                columns={columns}
-                options={{
-                    pagination: 'local',
-                    paginationSize: 10,
-                    paginationSizeSelector: [6, 10, 15, 20],
-                    movableColumns: true,
-                    paginationCounter: 'rows',
-                    layout: 'fitColumns',
-                    selectable: true,
-                }}
-                events={{
-                    rowClick: function (e, row) {
-                        row.toggleSelect()
-                    },
-                    rowUpdated: function (row) {
-                        row.toggleSelect()
-                    },
-                    rowAdded: function (row) {
-                        row.toggleSelect()
-                    },
-                }}
-            />
-            <ReplaceCourse tableRef={tableRef} />
-            <CourseSlotsModal tableRef={tableRef} />
-            <Stack direction={'row'} mt={2} mb={5} justifyContent={'flex-end'}>
-                <Button
-                    variant="text"
-                    id="download-csv"
-                    onClick={() => tableRef?.current.download('csv', 'horario.csv', { delimiter: ';', bom: true })}
-                >
-                    Download CSV
-                </Button>
-                <Button
-                    variant="text"
-                    id="download-json"
-                    onClick={() => tableRef?.current.download('json', 'horario.json')}
-                >
-                    Download JSON
-                </Button>
-            </Stack>
-        </div>
+        <Tooltip title={defaultData.length === 0 ? 'Por favor carregue o ficheiro horário' : ''}>
+            <div>
+                <ScheduleTableFilter tableRef={tableRef} disabled={defaultData.length === 0} />
+                <Stack flexDirection="row" justifyContent="space-between" alignItems="center" mb={2}>
+                    <MultipleSelectCheckmarks tableRef={tableRef} disabled={defaultData.length === 0} />
+                    <Tooltip title={rooms.length === 0 ? 'Por favor carregue o ficheiro salas' : ''}>
+                        <span>
+                            <Button
+                                variant="contained"
+                                id="slots-uc"
+                                disabled={defaultData.length === 0 || rooms.length === 0}
+                                onClick={() => setModalSlotsToOpen({ isOpen: true, slots: [] })}
+                                style={defaultData.length === 0 || rooms.length === 0 ? { pointerEvents: 'none' } : {}}
+                                startIcon={<AddIcon />}
+                            >
+                                Aulas UC
+                            </Button>
+                        </span>
+                    </Tooltip>
+                </Stack>
+                <ReactTabulator
+                    onRef={(r) => (tableRef.current = r.current)}
+                    data={dataWithWeekAndSemesterNumber}
+                    columns={columns}
+                    options={{
+                        pagination: 'local',
+                        paginationSize: 10,
+                        paginationSizeSelector: [6, 10, 15, 20],
+                        movableColumns: true,
+                        paginationCounter: 'rows',
+                        layout: 'fitColumns',
+                        selectable: true,
+                    }}
+                    events={{
+                        rowClick: function (e, row) {
+                            row.toggleSelect()
+                        },
+                        rowUpdated: function (row) {
+                            if (row.isSelected()) return
+                            row.toggleSelect()
+                        },
+                        rowAdded: function (row) {
+                            row.toggleSelect()
+                        },
+                    }}
+                />
+                <ReplaceCourse tableRef={tableRef} />
+                <CourseSlotsModal tableRef={tableRef} />
+                <Stack direction={'row'} mt={2} mb={5} justifyContent={'flex-end'}>
+                    <Button
+                        variant="text"
+                        id="download-csv"
+                        disabled={defaultData.length === 0}
+                        onClick={() => tableRef?.current.download('csv', 'horario.csv', { delimiter: ';', bom: true })}
+                    >
+                        Download CSV
+                    </Button>
+                    <Button
+                        variant="text"
+                        id="download-json"
+                        disabled={defaultData.length === 0}
+                        onClick={() => tableRef?.current.download('json', 'horario.json')}
+                    >
+                        Download JSON
+                    </Button>
+                </Stack>
+            </div>
+        </Tooltip>
     )
 }
