@@ -69,7 +69,6 @@ export default function RemoteFile({ id }) {
                 }
                 return { ...item, id: index }
             })
-            console.log('🚀 ~ dataWithIndex ~ dataWithIndex:', dataWithIndex)
             setData(dataWithIndex)
         } catch (error) {
             console.error('Error fetching CSV:', error)
