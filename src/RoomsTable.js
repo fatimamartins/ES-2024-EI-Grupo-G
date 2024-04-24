@@ -481,7 +481,6 @@ export default function RoomsTable() {
                                                 checked={availableDecision === 'Disponível'}
                                                 inputProps={{ 'aria-label': 'ant design' }}
                                                 disabled={defaultScheduleData.length === 0}
-                                                required
                                                 onChange={(e, c) => setAvailableDecision(c ? 'Disponível' : 'Ocupado')}
                                             />
                                             <Typography>Disponível</Typography>
@@ -510,7 +509,6 @@ export default function RoomsTable() {
                                         checked={logicOperator === 'AND'}
                                         inputProps={{ 'aria-label': 'ant design' }}
                                         onChange={(e, c) => setLogicOperator(c ? 'AND' : 'OR')}
-                                        required
                                         disabled={defaultData.length === 0}
                                     />
                                     <Typography>AND</Typography>
