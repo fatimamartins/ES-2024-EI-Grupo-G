@@ -69,7 +69,7 @@ const CourseSlotsModal = ({ tableRef }) => {
     const schedule = useAtomValue(atomSchedule)
     const rooms = useAtomValue(atomRooms)
     const setValue = useSetAtom(atomModalSlotsClass)
-    const [courses, setCourses] = React.useState(null)
+    const [courses, setCourses] = React.useState([])
     const [shifts, setShifts] = React.useState(null)
     const [degree, setDegree] = React.useState(null)
     const [rulesToInclude, setRulesToInclude] = React.useState(null)
@@ -149,9 +149,7 @@ const CourseSlotsModal = ({ tableRef }) => {
                                     onChange={(event, newValue) => {
                                         setRulesToInclude({ ...rulesToInclude, unidadeCurricular: newValue })
                                     }}
-                                    renderInput={(params) => (
-                                        <TextField {...params} label="Unidade Curricular" required />
-                                    )}
+                                    renderInput={(params) => <TextField {...params} label="Unidade Curricular" />}
                                     // onChange={(e, value) => {
                                     //     console.log('🚀 ~ CourseSlotsModal ~ value:', value)
                                     //     setRulesToInclude({ ...rulesToInclude, unidadeCurricular: value })
