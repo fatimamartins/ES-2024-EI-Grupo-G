@@ -31,7 +31,26 @@ export default function CsvReader({ id }) {
      * @param {Object} fileInfo - Information about the loaded file.
      */
     const handleFileLoaded = (data, fileInfo) => {
-        setData(data)
+        const dataWithIndex = data.map((item, index) => {
+            if (id === 'scheduleReader') {
+                const parseInscritos = parseInt(item['Inscritos no turno'])
+                return { ...item, id: index, 'Inscritos no turno': parseInscritos }
+            } else if (id === 'roomsReader') {
+                const parseNormal = parseInt(item['Capacidade Normal'])
+                const parseExame = parseInt(item['Capacidade Exame'])
+                const parseCaracteristicas = parseInt(item['Nº características'])
+
+                return {
+                    ...item,
+                    id: index,
+                    'Capacidade Normal': parseNormal,
+                    'Capacidade Exame': parseExame,
+                    'Nº características': parseCaracteristicas,
+                }
+            }
+            return { ...item, id: index }
+        })
+        setData(dataWithIndex)
     }
 
     return (

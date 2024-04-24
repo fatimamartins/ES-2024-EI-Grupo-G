@@ -57,7 +57,7 @@ const colName = [
  * @name MultipleSelectCheckmarks
  * @returns {JSX.Element} The rendered MultipleSelectCheckmarks component.
  */
-export default function MultipleSelectCheckmarks({ tableRef }) {
+export default function MultipleSelectCheckmarks({ tableRef, disabled }) {
     const [selectedColumns, setSelectedColumns] = useState(colName) // the default value is all columns because all columns are visible by default
 
     const handleChange = (event) => {
@@ -80,7 +80,7 @@ export default function MultipleSelectCheckmarks({ tableRef }) {
     }
 
     return (
-        <Stack direction={'row'} mb={1} justifyContent="flex-end">
+        <Stack direction={'row'}>
             <FormControl sx={{ width: 350 }}>
                 <InputLabel id="multiple-checkbox-label">Colunas visíveis</InputLabel>
                 <Select
@@ -92,6 +92,7 @@ export default function MultipleSelectCheckmarks({ tableRef }) {
                     label="Colunas visíveis"
                     renderValue={(selected) => selected.join(', ')}
                     MenuProps={MenuProps}
+                    disabled={disabled}
                 >
                     {colName.map((col) => (
                         <MenuItem key={col} value={col}>

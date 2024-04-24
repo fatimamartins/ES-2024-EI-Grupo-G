@@ -1,4 +1,12 @@
-import React from 'react'
+/**
+ * @file This is a component for a filter of the shedule table using react-tabulator.
+ */
+
+/**
+ * @external React
+ * @see {@link https://reactjs.org/}
+ */
+import * as React from 'react'
 import {
     Button,
     Stack,
@@ -31,7 +39,7 @@ const defaultFilterFields = [
     { title: 'Semana do semestre', field: 'Semana do semestre' },
 ]
 
-export default function MultipleSelectCheckmarks({ tableRef }) {
+function ScheduleTableFilter({ tableRef, disabled }) {
     const [selectedField, setSelectedField] = React.useState('')
     const [value, setValue] = React.useState('')
     const [logicOperator, setLogicOperator] = React.useState('AND')
@@ -39,7 +47,8 @@ export default function MultipleSelectCheckmarks({ tableRef }) {
     const [filters, setFilters] = React.useState([])
     const [tabulatorFilter, setTabulatorFilter] = React.useState([])
 
-    const addFilter = () => {
+    const addFilter = (e) => {
+        e.preventDefault()
         setFilters([
             ...filters,
             {
@@ -116,70 +125,80 @@ export default function MultipleSelectCheckmarks({ tableRef }) {
     }, [tableRef, tabulatorFilter])
 
     return (
-        <div>
+        <Stack mt={6} mb={4}>
             <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2 }}>
                 <Typography>OR</Typography>
                 <Switch
-                    defaultChecked
+                    checked={logicOperator === 'AND'}
                     inputProps={{ 'aria-label': 'ant design' }}
                     onChange={(e, c) => setLogicOperator(c ? 'AND' : 'OR')}
+                    disabled={disabled}
                 />
                 <Typography>AND</Typography>
             </Stack>
-            <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2, mb: 2 }}>
-                <FormControl sx={{ width: 350 }}>
-                    <InputLabel id="simple-select-label1">Campo a filtrar</InputLabel>
-                    <Select
-                        labelId="simple-select-label1"
-                        id="simple-select1"
-                        value={selectedField}
-                        label="Campo a filtrar"
-                        onChange={(event) => setSelectedField(event.target.value)}
-                    >
-                        {defaultFilterFields.map((col) => {
-                            return (
-                                <MenuItem key={col.title} value={col.field}>
-                                    <ListItemText primary={col.title} />
-                                </MenuItem>
-                            )
-                        })}
-                    </Select>
-                </FormControl>
-                <FormControl sx={{ width: 100 }}>
-                    <InputLabel id="simple-select-label2">Tipo</InputLabel>
-                    <Select
-                        labelId="simple-select-label2"
-                        id="simple-select2"
-                        value={type}
-                        label="Tipo"
-                        onChange={(event) => setType(event.target.value)}
-                    >
-                        {defaultTypeOfFilterComparison.map((t, index) => {
-                            return (
-                                <MenuItem key={index} value={t}>
-                                    {t}
-                                </MenuItem>
-                            )
-                        })}
-                    </Select>
-                </FormControl>
-                <TextField
-                    sx={{ ml: 1, width: 350 }}
-                    id="outlined-basic"
-                    placeholder="valor"
-                    variant="outlined"
-                    value={value}
-                    onChange={(event) => {
-                        setValue(event.target.value)
-                    }}
-                />
-                <Button variant="contained" onClick={addFilter} sx={{ ml: 1 }}>
-                    Adicionar filtro
-                </Button>
-                <Button variant="text" onClick={clear}>
-                    Limpar filtros
-                </Button>
-            </Stack>
+            <form onSubmit={(e) => addFilter(e)}>
+                <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2, mb: 2 }}>
+                    <FormControl sx={{ width: 350 }}>
+                        <InputLabel id="simple-select-label1">Campo a filtrar</InputLabel>
+                        <Select
+                            labelId="simple-select-label1"
+                            id="simple-select1"
+                            value={selectedField}
+                            label="Campo a filtrar"
+                            required
+                            onChange={(event) => setSelectedField(event.target.value)}
+                            disabled={disabled}
+                        >
+                            {defaultFilterFields.map((col) => {
+                                return (
+                                    <MenuItem key={col.title} value={col.field}>
+                                        <ListItemText primary={col.title} />
+                                    </MenuItem>
+                                )
+                            })}
+                        </Select>
+                    </FormControl>
+                    <FormControl sx={{ width: 100, ml: 1 }}>
+                        <InputLabel id="simple-select-label2">Tipo</InputLabel>
+                        <Select
+                            labelId="simple-select-label2"
+                            id="simple-select2"
+                            value={type}
+                            label="Tipo"
+                            onChange={(event) => setType(event.target.value)}
+                            disabled={disabled}
+                        >
+                            {defaultTypeOfFilterComparison.map((t, index) => {
+                                return (
+                                    <MenuItem key={index} value={t}>
+                                        {t}
+                                    </MenuItem>
+                                )
+                            })}
+                        </Select>
+                    </FormControl>
+                    <TextField
+                        sx={{ ml: 1, width: 350 }}
+                        id="outlined-basic"
+                        placeholder="valor"
+                        variant="outlined"
+                        value={value}
+                        required
+                        onChange={(event) => {
+                            setValue(event.target.value)
+                        }}
+                        disabled={disabled}
+                    />
+                    <Stack direction="row" alignContent={'center'}>
+                        <Button variant="contained" type="submit" sx={{ ml: 1 }} disabled={disabled}>
+                            Adicionar filtro
+                        </Button>
+                        <Button variant="text" onClick={clear} disabled={disabled}>
+                            Limpar filtros
+                        </Button>
+                    </Stack>
+                </Stack>
+            </form>
             {filters && filters.length > 0 && (
                 <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2 }}>
                     {filters.map((filter, index) => {
@@ -212,6 +231,8 @@ export default function MultipleSelectCheckmarks({ tableRef }) {
                     })}
                 </Stack>
             )}
-        </div>
+        </Stack>
     )
 }
+
+export default ScheduleTableFilter

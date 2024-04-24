@@ -3,7 +3,8 @@
  */
 
 /** @module date-fns */
-import { format, getISOWeek } from 'date-fns'
+import { format, getISOWeek, isSameDay, getDay } from 'date-fns'
+import { WEEKDAYS } from './constants'
 /** @module dayjs */
 
 /**
@@ -89,6 +90,25 @@ export function parseHour(hourString) {
 }
 
 /**
+ * Parses a string representation of time into a numerical representation.
+ *
+ * @function
+ * @name getCourseDurationToMilliseconds
+ * @param {string} start - A string representing the start time for a course in the format 'HH:MM:SS'.
+ * * @param {string} end - A string representing the end time for a course in the format 'HH:MM:SS'.
+ * @returns {number|null} The duration of a course parsed in milliseconds
+ */
+export function getCourseDurationToMilliseconds(start, end) {
+    if (start && end) {
+        const startHour = parseHour(start)
+        const endHour = parseHour(end)
+        const duration = endHour - startHour
+        return duration
+    }
+    return 0
+}
+
+/**
  * Compares two date strings and returns a number indicating their sort order.
  *
  * @function
@@ -149,7 +169,7 @@ export function validateRoomAvailability(room, date, hour, horario) {
  * `getFormattedDateTime` is a function that formats a given date and time into a specific string format.
  *
  * @param {string} date - The date to format, in 'DD/MM/YYYY' format.
- * @param {string} time - The time to format, in 'HH:mm' format.
+ * @param {string} time - The time to format, in 'HH:mm:ss' format.
  * @returns {string} - Returns the formatted date and time as a string.
  */
 export function getFormattedDateTime(date, time, formatStr) {
@@ -166,4 +186,52 @@ export function getFormattedDateTime(date, time, formatStr) {
         return format(combinedDateTime, formatStr)
     }
     return ''
+}
+
+/**
+ * @function getWeek
+ * `getWeek` is a function that return the week number of a given date.
+ *
+ * @param {string} date - The date to format, in 'DD/MM/YYYY' format.
+ * @returns {string} - Returns the week number of the given date.
+ */
+export function getWeek(date) {
+    return getISOWeek(parseDate(date))
+}
+
+/**
+ * @function getSemesterWeek
+ * `getSemesterWeek` is a function that return the semester week number of a given date.
+ *
+ * @param {string} date - The date to format, in 'DD/MM/YYYY' format.
+ * @returns {string} - Returns the semester week number of a given date.
+ */
+export function getSemesterWeek(oldDate, semesterWeek, newDate) {
+    const dif = getWeek(newDate) - getWeek(oldDate)
+    return semesterWeek + dif
+}
+
+/**
+ * @function getDayOfTheWeek
+ * `getDayOfTheWeek` is a function that return the day of the week of a given date.
+ *
+ * @param {string} date - The date to format, in 'DD/MM/YYYY' format.
+ * @returns {string} - Returns the day of the week of a given date.
+ */
+export function getDayOfTheWeek(date) {
+    const index = getDay(parseDate(date))
+    if (index === 0) return null // 0 is Sunday but is not a valid day for the application
+    return WEEKDAYS[index - 1] // Adjust the index to match the WEEKDAYS array. 0 is Monday
+}
+
+/**
+ * @function isSameDate
+ * `isSameDate` is a function that return true if two dates are the same.
+ *
+ * @param {string} date - The date to format, in 'DD/MM/YYYY' format.
+ * * @param {string} date - The date to format, in 'DD/MM/YYYY' format.
+ * @returns {boolean} - Returns true if the two dates are the same.
+ */
+export function isSameDate(date1, date2) {
+    return isSameDay(parseDate(date1), parseDate(date2))
 }
