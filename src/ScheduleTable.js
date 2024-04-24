@@ -320,6 +320,7 @@ export default function ScheduleTable() {
                         row.toggleSelect()
                     },
                     rowUpdated: function (row) {
+                        if (row.isSelected()) return
                         row.toggleSelect()
                     },
                     rowAdded: function (row) {
