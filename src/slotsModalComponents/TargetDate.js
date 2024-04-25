@@ -65,6 +65,7 @@ const TargetDate = ({ rules, setRules, options, defaultValue }) => {
                                 views={['day', 'month', 'year', 'hours', 'minutes']}
                                 value={rules?.dataFim || null}
                                 onChange={(e) => setRules({ ...rules, dataFim: e })}
+                                minDateTime={rules?.dataInicio}
                             />
                         </DemoContainer>
                     </LocalizationProvider>

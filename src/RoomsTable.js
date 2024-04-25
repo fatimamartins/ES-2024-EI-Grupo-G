@@ -472,6 +472,7 @@ export default function RoomsTable() {
                                                     onChange={(newValue) => {
                                                         setEndDateTime(newValue)
                                                     }}
+                                                    minDateTime={startDateTime}
                                                 />
                                             </DemoContainer>
                                         </LocalizationProvider>
