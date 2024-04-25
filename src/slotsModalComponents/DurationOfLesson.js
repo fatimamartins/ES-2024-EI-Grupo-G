@@ -19,13 +19,13 @@ import { COURSE_DURATION } from '../constants'
 const DurationOfLesson = ({ rules, setRules }) => {
     return (
         <FormControl sx={{ minWidth: 180, marginLeft: 2 }}>
-            <InputLabel id="label4">Duração</InputLabel>
+            <InputLabel id="label4">Duração *</InputLabel>
             <Select
                 labelId="label4"
                 required
                 id="select4"
                 value={rules?.duracao || ''}
-                label="Duração"
+                label="Duração *"
                 onChange={(e) => {
                     setRules({ ...rules, duracao: parseInt(e.target.value) })
                 }}

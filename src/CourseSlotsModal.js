@@ -71,7 +71,6 @@ const CourseSlotsModal = ({ tableRef }) => {
     const setValue = useSetAtom(atomModalSlotsClass)
     const [courses, setCourses] = React.useState([])
     const [shifts, setShifts] = React.useState(null)
-    const [degree, setDegree] = React.useState(null)
     const [rulesToInclude, setRulesToInclude] = React.useState(null)
     const [rulesToExclude, setRulesToExclude] = React.useState(null)
     const [slots, setSlots] = React.useState([]) // list of possible slots
@@ -100,9 +99,6 @@ const CourseSlotsModal = ({ tableRef }) => {
                 if (item['Unidade Curricular'] === rulesToInclude?.unidadeCurricular) set.add(item.Turno)
             })
             setShifts([...set])
-            const item = schedule.find((item) => item['Unidade Curricular'] === rulesToInclude?.unidadeCurricular)
-            // save the degree of the course chosen to be used when inserting the slots in schedule
-            setDegree(item.Curso)
         }
     }, [rulesToInclude?.unidadeCurricular, schedule])
 
@@ -149,7 +145,7 @@ const CourseSlotsModal = ({ tableRef }) => {
                                     onChange={(event, newValue) => {
                                         setRulesToInclude({ ...rulesToInclude, unidadeCurricular: newValue })
                                     }}
-                                    renderInput={(params) => <TextField {...params} label="Unidade Curricular" />}
+                                    renderInput={(params) => <TextField {...params} label="Unidade Curricular *" />}
                                     // onChange={(e, value) => {
                                     //     console.log('🚀 ~ CourseSlotsModal ~ value:', value)
                                     //     setRulesToInclude({ ...rulesToInclude, unidadeCurricular: value })
@@ -271,17 +267,34 @@ const CourseSlotsModal = ({ tableRef }) => {
                                 <Button onClick={handleCancel}>Cancelar</Button>
                                 <Button
                                     onClick={() => {
-                                        const slotsAsTableRows = selectedSlots.map((slot) => ({
-                                            Curso: degree,
-                                            'Unidade Curricular': rulesToInclude.unidadeCurricular,
-                                            Turno: rulesToInclude.turno,
-                                            'Data da aula': slot['Data da aula'],
-                                            'Hora início da aula': slot['Hora início da aula'],
-                                            'Hora fim da aula': slot['Hora fim da aula'],
-                                            'Sala atribuída à aula': slot['Sala atribuída à aula'],
-                                            'Dia da semana': getDayOfTheWeek(slot['Data da aula']),
-                                            'Semana do ano': getWeek(parseDate(slot['Data da aula'])),
-                                        }))
+                                        const appointment = schedule.find(
+                                            (row) =>
+                                                row['Unidade Curricular'] === rulesToInclude?.unidadeCurricular &&
+                                                row.Turno === rulesToInclude?.turno
+                                        )
+
+                                        const slotsAsTableRows = selectedSlots.map((slot) => {
+                                            const roomFeatures = schedule.find(
+                                                (row) =>
+                                                    row['Sala atribuída à aula'] === slot['Sala atribuída à aula'] &&
+                                                    row['Características da sala pedida para a aula'] !==
+                                                        'Não necessita de sala'
+                                            )['Características da sala pedida para a aula']
+
+                                            return {
+                                                Curso: appointment.Curso,
+                                                'Unidade Curricular': rulesToInclude.unidadeCurricular,
+                                                Turno: rulesToInclude.turno,
+                                                'Inscritos no turno': appointment['Inscritos no turno'],
+                                                'Data da aula': slot['Data da aula'],
+                                                'Hora início da aula': slot['Hora início da aula'],
+                                                'Hora fim da aula': slot['Hora fim da aula'],
+                                                'Características da sala pedida para a aula': roomFeatures,
+                                                'Sala atribuída à aula': slot['Sala atribuída à aula'],
+                                                'Dia da semana': getDayOfTheWeek(slot['Data da aula']),
+                                                'Semana do ano': getWeek(parseDate(slot['Data da aula'])),
+                                            }
+                                        })
                                         tableRef.current.updateOrAddData(slotsAsTableRows)
                                         handleCancel()
                                     }}

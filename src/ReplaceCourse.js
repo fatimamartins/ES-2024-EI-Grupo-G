@@ -167,11 +167,21 @@ const ReplaceCourse = ({ tableRef }) => {
     }
 
     const updateTable = (selectedSlot) => {
+        const roomFeatures = // if room is different, get the features of the new room
+            selectedSlot['Sala atribuída à aula'] !== selectedCourse['Sala atribuída à aula']
+                ? schedule.find(
+                      (row) =>
+                          row['Sala atribuída à aula'] === selectedSlot['Sala atribuída à aula'] &&
+                          row['Características da sala pedida para a aula'] !== 'Não necessita de sala'
+                  )['Características da sala pedida para a aula']
+                : selectedCourse['Características da sala pedida para a aula']
+
         if (isSameDate(selectedCourse['Data da aula'], selectedSlot['Data da aula'])) {
             tableRef.current.updateRow(selectedCourse.id, {
                 'Data da aula': selectedSlot['Data da aula'],
                 'Hora início da aula': selectedSlot['Hora início da aula'],
                 'Hora fim da aula': selectedSlot['Hora fim da aula'],
+                'Características da sala pedida para a aula': roomFeatures,
                 'Sala atribuída à aula': selectedSlot['Sala atribuída à aula'],
             })
         } else {
@@ -179,6 +189,7 @@ const ReplaceCourse = ({ tableRef }) => {
                 'Data da aula': selectedSlot['Data da aula'],
                 'Hora início da aula': selectedSlot['Hora início da aula'],
                 'Hora fim da aula': selectedSlot['Hora fim da aula'],
+                'Características da sala pedida para a aula': roomFeatures,
                 'Sala atribuída à aula': selectedSlot['Sala atribuída à aula'],
                 'Dia da semana': getDayOfTheWeek(selectedSlot['Data da aula']),
                 'Semana do ano': getWeek(parseDate(selectedSlot['Data da aula'])),
