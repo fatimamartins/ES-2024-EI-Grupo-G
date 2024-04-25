@@ -214,7 +214,7 @@ export default function ScheduleTable() {
             width: 147,
             editor: 'list',
             editorParams: {
-                values: ROOM_FEATURES,
+                values: [...ROOM_FEATURES, 'Não necessita de sala'],
             },
             validator: function (cell, value) {
                 if (value && value.trim() === '' && cell.getInitialValue() === '') {

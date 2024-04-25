@@ -250,7 +250,6 @@ export const ROOM_FEATURES = [
     'Sala de Aulas normal',
     'videoconferência',
     'Átrio',
-    'Não necessita de sala',
 ]
 
 /**
