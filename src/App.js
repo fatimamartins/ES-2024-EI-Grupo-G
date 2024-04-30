@@ -16,6 +16,8 @@ import CsvReader from './CsvReader'
 import RemoteFile from './RemoteFile'
 /** @module RoomsTable */
 import RoomsTable from './RoomsTable'
+
+import Navbar from './Navbar'
 import 'react-tabulator/lib/css/tabulator.min.css'
 import 'react-tabulator/lib/styles.css'
 // import 'react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
@@ -35,6 +37,7 @@ import 'react-tabulator/css/tabulator_bootstrap3.css'
 export default function App() {
     return (
         <Container sx={{ maxWidth: 1250, minWidth: 1250 }}>
+            <Navbar />
             <h1>Aplicação de suporte à gestão de horários</h1>
             <h2>Horário</h2>
             <Stack direction="row" alignItems="center" mt={6} mb={2}>
