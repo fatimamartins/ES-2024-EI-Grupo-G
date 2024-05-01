@@ -10,7 +10,15 @@ import Container from '@mui/material/Container'
 import Button from '@mui/material/Button'
 import MenuItem from '@mui/material/MenuItem'
 
-const pages = ['Horário e Salas', 'Conflitualidade entre Aulas', 'Ocupação de Salas']
+/** @module App.css */
+import './App.css'
+import { Link } from 'react-router-dom'
+
+const pages = [
+    { name: 'Horário e Salas', path: '' },
+    { name: 'Conflitualidade entre Aulas', path: 'Conflitualidade' },
+    { name: 'Ocupação de Salas', path: 'Ocupacao' },
+]
 
 function NavBar() {
     const [anchorElNav, setAnchorElNav] = React.useState(null)
@@ -25,7 +33,7 @@ function NavBar() {
 
     return (
         <AppBar position="static">
-            <Container maxWidth="xl">
+            <Container sx={{ maxWidth: 1250, minWidth: 1250 }}>
                 <Toolbar disableGutters>
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                         <IconButton
@@ -57,8 +65,12 @@ function NavBar() {
                             }}
                         >
                             {pages.map((page) => (
-                                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                                    <Typography textAlign="center">{page}</Typography>
+                                <MenuItem key={page.name} onClick={handleCloseNavMenu}>
+                                    <Typography textAlign="center">
+                                        <Link style={{ textDecoration: 'none', color: '#1976d2' }} to={`/${page.path}`}>
+                                            {page.name}
+                                        </Link>
+                                    </Typography>
                                 </MenuItem>
                             ))}
                         </Menu>
@@ -66,11 +78,11 @@ function NavBar() {
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                         {pages.map((page) => (
                             <Button
-                                key={page}
+                                key={page.name}
                                 onClick={handleCloseNavMenu}
                                 sx={{ my: 2, color: 'white', display: 'block' }}
                             >
-                                {page}
+                                <Link to={`/${page.path}`}>{page.name}</Link>
                             </Button>
                         ))}
                     </Box>
