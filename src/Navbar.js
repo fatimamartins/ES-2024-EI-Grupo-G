@@ -1,92 +1,82 @@
-// Importing files from Material-UI
-import React, { useState } from 'react'
-import { makeStyles } from '@material-ui/core/styles'
-import AppBar from '@material-ui/core/AppBar'
-import Toolbar from '@material-ui/core/Toolbar'
-import Typography from '@material-ui/core/Typography'
-import MenuIcon from '@material-ui/icons/Menu'
-import Button from '@material-ui/core/Button'
-import useMediaQuery from '@mui/material/useMediaQuery'
+import * as React from 'react'
+import AppBar from '@mui/material/AppBar'
+import Box from '@mui/material/Box'
+import Toolbar from '@mui/material/Toolbar'
+import IconButton from '@mui/material/IconButton'
+import Typography from '@mui/material/Typography'
+import Menu from '@mui/material/Menu'
+import MenuIcon from '@mui/icons-material/Menu'
+import Container from '@mui/material/Container'
+import Button from '@mui/material/Button'
+import MenuItem from '@mui/material/MenuItem'
 
-import { List, ListItem, ListItemText, Collapse } from '@mui/material'
-import ExpandLess from '@mui/icons-material/ExpandLess'
-import ExpandMore from '@mui/icons-material/ExpandMore'
+const pages = ['Horário e Salas', 'Conflitualidade entre Aulas', 'Ocupação de Salas']
 
-// Using Inline Styling
-const useStyles = makeStyles((theme) => ({
-    root: {
-        flexGrow: 1,
-    },
-    menuButton: {
-        marginRight: theme.spacing(2),
-    },
-}))
+function NavBar() {
+    const [anchorElNav, setAnchorElNav] = React.useState(null)
 
-// Exporting Default Navbar to the App.js File
-export default function Navbar() {
-    const classes = useStyles()
-    const small = useMediaQuery('(max-width:600px)')
-    const full = useMediaQuery('(min-width:600px)')
+    const handleOpenNavMenu = (event) => {
+        setAnchorElNav(event.currentTarget)
+    }
 
-    const [open, setOpen] = useState(false)
-
-    const handleClick = () => {
-        setOpen(!open)
+    const handleCloseNavMenu = () => {
+        setAnchorElNav(null)
     }
 
     return (
-        <div className={classes.root}>
-            <AppBar position="static">
-                <Toolbar variant="dense">
-                    {small && (
-                        <>
-                            <List>
-                                <ListItem button>
-                                    <Button onClick={handleClick}>
-                                        <MenuIcon />
-                                        {open ? <ExpandLess /> : <ExpandMore />}
-                                    </Button>
-                                    <Typography
-                                        variant="h6"
-                                        color="inherit"
-                                        onClick={() => {
-                                            console.log('logo clicked')
-                                            setOpen(false)
-                                        }}
-                                    >
-                                        Gestão de Horários
-                                    </Typography>
-                                </ListItem>
-                                <Collapse in={open} timeout="auto" unmountOnExit>
-                                    <List component="div" disablePadding>
-                                        <ListItem button>
-                                            <ListItemText primary="Horário e Salas" />
-                                        </ListItem>
-                                        <ListItem button>
-                                            <ListItemText primary="Network Graph" />
-                                        </ListItem>{' '}
-                                        <ListItem button>
-                                            <ListItemText primary="Heatmap" />
-                                        </ListItem>
-                                    </List>
-                                </Collapse>
-                            </List>
-                        </>
-                    )}
-
-                    {full && (
-                        <>
-                            <Typography variant="h6" color="inherit">
-                                Gestão de Horários
-                            </Typography>
-                            <Button color="inherit">Horário e Salas</Button>
-
-                            <Button color="inherit">Network Graph</Button>
-                            <Button color="inherit">Heatmap</Button>
-                        </>
-                    )}
+        <AppBar position="static">
+            <Container maxWidth="xl">
+                <Toolbar disableGutters>
+                    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+                        <IconButton
+                            size="large"
+                            aria-label="account of current user"
+                            aria-controls="menu-appbar"
+                            aria-haspopup="true"
+                            onClick={handleOpenNavMenu}
+                            color="inherit"
+                        >
+                            <MenuIcon />
+                        </IconButton>
+                        <Menu
+                            id="menu-appbar"
+                            anchorEl={anchorElNav}
+                            anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'left',
+                            }}
+                            keepMounted
+                            transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'left',
+                            }}
+                            open={Boolean(anchorElNav)}
+                            onClose={handleCloseNavMenu}
+                            sx={{
+                                display: { xs: 'block', md: 'none' },
+                            }}
+                        >
+                            {pages.map((page) => (
+                                <MenuItem key={page} onClick={handleCloseNavMenu}>
+                                    <Typography textAlign="center">{page}</Typography>
+                                </MenuItem>
+                            ))}
+                        </Menu>
+                    </Box>
+                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+                        {pages.map((page) => (
+                            <Button
+                                key={page}
+                                onClick={handleCloseNavMenu}
+                                sx={{ my: 2, color: 'white', display: 'block' }}
+                            >
+                                {page}
+                            </Button>
+                        ))}
+                    </Box>
                 </Toolbar>
-            </AppBar>
-        </div>
+            </Container>
+        </AppBar>
     )
 }
+export default NavBar
