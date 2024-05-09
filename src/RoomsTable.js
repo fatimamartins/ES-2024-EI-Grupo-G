@@ -366,7 +366,7 @@ export default function RoomsTable() {
                 <form onSubmit={(e) => addFilter(e)}>
                     <div>
                         <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 8, mb: 3 }}>
-                            <FormControl sx={{ width: 350, height: 56 }}>
+                            <FormControl sx={{ width: 350 }}>
                                 <InputLabel id="simple-select-label1">Tipo de filtro</InputLabel>
                                 <Select
                                     labelId="simple-select-label1"
@@ -376,6 +376,7 @@ export default function RoomsTable() {
                                     disabled={defaultData.length === 0}
                                     required
                                     onChange={(event) => setSelectedField(event.target.value)}
+                                    sx={{ height: 57 }}
                                 >
                                     {defaultFilterFields.map((col, index) => {
                                         const isTimeFilterDisabled =

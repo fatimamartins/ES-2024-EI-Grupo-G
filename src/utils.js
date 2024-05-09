@@ -235,3 +235,12 @@ export function getDayOfTheWeek(date) {
 export function isSameDate(date1, date2) {
     return isSameDay(parseDate(date1), parseDate(date2))
 }
+
+export const randomColor = () => {
+    const digits = '0123456789abcdef'
+    let code = '#'
+    for (let i = 0; i < 6; i++) {
+        code += digits.charAt(Math.floor(Math.random() * 16))
+    }
+    return code
+}
