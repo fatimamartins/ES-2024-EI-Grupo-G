@@ -5,18 +5,20 @@
 /** @module react */
 import React, { useEffect } from 'react'
 
+import { isAfter, isBefore } from 'date-fns'
 import { Button, Checkbox, FormControl, InputLabel, ListItemText, MenuItem, Select, Stack } from '@mui/material'
 import { useAtomValue } from 'jotai'
 import { atomSchedule } from './atoms/schedule'
 import Graph from 'graphology'
 import { SigmaContainer, useLoadGraph } from '@react-sigma/core'
 import '@react-sigma/core/lib/react-sigma.min.css'
-import { getCourseDurationToMilliseconds, randomColor } from './utils'
+import { getCourseDurationToMilliseconds, parseDate, randomColor } from './utils'
 import { ROOM_FEATURES } from './constants'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import dayjs from 'dayjs'
 
 /** @constant {number} ITEM_HEIGHT - The height of each item in the select menu. */
 const ITEM_HEIGHT = 48
@@ -78,10 +80,10 @@ export default function Home() {
             filters.push((appointment) => selectedCourses.includes(appointment['Unidade Curricular']))
         }
         if (startDate) {
-            filters.push((appointment) => appointment['Data da aula'] >= startDate)
+            filters.push((appointment) => isAfter(parseDate(appointment['Data da aula']), parseDate(startDate)))
         }
         if (endDate) {
-            filters.push((appointment) => appointment['Data da aula'] <= endDate)
+            filters.push((appointment) => isBefore(parseDate(appointment['Data da aula']), parseDate(endDate)))
         }
 
         return filters
@@ -97,7 +99,6 @@ export default function Home() {
         }
     }
 
-    console.log('🚀 ~ graphData.forEach ~ graphData:', graphData)
     // creating the graph, nodes and edges
     const map = new Map()
     graphData.forEach((appointment) => {
@@ -112,7 +113,6 @@ export default function Home() {
             map.set(id, appoitmentDuration)
         }
     })
-    console.log('🚀 ~ Home ~ map:', map)
 
     const checkRelation = (node1, node2) => {
         const diff = Math.abs(node1 - node2)
@@ -253,12 +253,12 @@ export default function Home() {
                 </FormControl>
                 <Stack direction="row" sx={{ marginBottom: '10px' }}>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DemoContainer components={['DatePicker']} sx={{ paddingTop: 0, marginRight: '8px' }}>
+                        <DemoContainer components={['DatePicker']} sx={{ marginRight: '8px' }}>
                             <DatePicker
                                 label="Data de início"
                                 format="DD-MM-YYYY"
                                 views={['day', 'month', 'year']}
-                                value={startDate}
+                                value={dayjs(startDate, 'DD/MM/YYYY')}
                                 disabled={schedule.length === 0}
                                 onChange={(newValue) => {
                                     const dateString = newValue.format('DD/MM/YYYY')
@@ -269,12 +269,12 @@ export default function Home() {
                         </DemoContainer>
                     </LocalizationProvider>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DemoContainer components={['DatePicker']} sx={{ paddingTop: 0 }}>
+                        <DemoContainer components={['DatePicker']}>
                             <DatePicker
                                 label="Data de fim"
                                 format="DD-MM-YYYY"
                                 views={['day', 'month', 'year']}
-                                value={endDate}
+                                value={dayjs(endDate, 'DD/MM/YYYY')}
                                 disabled={schedule.length === 0}
                                 onChange={(newValue) => {
                                     const dateString = newValue.format('DD/MM/YYYY')
