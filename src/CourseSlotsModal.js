@@ -19,7 +19,18 @@ import { useAtomValue, useSetAtom } from 'jotai'
  */
 
 import { atomModalSlotsClass } from './atoms/modalSlotsClass'
-import { Autocomplete, Box, Button, FormControl, Modal, Stack, TextField, Typography } from '@mui/material'
+import {
+    Box,
+    Button,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Modal,
+    Select,
+    Stack,
+    TextField,
+    Typography,
+} from '@mui/material'
 import { atomSchedule } from './atoms/schedule'
 import dayjs from 'dayjs'
 import DurationOfLesson from './slotsModalComponents/DurationOfLesson'
@@ -134,23 +145,23 @@ const CourseSlotsModal = ({ tableRef }) => {
                         <h3>Slots para alocação de aulas de Unidade Curricular</h3>
                         <Stack direction="row" mt={4} mb={4}>
                             <FormControl sx={{ minWidth: 380 }}>
-                                {/* FIX */}
-                                <Autocomplete
-                                    // value={rulesToInclude?.unidadeCurricular}
-                                    // disablePortal
-                                    id="combo-box-demo"
-                                    options={courses}
-                                    sx={{ width: 380 }}
-                                    value={rulesToInclude?.unidadeCurricular}
-                                    onChange={(event, newValue) => {
-                                        setRulesToInclude({ ...rulesToInclude, unidadeCurricular: newValue })
+                                <InputLabel id="label">Unidade Curricular *</InputLabel>
+                                <Select
+                                    labelId="label"
+                                    required
+                                    id="select4"
+                                    value={rulesToInclude?.unidadeCurricular || ''}
+                                    label="Unidade Curricular *"
+                                    onChange={(e) => {
+                                        setRulesToInclude({ ...rulesToInclude, unidadeCurricular: e.target.value })
                                     }}
-                                    renderInput={(params) => <TextField {...params} label="Unidade Curricular *" />}
-                                    // onChange={(e, value) => {
-                                    //     console.log('🚀 ~ CourseSlotsModal ~ value:', value)
-                                    //     setRulesToInclude({ ...rulesToInclude, unidadeCurricular: value })
-                                    // }}
-                                />
+                                >
+                                    {courses.map((course, index) => (
+                                        <MenuItem key={index} value={course} name={course}>
+                                            {course}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
                             </FormControl>
                             {rulesToInclude?.unidadeCurricular && shifts?.length > 0 && (
                                 <Shift options={shifts} rules={rulesToInclude} setRules={setRulesToInclude} />
