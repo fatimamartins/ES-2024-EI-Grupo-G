@@ -6,7 +6,18 @@
 import React, { useEffect } from 'react'
 
 import { isAfter, isBefore } from 'date-fns'
-import { Button, Checkbox, FormControl, InputLabel, ListItemText, MenuItem, Select, Stack } from '@mui/material'
+import {
+    Button,
+    Checkbox,
+    FormControl,
+    InputLabel,
+    ListItemText,
+    MenuItem,
+    Select,
+    Stack,
+    TextField,
+    Tooltip,
+} from '@mui/material'
 import { useAtomValue } from 'jotai'
 import { atomSchedule } from './atoms/schedule'
 import Graph from 'graphology'
@@ -43,6 +54,7 @@ export default function Home() {
     const [endDate, setEndDate] = React.useState(null)
     const [degrees, setDegrees] = React.useState([])
     const [selectedDegrees, setSelectedDegrees] = React.useState([])
+    const [correlation, setCorrelation] = React.useState(1)
     const [graphData, setGraphData] = React.useState([])
 
     // get list of degrees and courses
@@ -113,12 +125,14 @@ export default function Home() {
             map.set(id, appoitmentDuration)
         }
     })
+    console.log('🚀 ~ graphData.forEach ~ graphData:', graphData)
 
+    console.log('🚀 ~ Home ~ map:', map)
     const checkRelation = (node1, node2) => {
         const diff = Math.abs(node1 - node2)
         if (diff === 0) return false
-        // Nodes are related if difference between them is less than 34%
-        return diff / (node1 + node2) <= 0.34
+        // By default nodes are related if difference between them is less than 34%
+        return diff / (node1 + node2) <= correlation
     }
     const potencialNodes = [...map.keys()]
     const nodes = new Set()
@@ -180,123 +194,151 @@ export default function Home() {
     }, [])
 
     return (
-        <Stack sx={{ mt: 8 }}>
-            <form onSubmit={(e) => calculateGraphDate(e)}>
-                <FormControl sx={{ width: 850, marginBottom: '10px' }}>
-                    <InputLabel id="label2">Tipo de sala</InputLabel>
-                    <Select
-                        labelId="label1"
-                        id="label1"
-                        label="Tipo de sala"
-                        sx={{ height: 57 }}
-                        value={roomType}
-                        disabled={schedule.length === 0}
-                        required
-                        onChange={(event) => {
-                            setRoomType(event.target.value)
-                        }}
-                    >
-                        {ROOM_FEATURES.map((col) => (
-                            <MenuItem key={col} value={col}>
-                                <ListItemText primary={col} />
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-                <FormControl sx={{ width: '850px', marginBottom: '10px' }}>
-                    <InputLabel id="label2">Cursos</InputLabel>
-                    <Select
-                        labelId="label2"
-                        id="label2"
-                        multiple
-                        value={selectedDegrees}
-                        onChange={(e) => {
-                            setSelectedDegrees(e.target.value)
-                        }}
-                        label="Cursos"
-                        renderValue={(selected) => selected.join(', ')}
-                        MenuProps={MenuProps}
-                        disabled={schedule.length === 0}
-                    >
-                        {degrees &&
-                            degrees.map((degree, index) => (
-                                <MenuItem key={index} value={degree}>
-                                    <Checkbox checked={selectedDegrees?.indexOf(degree) > -1} />
-                                    <ListItemText primary={degree} />
+        <Tooltip title={schedule.length === 0 ? 'Por favor carregue o ficheiro horário' : ''}>
+            <Stack sx={{ mt: 8 }}>
+                <form onSubmit={(e) => calculateGraphDate(e)}>
+                    <FormControl sx={{ width: 850, marginBottom: '10px' }}>
+                        <InputLabel id="label2">Tipo de sala *</InputLabel>
+                        <Select
+                            labelId="label1"
+                            id="label1"
+                            label="Tipo de sala *"
+                            sx={{ height: 57 }}
+                            value={roomType}
+                            disabled={schedule.length === 0}
+                            required
+                            onChange={(event) => {
+                                setRoomType(event.target.value)
+                            }}
+                        >
+                            {ROOM_FEATURES.map((col) => (
+                                <MenuItem key={col} value={col}>
+                                    <ListItemText primary={col} />
                                 </MenuItem>
                             ))}
-                    </Select>
-                </FormControl>
-                <FormControl sx={{ width: '850px', marginBottom: '10px' }}>
-                    <InputLabel id="label3">Unidade Curricular</InputLabel>
-                    <Select
-                        labelId="label3"
-                        id="label3"
-                        multiple
-                        value={selectedCourses}
-                        onChange={(e) => {
-                            setSelectedCourses(e.target.value)
-                        }}
-                        label="Unidades Curricular"
-                        renderValue={(selected) => selected.join(', ')}
-                        MenuProps={MenuProps}
-                        disabled={schedule.length === 0}
-                    >
-                        {courses &&
-                            courses.map((course, index) => (
-                                <MenuItem key={index} value={course}>
-                                    <Checkbox checked={selectedCourses?.indexOf(course) > -1} />
-                                    <ListItemText primary={course} />
-                                </MenuItem>
-                            ))}
-                    </Select>
-                </FormControl>
-                <Stack direction="row" sx={{ marginBottom: '10px' }}>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DemoContainer components={['DatePicker']} sx={{ marginRight: '8px' }}>
-                            <DatePicker
-                                label="Data de início"
-                                format="DD-MM-YYYY"
-                                views={['day', 'month', 'year']}
-                                value={dayjs(startDate, 'DD/MM/YYYY')}
-                                disabled={schedule.length === 0}
-                                onChange={(newValue) => {
-                                    const dateString = newValue.format('DD/MM/YYYY')
-                                    setStartDate(dateString)
-                                }}
-                                sx={{ width: '420px' }}
-                            />
-                        </DemoContainer>
-                    </LocalizationProvider>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DemoContainer components={['DatePicker']}>
-                            <DatePicker
-                                label="Data de fim"
-                                format="DD-MM-YYYY"
-                                views={['day', 'month', 'year']}
-                                value={dayjs(endDate, 'DD/MM/YYYY')}
-                                disabled={schedule.length === 0}
-                                onChange={(newValue) => {
-                                    const dateString = newValue.format('DD/MM/YYYY')
-                                    setEndDate(dateString)
-                                }}
-                                sx={{ width: '420px' }}
-                            />
-                        </DemoContainer>
-                    </LocalizationProvider>
-                </Stack>
-                <Stack direction="row" alignContent={'center'} sx={{ marginTop: '20px' }}>
-                    <Button variant="contained" type="submit" disabled={schedule.length === 0}>
-                        Desenhar grafo
-                    </Button>
-                    <Button onClick={clear} sx={{ marginLeft: '8px' }} variant="text" disabled={schedule.length === 0}>
-                        Limpar campos
-                    </Button>
-                </Stack>
-            </form>
-            <SigmaContainer style={sigmaStyle} settings={settings}>
-                <LoadGraph />
-            </SigmaContainer>
-        </Stack>
+                        </Select>
+                    </FormControl>
+                    <FormControl sx={{ width: '850px', marginBottom: '10px' }}>
+                        <InputLabel id="label2">Cursos</InputLabel>
+                        <Select
+                            labelId="label2"
+                            id="label2"
+                            multiple
+                            value={selectedDegrees}
+                            onChange={(e) => {
+                                setSelectedDegrees(e.target.value)
+                            }}
+                            label="Cursos"
+                            renderValue={(selected) => selected.join(', ')}
+                            MenuProps={MenuProps}
+                            disabled={schedule.length === 0}
+                        >
+                            {degrees &&
+                                degrees.map((degree, index) => (
+                                    <MenuItem key={index} value={degree}>
+                                        <Checkbox checked={selectedDegrees?.indexOf(degree) > -1} />
+                                        <ListItemText primary={degree} />
+                                    </MenuItem>
+                                ))}
+                        </Select>
+                    </FormControl>
+                    <FormControl sx={{ width: '850px', marginBottom: '10px' }}>
+                        <InputLabel id="label3">Unidades Curricular</InputLabel>
+                        <Select
+                            labelId="label3"
+                            id="label3"
+                            multiple
+                            value={selectedCourses}
+                            onChange={(e) => {
+                                setSelectedCourses(e.target.value)
+                            }}
+                            label="Unidades Curricular"
+                            renderValue={(selected) => selected.join(', ')}
+                            MenuProps={MenuProps}
+                            disabled={schedule.length === 0}
+                        >
+                            {courses &&
+                                courses.map((course, index) => (
+                                    <MenuItem key={index} value={course}>
+                                        <Checkbox checked={selectedCourses?.indexOf(course) > -1} />
+                                        <ListItemText primary={course} />
+                                    </MenuItem>
+                                ))}
+                        </Select>
+                    </FormControl>
+                    <Stack direction="row" sx={{ marginBottom: '10px' }}>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DemoContainer components={['DatePicker']} sx={{ marginRight: '8px' }}>
+                                <DatePicker
+                                    label="Data de início"
+                                    format="DD-MM-YYYY"
+                                    views={['day', 'month', 'year']}
+                                    value={startDate ? dayjs(startDate, 'DD/MM/YYYY') : null}
+                                    disabled={schedule.length === 0}
+                                    onChange={(newValue) => {
+                                        const dateString = newValue.format('DD/MM/YYYY')
+                                        setStartDate(dateString)
+                                    }}
+                                    sx={{ width: '420px' }}
+                                />
+                            </DemoContainer>
+                        </LocalizationProvider>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DemoContainer components={['DatePicker']}>
+                                <DatePicker
+                                    label="Data de fim"
+                                    format="DD-MM-YYYY"
+                                    views={['day', 'month', 'year']}
+                                    value={endDate ? dayjs(endDate, 'DD/MM/YYYY') : null}
+                                    disabled={schedule.length === 0}
+                                    onChange={(newValue) => {
+                                        const dateString = newValue.format('DD/MM/YYYY')
+                                        setEndDate(dateString)
+                                    }}
+                                    sx={{ width: '420px' }}
+                                    minDate={startDate ? dayjs(startDate, 'DD/MM/YYYY') : null}
+                                />
+                            </DemoContainer>
+                        </LocalizationProvider>
+                    </Stack>
+                    <FormControl sx={{ width: '850px', marginTop: '10px' }}>
+                        <TextField
+                            type="number"
+                            id="label4"
+                            placeholder="Fator de correlação entre 0 e 1"
+                            label="Fator de correlação"
+                            variant="outlined"
+                            disabled={schedule.length === 0}
+                            required
+                            onChange={(event) => {
+                                setCorrelation(event.target.value)
+                            }}
+                            InputProps={{ inputProps: { min: 0, max: 1, step: 0.01 } }}
+                        />
+                        <span style={{ marginTop: '5px', fontSize: '10px', fontWeight: '600' }}>
+                            Nota: Um fator de correlação igual a 0,34 significa que apenas exite relação entre dois
+                            cursos se a diferença entre si (número de horas de ocupação para um tipo de sala) for
+                            inferior ou igual a 34%
+                        </span>
+                    </FormControl>
+                    <Stack direction="row" alignContent={'center'} sx={{ marginTop: '20px' }}>
+                        <Button variant="contained" type="submit" disabled={schedule.length === 0}>
+                            Desenhar grafo
+                        </Button>
+                        <Button
+                            onClick={clear}
+                            sx={{ marginLeft: '8px' }}
+                            variant="text"
+                            disabled={schedule.length === 0}
+                        >
+                            Limpar campos
+                        </Button>
+                    </Stack>
+                </form>
+                <SigmaContainer style={sigmaStyle} settings={settings}>
+                    <LoadGraph />
+                </SigmaContainer>
+            </Stack>
+        </Tooltip>
     )
 }
