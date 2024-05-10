@@ -1,108 +1,109 @@
-/**
- * @file This is the page with the schedule and rooms.
- */
-
-/** @module App.css */
-import './App.css'
-/** @module react */
 import React from 'react'
+import { useAtomValue } from 'jotai'
+import HeatMap from 'react-heatmap-grid'
+import { atomRooms } from './atoms/rooms'
+import { atomSchedule } from './atoms/schedule'
+import { ROOMS } from './constants'
+import { parseHour, parseDate } from './utils'
 
-import 'react-tabulator/lib/css/tabulator.min.css'
-import 'react-tabulator/lib/styles.css'
-// import 'react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
-// import 'react-tabulator/css/semantic-ui/tabulator_semantic-ui.css'
-import 'react-tabulator/css/tabulator_bootstrap3.css'
-
-import { Group } from '@visx/group'
-import genBins from '@visx/mock-data/lib/generators/genBins'
-import { scaleLinear } from '@visx/scale'
-import { HeatmapRect } from '@visx/heatmap'
-import { getSeededRandom } from '@visx/mock-data'
-
-const cool1 = '#FFFFFF' // Tom de vermelho
-const cool2 = '#E63946' // Outra cor qualquer
-export const background = '#28272c' // Cor de fundo
-
-const seededRandom = getSeededRandom(2)
-
-const binData = genBins(
-    16,
-    16,
-    (idx) => 150 * idx,
-    (i, number) => 25 * (number - i) * seededRandom()
-)
-
-function max(data, value) {
-    return Math.max(...data.map(value))
+const xLabels = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']
+const yLabels = []
+for (let hour = 8; hour <= 22; hour++) {
+    yLabels.push(`${hour}:00:00`)
+    if (hour !== 23) {
+        // Assuming 22:30 is the last label you want
+        yLabels.push(`${hour}:30:00`)
+    }
 }
 
-const bins = (d) => d.bins
-const count = (d) => d.count
+function processData(scheduleData, targetDate) {
+    const formattedDate = parseDate('03/09/2022') // Converts string to Date object
 
-const colorMax = max(binData, (d) => max(bins(d), count))
-const bucketSizeMax = max(binData, (d) => bins(d).length)
+    console.log('data do horário: ', scheduleData)
+    console.log('Constructed Date object:', formattedDate)
 
-const xScale = scaleLinear({
-    domain: [0, binData.length],
-})
-const yScale = scaleLinear({
-    domain: [0, bucketSizeMax],
-})
-const rectColorScale = scaleLinear({
-    range: [cool1, cool2],
-    domain: [0, colorMax],
-})
+    // const data = yLabels.map(() => new Array(xLabels.length).fill(0))
+    const data = new Array(yLabels.length).fill(0).map(() => new Array(xLabels.length).fill(0))
 
-const defaultMargin = { top: 10, left: 30, right: 30, bottom: 50 }
+    scheduleData.forEach((item) => {
+        if (!item['Data da aula']) return
+        const scheduleDate = parseDate(item['Data da aula'])
+        console.log(item)
+        console.log('Constructed Date schedule object:', scheduleDate)
 
-export default function Home({ width = 600, height = 500, events = true, margin = defaultMargin, separation = 0 }) {
-    console.log('Width:', width, 'Height:', height)
-    const size = width > margin.left + margin.right ? width - margin.left - margin.right - separation : width
-    const xMax = size
-    const yMax = height - margin.bottom - margin.top
+        // Only process entries for the specific date
+        if (scheduleDate.getTime() !== formattedDate.getTime()) {
+            console.log('Skipping due to date mismatch.')
+            return
+        }
 
-    const binWidth = xMax / binData.length
-    const binHeight = yMax / bucketSizeMax
+        const itemStartTime = parseHour(item['Hora início da aula'])
+        const itemEndTime = parseHour(item['Hora fim da aula'])
+        const itemDay = item['Dia da semana'] // Make sure this matches with xLabels
 
-    xScale.range([0, xMax])
-    yScale.range([yMax, 0])
+        // Convert day string to index
+        const dayIndex = xLabels.indexOf(itemDay)
+        if (dayIndex === -1) {
+            console.log(`Skipping due to day mismatch: ${itemDay}`)
+            return // If the day doesn't match any index, skip this item
+        }
 
-    return width < 10 ? null : (
-        <svg width={width} height={height}>
-            <rect x={0} y={0} width={width} height={height} rx={14} fill={background} />
-            <Group top={margin.top} left={margin.left}>
-                <HeatmapRect
-                    data={binData}
-                    xScale={(d) => xScale(d) ?? 0}
-                    yScale={(d) => yScale(d) ?? 0}
-                    colorScale={rectColorScale}
-                    binWidth={binWidth}
-                    binHeight={binHeight}
-                    gap={2}
-                >
-                    {(heatmap) =>
-                        heatmap.map((heatmapBins) =>
-                            heatmapBins.map((bin) => (
-                                <rect
-                                    key={`heatmap-rect-${bin.row}-${bin.column}`}
-                                    className="visx-heatmap-rect"
-                                    width={bin.width}
-                                    height={bin.height}
-                                    x={bin.x}
-                                    y={bin.y}
-                                    fill={bin.color}
-                                    fillOpacity={bin.opacity}
-                                    onClick={() => {
-                                        if (!events) return
-                                        const { row, column } = bin
-                                        alert(JSON.stringify({ row, column, bin: bin.bin }))
-                                    }}
-                                />
-                            ))
-                        )
-                    }
-                </HeatmapRect>
-            </Group>
-        </svg>
+        console.log(`Day index found: ${dayIndex} for day: ${itemDay}`)
+
+        yLabels.forEach((time, yIndex) => {
+            const currentHour = parseHour(time)
+            console.log(currentHour)
+            console.log(itemStartTime)
+            console.log(itemEndTime)
+
+            const overlaps = currentHour >= itemStartTime && currentHour <= itemEndTime
+
+            if (overlaps) {
+                data[yIndex][dayIndex] += 1 // Increment the count of occupied rooms for the cell
+                console.log(`Overlap found: Incrementing [${yIndex}][${dayIndex}] to ${data[yIndex][dayIndex]}`)
+            } else {
+                console.log(`No overlap for time slot: ${time} on day: ${itemDay}`)
+            }
+        })
+    })
+
+    console.log('Final data matrix:', data)
+
+    return data
+}
+
+const MyHeatMap = () => {
+    const rooms = useAtomValue(atomRooms)
+    const schedule = useAtomValue(atomSchedule)
+    const [data, setData] = React.useState([])
+    React.useEffect(() => {
+        if (schedule.length > 0 && rooms.length > 0) {
+            setData(processData(schedule, rooms))
+        }
+    }, [schedule, rooms])
+    // Process data to fit into the heatmap format
+    // const data = processData(defaultData, defaultScheduleData) // You'll need to write this function based on how your data needs to be displayed
+    console.log('xixi: ', data)
+    return (
+        <div style={{ width: '100%', margin: 'auto' }}>
+            {data.length > 0 && (
+                <HeatMap
+                    xLabels={xLabels}
+                    yLabels={yLabels}
+                    data={data}
+                    squares
+                    height={50}
+                    xLabelWidth={60}
+                    cellStyle={(background, value, min, max, data, x, y) => ({
+                        background: `rgb(0, 151, 230, ${1 - (max - value) / (max - min)})`,
+                        fontSize: '11.5px',
+                        color: '#444',
+                    })}
+                    cellRender={(value) => value && <div>{value}</div>}
+                />
+            )}
+        </div>
     )
 }
+
+export default MyHeatMap
