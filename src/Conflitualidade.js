@@ -59,20 +59,40 @@ export default function Home() {
 
     const clear = () => {
         setRoomType('')
-        setCourses([]) // clear all filters
+        setSelectedCourses([])
         setStartDate(null)
         setEndDate(null)
-        setDegrees([])
+        setSelectedDegrees([])
+        setGraphData([])
+    }
+
+    const getFilters = () => {
+        const filters = []
+        if (roomType) {
+            filters.push((appointment) => appointment['Características da sala pedida para a aula'] === roomType)
+        }
+        if (selectedDegrees.length > 0) {
+            filters.push((appointment) => selectedDegrees.includes(appointment.Curso))
+        }
+        if (selectedCourses.length > 0) {
+            filters.push((appointment) => selectedCourses.includes(appointment['Unidade Curricular']))
+        }
+        if (startDate) {
+            filters.push((appointment) => appointment['Data da aula'] >= startDate)
+        }
+        if (endDate) {
+            filters.push((appointment) => appointment['Data da aula'] <= endDate)
+        }
+
+        return filters
     }
 
     // updating graph data based on the selected field and value
     const calculateGraphDate = (e) => {
         e.preventDefault()
-        if (roomType && schedule.length > 0) {
-            const filteredData = schedule.filter(
-                (item) => item['Características da sala pedida para a aula'] === 'Laboratório de Informática'
-            )
-            console.log('🚀 ~ calculateGraphDate ~ filteredData:', filteredData)
+        if (schedule.length > 0) {
+            const filters = getFilters()
+            const filteredData = schedule.filter((appointment) => filters.every((filter) => filter(appointment)))
             setGraphData(filteredData)
         }
     }
@@ -92,6 +112,7 @@ export default function Home() {
             map.set(id, appoitmentDuration)
         }
     })
+    console.log('🚀 ~ Home ~ map:', map)
 
     const checkRelation = (node1, node2) => {
         const diff = Math.abs(node1 - node2)
@@ -236,7 +257,7 @@ export default function Home() {
                             <DatePicker
                                 label="Data de início"
                                 format="DD-MM-YYYY"
-                                views={['day', 'month', 'year', 'hours', 'minutes']}
+                                views={['day', 'month', 'year']}
                                 value={startDate}
                                 disabled={schedule.length === 0}
                                 onChange={(newValue) => {
@@ -252,7 +273,7 @@ export default function Home() {
                             <DatePicker
                                 label="Data de fim"
                                 format="DD-MM-YYYY"
-                                views={['day', 'month', 'year', 'hours', 'minutes']}
+                                views={['day', 'month', 'year']}
                                 value={endDate}
                                 disabled={schedule.length === 0}
                                 onChange={(newValue) => {
