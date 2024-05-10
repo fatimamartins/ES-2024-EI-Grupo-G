@@ -148,6 +148,7 @@ function ScheduleTableFilter({ tableRef, disabled }) {
                             required
                             onChange={(event) => setSelectedField(event.target.value)}
                             disabled={disabled}
+                            sx={{ height: 57 }}
                         >
                             {defaultFilterFields.map((col) => {
                                 return (

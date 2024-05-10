@@ -127,7 +127,7 @@ export default function ScheduleTable() {
             hozAlign: 'left',
             sorter: 'string',
             visible: true,
-            width: 82,
+            width: 100,
             editor: 'list',
             editorParams: {
                 valuesLookup: true,
@@ -232,7 +232,7 @@ export default function ScheduleTable() {
             },
         },
         {
-            title: 'Sala ',
+            title: 'Sala',
             field: 'Sala atribuída à aula',
             hozAlign: 'left',
             sorter: 'string',
@@ -258,7 +258,7 @@ export default function ScheduleTable() {
             },
         },
         {
-            title: 'Sem. ano',
+            title: 'Se. ano',
             field: 'Semana do ano',
             hozAlign: 'left',
             sorter: 'number',
@@ -267,7 +267,7 @@ export default function ScheduleTable() {
             width: 112,
         },
         {
-            title: 'Sem. semestre',
+            title: 'Se. semestre',
             field: 'Semana do semestre',
             hozAlign: 'left',
             sorter: 'number',
