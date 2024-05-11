@@ -17,7 +17,8 @@ for (let hour = 8; hour <= 22; hour++) {
 }
 
 function processData(scheduleData, targetDate) {
-    const formattedDate = parseDate('03/09/2022') // Converts string to Date object
+    const formattedDate = parseDate('12/09/2022') // Converts string to Date object
+    const formattedDateFim = parseDate('15/09/2022')
 
     console.log('data do horário: ', scheduleData)
     console.log('Constructed Date object:', formattedDate)
@@ -32,7 +33,7 @@ function processData(scheduleData, targetDate) {
         console.log('Constructed Date schedule object:', scheduleDate)
 
         // Only process entries for the specific date
-        if (scheduleDate.getTime() !== formattedDate.getTime()) {
+        if (scheduleDate.getTime() < formattedDate.getTime() || scheduleDate.getTime() > formattedDateFim.getTime()) {
             console.log('Skipping due to date mismatch.')
             return
         }
@@ -94,6 +95,7 @@ const MyHeatMap = () => {
                     squares
                     height={50}
                     xLabelWidth={60}
+                    yLabelWidth={80}
                     cellStyle={(background, value, min, max, data, x, y) => ({
                         background: `rgb(0, 151, 230, ${1 - (max - value) / (max - min)})`,
                         fontSize: '11.5px',
