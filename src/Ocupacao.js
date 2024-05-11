@@ -57,7 +57,7 @@ function processData(scheduleData, targetDate) {
             console.log(itemStartTime)
             console.log(itemEndTime)
 
-            const overlaps = currentHour >= itemStartTime && currentHour <= itemEndTime
+            const overlaps = currentHour >= itemStartTime && currentHour < itemEndTime
 
             if (overlaps) {
                 data[yIndex][dayIndex] += 1 // Increment the count of occupied rooms for the cell
