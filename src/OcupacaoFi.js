@@ -23,11 +23,14 @@ import {
 import { useAtomValue } from 'jotai'
 import { atomSchedule } from './atoms/schedule'
 import { atomRooms } from './atoms/rooms'
-import { ROOM_FEATURES } from './constants'
+import { COURSE_END_TIMES, COURSE_START_TIMES, ROOM_FEATURES } from './constants'
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import dayjs from 'dayjs'
+import HeatMap from 'react-heatmap-grid'
+import { parseDate, parseHour } from './utils'
+import { eachDayOfInterval, format } from 'date-fns'
 
 const defaultTypeOfFilterComparison = ['=', '<', '>']
 
@@ -37,40 +40,120 @@ export default function Home() {
     const [roomType, setRoomType] = React.useState('')
     const [startDate, setStartDate] = React.useState(null)
     const [endDate, setEndDate] = React.useState(null)
-    const [roomCapacity, setRoomCapacity] = React.useState(0)
-    console.log('🚀 ~ Home ~ roomCapacity:', roomCapacity)
+    const [roomCapacity, setRoomCapacity] = React.useState(null)
     const [capacityLogicOperator, setCapacityLogicOperator] = React.useState('>')
     const [logicOperator, setLogicOperator] = React.useState('Ocupado')
+    const [heatmapData, setHeatmapData] = React.useState([])
+    const [xLabels, setXLabels] = React.useState([]) // it changes according to the selected date range
+    const yLabels = [...new Set([...COURSE_START_TIMES, ...COURSE_END_TIMES])]
 
-    const calculateHeatmap = (e) => {
-        e.preventDefault()
-        console.log('Calculating heatmap')
-    }
-
+    // Filter
     const clear = () => {
         setRoomType('')
         setStartDate(null)
         setEndDate(null)
-        setRoomCapacity(0)
+        setRoomCapacity(null)
+    }
+
+    const getRoomsByCapacity = () => {
+        return roomCapacity
+            ? rooms.filter((room) => {
+                  if (capacityLogicOperator === '=') {
+                      return (room['Capacidade Normal'] = roomCapacity)
+                  } else if (capacityLogicOperator === '>') {
+                      return room['Capacidade Normal'] > roomCapacity
+                  } else if (capacityLogicOperator === '<') {
+                      return room['Capacidade Normal'] < roomCapacity
+                  } else {
+                      return false
+                  }
+              })
+            : rooms
+    }
+
+    const getDataRange = () => {
+        const dates = eachDayOfInterval({ start: parseDate(startDate), end: parseDate(endDate) })
+        return dates.map((date) => format(date, 'dd/MM/yyyy'))
+    }
+
+    function processData(roomsFilteredByCapacity, dateRange) {
+        // Create a matrix of zeros with the same dimensions as the heatmap
+        const data = new Array(yLabels.length).fill(0).map(() => new Array(xLabels.length).fill(0))
+
+        // Filter the ROOMS array to get rooms that have the specified roomType
+        const filteredRoomNames = roomsFilteredByCapacity
+            .filter((room) => room[roomType])
+            .map((room) => room['Nome sala'])
+
+        // Iterate over the schedule to populate the data matrix
+        schedule.forEach((item) => {
+            // Skip entries that don't match the room type filter
+            if (roomType !== '') {
+                if (!filteredRoomNames.includes(item['Sala atribuída à aula'])) return
+            }
+
+            // Skip entries without a date
+            if (!item['Data da aula']) return
+            // cons appointmentDate = parseDate(item['Data da aula'])
+
+            // Skip entries that don't match the date range
+            if (!dateRange.includes(item['Data da aula'])) {
+                // console.log('Skipping due to date mismatch.')
+                return
+            }
+
+            const itemStartTime = parseHour(item['Hora início da aula'])
+            const itemEndTime = parseHour(item['Hora fim da aula'])
+
+            // Find the index of the day in the xLabels array
+            const dayIndex = xLabels.indexOf(item['Data da aula'])
+            if (dayIndex === -1) {
+                return
+            }
+
+            // Iterate over the yLabels to find the time slot that overlaps with the current item
+            yLabels.forEach((time, yIndex) => {
+                const currentHour = parseHour(time)
+                const overlaps = currentHour >= itemStartTime && currentHour < itemEndTime
+
+                if (overlaps) {
+                    data[yIndex][dayIndex] += 1 // Increment the count of occupied rooms for the cell
+                }
+            })
+        })
+
+        return data
+    }
+
+    // Generate heatmap based on the selected filters
+    const calculateHeatmap = (e) => {
+        e.preventDefault()
+        // get xLabels based on the selected date range
+        const dateRange = getDataRange()
+        setXLabels(dateRange)
+        // get rooms that match the room capacity filter
+        const roomsFiltered = getRoomsByCapacity()
+        // process the data to generate the heatmap
+        setHeatmapData(processData(roomsFiltered, dateRange))
     }
 
     return (
         <Tooltip
             title={schedule.length === 0 || rooms.length === 0 ? 'Por favor carregue os ficheiros horário e salas' : ''}
         >
-            <Stack sx={{ mt: 8 }}>
+            <Stack sx={{ mt: 8, mb: 8 }}>
                 <form onSubmit={(e) => calculateHeatmap(e)}>
                     <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2, mb: 2 }}>
-                        <Typography>Ocupado</Typography>
+                        <Typography>Disponível</Typography>
                         <Switch
                             checked={logicOperator === 'Ocupado'}
                             inputProps={{ 'aria-label': 'ant design' }}
                             onChange={(e, c) => setLogicOperator(c ? 'Ocupado' : 'Disponível')}
                             disabled={schedule.length === 0 || rooms.length === 0}
                         />
-                        <Typography>Disponível</Typography>
+                        <Typography>Ocupado</Typography>
                     </Stack>
-                    <FormControl sx={{ width: 850, marginBottom: '3px' }}>
+                    <FormControl sx={{ width: 850, marginBottom: '8px' }}>
                         <InputLabel id="label2">Tipo de sala</InputLabel>
                         <Select
                             labelId="label1"
@@ -90,7 +173,6 @@ export default function Home() {
                             ))}
                         </Select>
                     </FormControl>
-
                     <Stack direction="row" sx={{ marginBottom: '10px' }}>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DemoContainer components={['DatePicker']} sx={{ marginRight: '8px' }}>
@@ -153,7 +235,11 @@ export default function Home() {
                                 variant="outlined"
                                 disabled={schedule.length === 0 || rooms.length === 0}
                                 onChange={(event) => {
-                                    setRoomCapacity(event.target.value)
+                                    if (event.target.value === '') {
+                                        setRoomCapacity(null)
+                                    } else {
+                                        setRoomCapacity(event.target.value)
+                                    }
                                 }}
                                 InputProps={{ inputProps: { step: 1 } }}
                             />
@@ -179,6 +265,27 @@ export default function Home() {
                         </Button>
                     </Stack>
                 </form>
+                <Stack mt={6} sx={{ width: '100%', overflowX: 'scroll' }}>
+                    {heatmapData.length > 0 && (
+                        <HeatMap
+                            xLabels={xLabels}
+                            yLabels={yLabels}
+                            data={heatmapData}
+                            // squares
+                            xLabelWidth={100}
+                            yLabelWidth={80}
+                            cellStyle={(background, value, min, max, data, x, y) => ({
+                                background: `rgb(32, 95, 200, ${1 - (max - value) / (max - min)})`,
+                                fontSize: '11.5px',
+                                color: '#000',
+                                borderRadius: '4px',
+                                width: '100px',
+                            })}
+                            // xLabelsVisibility não mostrar domingos
+                            cellRender={(value) => value && <div>{value}</div>}
+                        />
+                    )}
+                </Stack>
             </Stack>
         </Tooltip>
     )

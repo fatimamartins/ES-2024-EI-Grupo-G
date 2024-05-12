@@ -3,7 +3,6 @@ import { useAtomValue } from 'jotai'
 import HeatMap from 'react-heatmap-grid'
 import { atomRooms } from './atoms/rooms'
 import { atomSchedule } from './atoms/schedule'
-import { ROOMS } from './constants'
 import { isAfter, isBefore } from 'date-fns'
 import { parseHour, parseDate } from './utils'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
@@ -14,18 +13,7 @@ import { ROOM_FEATURES } from './constants'
 import dayjs from 'dayjs'
 import { SigmaContainer } from '@react-sigma/core'
 import '@react-sigma/core/lib/react-sigma.min.css'
-import {
-    Button,
-    Checkbox,
-    FormControl,
-    InputLabel,
-    ListItemText,
-    MenuItem,
-    Select,
-    Stack,
-    TextField,
-    Tooltip,
-} from '@mui/material'
+import { Button, FormControl, InputLabel, ListItemText, MenuItem, Select, Stack, Tooltip } from '@mui/material'
 
 const xLabels = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']
 const yLabels = []
@@ -55,8 +43,7 @@ function processData(scheduleData, roomsData, startDate, endDate, roomType) {
 
         if (!item['Data da aula']) return
         const scheduleDate = parseDate(item['Data da aula'])
-        console.log(item)
-        console.log('Constructed Date schedule object:', scheduleDate)
+        console.log('🚀 ~ scheduleData.forEach ~ scheduleDate:', scheduleDate.getTime())
 
         // Only process entries for the specific date
         if (scheduleDate.getTime() < formattedDate.getTime() || scheduleDate.getTime() > formattedDateFim.getTime()) {

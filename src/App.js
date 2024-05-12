@@ -17,7 +17,7 @@ import 'react-tabulator/lib/styles.css'
 import 'react-tabulator/css/tabulator_bootstrap3.css'
 import Home from './Home'
 import Conflitualidade from './Conflitualidade'
-import Ocupacao from './Ocupacao'
+import OcupacaoFi from './OcupacaoFi'
 import { Routes, Route } from 'react-router-dom'
 // import 'react-tabulator/css/tabulator_semanticui.css'
 // import 'react-tabulator/css/tabulator_simple.css'
@@ -38,7 +38,7 @@ export default function App() {
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="Conflitualidade" element={<Conflitualidade />} />
-                    <Route path="Ocupacao" element={<Ocupacao />} />
+                    <Route path="Ocupacao" element={<OcupacaoFi />} />
                 </Routes>
             </Container>
         </div>
