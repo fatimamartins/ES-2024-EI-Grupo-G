@@ -12,15 +12,11 @@ import { Container } from '@mui/material'
 import Navbar from './Navbar'
 import 'react-tabulator/lib/css/tabulator.min.css'
 import 'react-tabulator/lib/styles.css'
-// import 'react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
-// import 'react-tabulator/css/semantic-ui/tabulator_semantic-ui.css'
 import 'react-tabulator/css/tabulator_bootstrap3.css'
 import Home from './Home'
-import Conflitualidade from './Conflitualidade'
-import Ocupacao from './Ocupacao'
+import NetworkGraph from './NetworkGraph'
+import Heatmap from './Heatmap'
 import { Routes, Route } from 'react-router-dom'
-// import 'react-tabulator/css/tabulator_semanticui.css'
-// import 'react-tabulator/css/tabulator_simple.css'
 
 /**
  * This is the main App component of the application.
@@ -37,8 +33,8 @@ export default function App() {
             <Container sx={{ maxWidth: 1250, minWidth: 1250 }}>
                 <Routes>
                     <Route path="/" element={<Home />} />
-                    <Route path="Conflitualidade" element={<Conflitualidade />} />
-                    <Route path="Ocupacao" element={<Ocupacao />} />
+                    <Route path="Conflitualidade" element={<NetworkGraph />} />
+                    <Route path="Ocupacao" element={<Heatmap />} />
                 </Routes>
             </Container>
         </div>
