@@ -34,6 +34,8 @@
     <div class="container-overview">
     
         
+            <div class="description"><p>External date-fns library for date manipulation.</p></div>
+        
 
         
 
@@ -67,7 +69,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils.js.html">utils.js</a>, <a href="utils.js.html#line5">line 5</a>
+        <a href="CourseSlotsModal.js.html">CourseSlotsModal.js</a>, <a href="CourseSlotsModal.js.html#line67">line 67</a>
     </li></ul></dd>
     
 
@@ -96,6 +98,157 @@
     
 
     
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="~style"><span class="type-signature">(inner, constant) </span>style<span class="type-signature"> :Object</span></h4>
+
+
+
+
+<div class="description">
+    <p>A style object used for positioning a modal at the center of the screen.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>position</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The position property of the style object.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>top</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The top property of the style object.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="ReplaceCourse.js.html">ReplaceCourse.js</a>, <a href="ReplaceCourse.js.html#line123">line 123</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+    
 
     
         <h3 class="subsection-title">Methods</h3>
@@ -106,7 +259,7 @@
     
 
     
-    <h4 class="name" id="~addSemesterWeekNumber"><span class="type-signature">(inner) </span>addSemesterWeekNumber<span class="signature">(defaultData)</span><span class="type-signature"> &rarr; {Array.&lt;Object>}</span></h4>
+    <h4 class="name" id="~ReplaceCourse"><span class="type-signature">(inner) </span>ReplaceCourse<span class="signature">(props)</span><span class="type-signature"> &rarr; {React.Element}</span></h4>
     
 
     
@@ -114,7 +267,7 @@
 
 
 <div class="description">
-    <p>Adds a semester week number to each row of the provided data.</p>
+    <p><code>ReplaceCourse</code> is a React functional component used to replace a course in a schedule.</p>
 </div>
 
 
@@ -150,13 +303,13 @@
 
         <tr>
             
-                <td class="name"><code>defaultData</code></td>
+                <td class="name"><code>props</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;Object></span>
+<span class="param-type">Object</span>
 
 
             
@@ -166,7 +319,56 @@
 
             
 
-            <td class="description last"><p>The data to add semester week numbers to.</p></td>
+            <td class="description last"><p>The properties that define the <code>ReplaceCourse</code> component.</p>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>tableRef</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A reference to a table in the parent component.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -207,7 +409,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils.js.html">utils.js</a>, <a href="utils.js.html#line24">line 24</a>
+        <a href="ReplaceCourse.js.html">ReplaceCourse.js</a>, <a href="ReplaceCourse.js.html#line153">line 153</a>
     </li></ul></dd>
     
 
@@ -236,7 +438,7 @@
 
         
 <div class="param-desc">
-    <p>The data with added semester week numbers.</p>
+    <p>A React element that represents a form inside a modal for replacing a course.</p>
 </div>
 
 
@@ -247,7 +449,7 @@
     </dt>
     <dd>
         
-<span class="param-type">Array.&lt;Object></span>
+<span class="param-type">React.Element</span>
 
 
     </dd>
@@ -265,7 +467,7 @@
     
 
     
-    <h4 class="name" id="~addWeekNumber"><span class="type-signature">(inner) </span>addWeekNumber<span class="signature">(defaultData)</span><span class="type-signature"> &rarr; {Array.&lt;Object>}</span></h4>
+    <h4 class="name" id="~handleSubmit"><span class="type-signature">(inner) </span>handleSubmit<span class="signature">(e)</span><span class="type-signature"></span></h4>
     
 
     
@@ -273,7 +475,7 @@
 
 
 <div class="description">
-    <p>Adds a week number to each row of the provided data based on the date.</p>
+    <p>This function handles form submission. It prevents the default form submission event, looks up slots based on the rules, and sets the slots state.</p>
 </div>
 
 
@@ -309,13 +511,13 @@
 
         <tr>
             
-                <td class="name"><code>defaultData</code></td>
+                <td class="name"><code>e</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;Object></span>
+<span class="param-type">Event</span>
 
 
             
@@ -325,7 +527,723 @@
 
             
 
-            <td class="description last"><p>The data to add week numbers to.</p></td>
+            <td class="description last"><p>The form submission event.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>slots</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The slots to replace a course.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>setSlots</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A function that sets the slots state.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="ReplaceCourse.js.html">ReplaceCourse.js</a>, <a href="ReplaceCourse.js.html#line244">line 244</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~updateTable"><span class="type-signature">(inner) </span>updateTable<span class="signature">(selectedSlot)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>This function updates the table with the selected slot's details. If the room is different, it gets the features of the new room. If the date is the same, it updates the row with the new slot's details. If the date is different, it updates the row with the new slot's details and additional information. After updating, it calls the handleCancel function.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>selectedSlot</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The selected slot to replace a course.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>roomFeatures</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The features of the room. If the room is different, it gets the features of the new room.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>handleCancel</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A function that resets the states and closes the modal.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="ReplaceCourse.js.html">ReplaceCourse.js</a>, <a href="ReplaceCourse.js.html#line198">line 198</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="lib_replaceCourse.js.html">lib/replaceCourse.js</a>, <a href="lib_replaceCourse.js.html#line6">line 6</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="~style"><span class="type-signature">(inner, constant) </span>style<span class="type-signature"> :Object</span></h4>
+
+
+
+
+<div class="description">
+    <p>A style object used for positioning a modal at the center of the screen.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>position</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The position property of the style object.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>top</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The top property of the style object.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="ReplaceCourse.js.html">ReplaceCourse.js</a>, <a href="ReplaceCourse.js.html#line123">line 123</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~ReplaceCourse"><span class="type-signature">(inner) </span>ReplaceCourse<span class="signature">(props)</span><span class="type-signature"> &rarr; {React.Element}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p><code>ReplaceCourse</code> is a React functional component used to replace a course in a schedule.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>props</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The properties that define the <code>ReplaceCourse</code> component.</p>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>tableRef</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A reference to a table in the parent component.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -366,7 +1284,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils.js.html">utils.js</a>, <a href="utils.js.html#line8">line 8</a>
+        <a href="ReplaceCourse.js.html">ReplaceCourse.js</a>, <a href="ReplaceCourse.js.html#line153">line 153</a>
     </li></ul></dd>
     
 
@@ -395,7 +1313,7 @@
 
         
 <div class="param-desc">
-    <p>The data with added week numbers.</p>
+    <p>A React element that represents a form inside a modal for replacing a course.</p>
 </div>
 
 
@@ -406,7 +1324,7 @@
     </dt>
     <dd>
         
-<span class="param-type">Array.&lt;Object></span>
+<span class="param-type">React.Element</span>
 
 
     </dd>
@@ -424,7 +1342,7 @@
     
 
     
-    <h4 class="name" id="~parseDate"><span class="type-signature">(inner) </span>parseDate<span class="signature">(dateString)</span><span class="type-signature"> &rarr; {Date}</span></h4>
+    <h4 class="name" id="~handleSubmit"><span class="type-signature">(inner) </span>handleSubmit<span class="signature">(e)</span><span class="type-signature"></span></h4>
     
 
     
@@ -432,7 +1350,7 @@
 
 
 <div class="description">
-    <p>Parses a date string in the format 'dd/mm/yyyy' and returns a Date object.</p>
+    <p>This function handles form submission. It prevents the default form submission event, looks up slots based on the rules, and sets the slots state.</p>
 </div>
 
 
@@ -468,7 +1386,273 @@
 
         <tr>
             
-                <td class="name"><code>dateString</code></td>
+                <td class="name"><code>e</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Event</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The form submission event.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>slots</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The slots to replace a course.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>setSlots</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A function that sets the slots state.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="ReplaceCourse.js.html">ReplaceCourse.js</a>, <a href="ReplaceCourse.js.html#line244">line 244</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~updateTable"><span class="type-signature">(inner) </span>updateTable<span class="signature">(selectedSlot)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>This function updates the table with the selected slot's details. If the room is different, it gets the features of the new room. If the date is the same, it updates the row with the new slot's details. If the date is different, it updates the row with the new slot's details and additional information. After updating, it calls the handleCancel function.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>selectedSlot</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The selected slot to replace a course.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>roomFeatures</code></td>
             
 
             <td class="type">
@@ -484,7 +1668,457 @@
 
             
 
-            <td class="description last"><p>The date string to parse.</p></td>
+            <td class="description last"><p>The features of the room. If the room is different, it gets the features of the new room.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>handleCancel</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A function that resets the states and closes the modal.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="ReplaceCourse.js.html">ReplaceCourse.js</a>, <a href="ReplaceCourse.js.html#line198">line 198</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="ReplaceCourse.js.html">ReplaceCourse.js</a>, <a href="ReplaceCourse.js.html#line118">line 118</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="~style"><span class="type-signature">(inner, constant) </span>style<span class="type-signature"> :Object</span></h4>
+
+
+
+
+<div class="description">
+    <p>A style object used for positioning a modal at the center of the screen.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>position</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The position property of the style object.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>top</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The top property of the style object.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="ReplaceCourse.js.html">ReplaceCourse.js</a>, <a href="ReplaceCourse.js.html#line123">line 123</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~ReplaceCourse"><span class="type-signature">(inner) </span>ReplaceCourse<span class="signature">(props)</span><span class="type-signature"> &rarr; {React.Element}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p><code>ReplaceCourse</code> is a React functional component used to replace a course in a schedule.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>props</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The properties that define the <code>ReplaceCourse</code> component.</p>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>tableRef</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A reference to a table in the parent component.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -525,7 +2159,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils.js.html">utils.js</a>, <a href="utils.js.html#line50">line 50</a>
+        <a href="ReplaceCourse.js.html">ReplaceCourse.js</a>, <a href="ReplaceCourse.js.html#line153">line 153</a>
     </li></ul></dd>
     
 
@@ -554,7 +2188,7 @@
 
         
 <div class="param-desc">
-    <p>The parsed date.</p>
+    <p>A React element that represents a form inside a modal for replacing a course.</p>
 </div>
 
 
@@ -565,7 +2199,7 @@
     </dt>
     <dd>
         
-<span class="param-type">Date</span>
+<span class="param-type">React.Element</span>
 
 
     </dd>
@@ -583,7 +2217,7 @@
     
 
     
-    <h4 class="name" id="~sortDate"><span class="type-signature">(inner) </span>sortDate<span class="signature">(a, b)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    <h4 class="name" id="~handleSubmit"><span class="type-signature">(inner) </span>handleSubmit<span class="signature">(e)</span><span class="type-signature"></span></h4>
     
 
     
@@ -591,7 +2225,7 @@
 
 
 <div class="description">
-    <p>Compares two date strings and returns a number indicating their sort order.</p>
+    <p>This function handles form submission. It prevents the default form submission event, looks up slots based on the rules, and sets the slots state.</p>
 </div>
 
 
@@ -627,13 +2261,13 @@
 
         <tr>
             
-                <td class="name"><code>a</code></td>
+                <td class="name"><code>e</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">Event</span>
 
 
             
@@ -643,14 +2277,257 @@
 
             
 
-            <td class="description last"><p>The first date string to compare.</p></td>
+            <td class="description last"><p>The form submission event.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>slots</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The slots to replace a course.</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>b</code></td>
+                <td class="name"><code>setSlots</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A function that sets the slots state.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="ReplaceCourse.js.html">ReplaceCourse.js</a>, <a href="ReplaceCourse.js.html#line244">line 244</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~updateTable"><span class="type-signature">(inner) </span>updateTable<span class="signature">(selectedSlot)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>This function updates the table with the selected slot's details. If the room is different, it gets the features of the new room. If the date is the same, it updates the row with the new slot's details. If the date is different, it updates the row with the new slot's details and additional information. After updating, it calls the handleCancel function.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>selectedSlot</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The selected slot to replace a course.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>roomFeatures</code></td>
             
 
             <td class="type">
@@ -666,7 +2543,457 @@
 
             
 
-            <td class="description last"><p>The second date string to compare.</p></td>
+            <td class="description last"><p>The features of the room. If the room is different, it gets the features of the new room.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>handleCancel</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A function that resets the states and closes the modal.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="ReplaceCourse.js.html">ReplaceCourse.js</a>, <a href="ReplaceCourse.js.html#line198">line 198</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="utils.js.html">utils.js</a>, <a href="utils.js.html#line6">line 6</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="~style"><span class="type-signature">(inner, constant) </span>style<span class="type-signature"> :Object</span></h4>
+
+
+
+
+<div class="description">
+    <p>A style object used for positioning a modal at the center of the screen.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>position</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The position property of the style object.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>top</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The top property of the style object.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="ReplaceCourse.js.html">ReplaceCourse.js</a>, <a href="ReplaceCourse.js.html#line123">line 123</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~ReplaceCourse"><span class="type-signature">(inner) </span>ReplaceCourse<span class="signature">(props)</span><span class="type-signature"> &rarr; {React.Element}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p><code>ReplaceCourse</code> is a React functional component used to replace a course in a schedule.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>props</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The properties that define the <code>ReplaceCourse</code> component.</p>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>tableRef</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A reference to a table in the parent component.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -707,7 +3034,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils.js.html">utils.js</a>, <a href="utils.js.html#line69">line 69</a>
+        <a href="ReplaceCourse.js.html">ReplaceCourse.js</a>, <a href="ReplaceCourse.js.html#line153">line 153</a>
     </li></ul></dd>
     
 
@@ -736,7 +3063,7 @@
 
         
 <div class="param-desc">
-    <p>A negative number if <code>a</code> is earlier than <code>b</code>, a positive number if <code>a</code> is later than <code>b</code>, or 0 if they are the same.</p>
+    <p>A React element that represents a form inside a modal for replacing a course.</p>
 </div>
 
 
@@ -747,7 +3074,7 @@
     </dt>
     <dd>
         
-<span class="param-type">number</span>
+<span class="param-type">React.Element</span>
 
 
     </dd>
@@ -765,7 +3092,7 @@
     
 
     
-    <h4 class="name" id="~sortWeekDays"><span class="type-signature">(inner) </span>sortWeekDays<span class="signature">(a, b)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    <h4 class="name" id="~handleSubmit"><span class="type-signature">(inner) </span>handleSubmit<span class="signature">(e)</span><span class="type-signature"></span></h4>
     
 
     
@@ -773,7 +3100,7 @@
 
 
 <div class="description">
-    <p>Compares two weekday strings and returns a number indicating their sort order.</p>
+    <p>This function handles form submission. It prevents the default form submission event, looks up slots based on the rules, and sets the slots state.</p>
 </div>
 
 
@@ -809,13 +3136,13 @@
 
         <tr>
             
-                <td class="name"><code>a</code></td>
+                <td class="name"><code>e</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">Event</span>
 
 
             
@@ -825,30 +3152,7 @@
 
             
 
-            <td class="description last"><p>The first weekday string to compare.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>b</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The second weekday string to compare.</p></td>
+            <td class="description last"><p>The form submission event.</p></td>
         </tr>
 
     
@@ -856,6 +3160,81 @@
 </table>
 
 
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>slots</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The slots to replace a course.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>setSlots</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A function that sets the slots state.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -889,7 +3268,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils.js.html">utils.js</a>, <a href="utils.js.html#line87">line 87</a>
+        <a href="ReplaceCourse.js.html">ReplaceCourse.js</a>, <a href="ReplaceCourse.js.html#line244">line 244</a>
     </li></ul></dd>
     
 
@@ -914,28 +3293,218 @@
 
 
 
-<h5>Returns:</h5>
+
+
+
+
 
         
-<div class="param-desc">
-    <p>A negative number if <code>a</code> is earlier in the week than <code>b</code>, a positive number if <code>a</code> is later in the week than <code>b</code>, or 0 if they are the same.</p>
+            
+
+    
+
+    
+    <h4 class="name" id="~updateTable"><span class="type-signature">(inner) </span>updateTable<span class="signature">(selectedSlot)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>This function updates the table with the selected slot's details. If the room is different, it gets the features of the new room. If the date is the same, it updates the row with the new slot's details. If the date is different, it updates the row with the new slot's details and additional information. After updating, it calls the handleCancel function.</p>
 </div>
 
 
 
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
         
-<span class="param-type">number</span>
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>selectedSlot</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
 
 
-    </dd>
-</dl>
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The selected slot to replace a course.</p></td>
+        </tr>
 
     
+    </tbody>
+</table>
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>roomFeatures</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The features of the room. If the room is different, it gets the features of the new room.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>handleCancel</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A function that resets the states and closes the modal.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="ReplaceCourse.js.html">ReplaceCourse.js</a>, <a href="ReplaceCourse.js.html#line198">line 198</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -957,13 +3526,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="@fontsource_roboto_300.module_css.html">css</a></li><li><a href="@fontsource_roboto_400.module_css.html">css</a></li><li><a href="@fontsource_roboto_500.module_css.html">css</a></li><li><a href="@fontsource_roboto_700.module_css.html">css</a></li><li><a href="App.module_css.html">css</a></li><li><a href="index.module_css.html">css</a></li><li><a href="module-@mui_material.html">@mui/material</a></li><li><a href="module-@mui_material_Checkbox.html">@mui/material/Checkbox</a></li><li><a href="module-@mui_material_FormControl.html">@mui/material/FormControl</a></li><li><a href="module-@mui_material_InputLabel.html">@mui/material/InputLabel</a></li><li><a href="module-@mui_material_ListItem.html">@mui/material/ListItem</a></li><li><a href="module-@mui_material_ListItemText.html">@mui/material/ListItemText</a></li><li><a href="module-@mui_material_MenuItem.html">@mui/material/MenuItem</a></li><li><a href="module-@mui_material_Select.html">@mui/material/Select</a></li><li><a href="module-App.html">App</a></li><li><a href="module-CsvReader.html">CsvReader</a></li><li><a href="module-MultipleSelectCheckmarks.html">MultipleSelectCheckmarks</a></li><li><a href="module-RemoteFile.html">RemoteFile</a></li><li><a href="module-RoomsTable.html">RoomsTable</a></li><li><a href="module-ScheduleTable.html">ScheduleTable</a></li><li><a href="module-date-fns.html">date-fns</a></li><li><a href="module-papaparse.html">papaparse</a></li><li><a href="module-react.html">react</a></li><li><a href="module-react-csv-reader.html">react-csv-reader</a></li><li><a href="module-react-dom_client.html">react-dom/client</a></li><li><a href="module-react-tabulator.html">react-tabulator</a></li><li><a href="module-reportWebVitals.html">reportWebVitals</a></li><li><a href="module-utils.html">utils</a></li><li><a href="react-tabulator_css_bootstrap_tabulator_bootstrap.min.module_css.html">css</a></li><li><a href="react-tabulator_lib_css_tabulator.min.module_css.html">css</a></li><li><a href="react-tabulator_lib_styles.module_css.html">css</a></li></ul><h3>Global</h3><ul><li><a href="global.html#reportWebVitals">reportWebVitals</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="@fontsource_roboto_300.module_css.html">css</a></li><li><a href="@fontsource_roboto_400.module_css.html">css</a></li><li><a href="@fontsource_roboto_500.module_css.html">css</a></li><li><a href="@fontsource_roboto_700.module_css.html">css</a></li><li><a href="@mui_material%250DMaterial%2520UI%2520components%2520used%2520in%2520this%2520file.module_.html">@mui/materialMaterial UI components used in this file.</a></li><li><a href="@mui_x-date-pickers%250DDate%2520picker%2520components%2520used%2520in%2520this%2520file.module_.html">@mui/x-date-pickersDate picker components used in this file.</a></li><li><a href="@mui_x-date-pickers_AdapterDayjs%250DAdapter%2520for%2520the%2520date%2520picker%2520to%2520use%2520Day.js.module_.html">@mui/x-date-pickers/AdapterDayjsAdapter for the date picker to use Day.js.</a></li><li><a href="@mui_x-date-pickers_internals_demo%250DDemo%2520container%2520component%2520used%2520in%2520this%2520file.module_.html">@mui/x-date-pickers/internals/demoDemo container component used in this file.</a></li><li><a href="@react-sigma_core_lib_react-sigma.min.module_css.html">css</a></li><li><a href="App.html#.module:css">css</a></li><li><a href="atoms_rooms%250DAtom%2520representing%2520the%2520rooms%2520state.module_.html">atoms/roomsAtom representing the rooms state.</a></li><li><a href="atoms_schedule%250DAtom%2520representing%2520the%2520schedule%2520state.module_.html">atoms/scheduleAtom representing the schedule state.</a></li><li><a href="constants%250DConstants%2520used%2520in%2520this%2520file.module_.html">constantsConstants used in this file.</a></li><li><a href="date-fns%250DDate%2520utility%2520functions%2520used%2520in%2520this%2520file.module_.html">date-fnsDate utility functions used in this file.</a></li><li><a href="dayjs%250DDate%2520library%2520used%2520in%2520this%2520file.module_.html">dayjsDate library used in this file.</a></li><li><a href="index.module_css.html">css</a></li><li><a href="jotai%250DState%2520management%2520library%2520used%2520in%2520this%2520file.module_.html">jotaiState management library used in this file.</a></li><li><a href="module-._atoms_modalSlotsClass.html">./atoms/modalSlotsClass</a></li><li><a href="module-._atoms_rooms.html">/atoms/rooms</a></li><li><a href="module-._atoms_schedule.html">/atoms/schedule</a></li><li><a href="module-._lib_replaceCourse.html">/lib/replaceCourse</a></li><li><a href="module-._slotsModalComponents.html">/slotsModalComponents</a></li><li><a href="module-@mui_icons-material_Add.html">@mui/icons-material/Add</a></li><li><a href="module-@mui_icons-material_Delete.html">@mui/icons-material/Delete</a></li><li><a href="module-@mui_icons-material_FindReplace.html">@mui/icons-material/FindReplace</a></li><li><a href="module-@mui_icons-material_Menu.html">@mui/icons-material/Menu</a></li><li><a href="module-@mui_material.html">@mui/material</a></li><li><a href="module-@mui_material_AppBar.html">@mui/material/AppBar</a></li><li><a href="module-@mui_material_Box.html">@mui/material/Box</a></li><li><a href="module-@mui_material_Button.html">@mui/material/Button</a></li><li><a href="module-@mui_material_Checkbox.html">@mui/material/Checkbox</a></li><li><a href="module-@mui_material_Container.html">@mui/material/Container</a></li><li><a href="module-@mui_material_FormControl.html">@mui/material/FormControl</a></li><li><a href="module-@mui_material_IconButton.html">@mui/material/IconButton</a></li><li><a href="module-@mui_material_InputLabel.html">@mui/material/InputLabel</a></li><li><a href="module-@mui_material_ListItemText.html">@mui/material/ListItemText</a></li><li><a href="module-@mui_material_Menu.html">@mui/material/Menu</a></li><li><a href="module-@mui_material_MenuItem.html">@mui/material/MenuItem</a></li><li><a href="module-@mui_material_Select.html">@mui/material/Select</a></li><li><a href="module-@mui_material_Stack.html">@mui/material/Stack</a></li><li><a href="module-@mui_material_Toolbar.html">@mui/material/Toolbar</a></li><li><a href="module-@mui_material_Tooltip.html">@mui/material/Tooltip</a></li><li><a href="module-@mui_material_Typography.html">@mui/material/Typography</a></li><li><a href="module-@mui_x-data-grid.html">@mui/x-data-grid</a></li><li><a href="module-@mui_x-date-pickers_AdapterDayjs.html">@mui/x-date-pickers/AdapterDayjs</a></li><li><a href="module-@mui_x-date-pickers_DatePicker.html">@mui/x-date-pickers/DatePicker</a></li><li><a href="module-@mui_x-date-pickers_DateTimePicker.html">@mui/x-date-pickers/DateTimePicker</a></li><li><a href="module-@mui_x-date-pickers_LocalizationProvider.html">@mui/x-date-pickers/LocalizationProvider</a></li><li><a href="module-@mui_x-date-pickers_internals_demo.html">@mui/x-date-pickers/internals/demo</a></li><li><a href="module-@react-sigma_core.html">@react-sigma/core</a></li><li><a href="module-AFTERNOON_SHIFT.html">AFTERNOON_SHIFT</a></li><li><a href="module-App.html">App</a></li><li><a href="module-BeginningOfLesson.html">BeginningOfLesson</a></li><li><a href="module-COURSE_END_TIMES.html">COURSE_END_TIMES</a></li><li><a href="module-COURSE_START_TIMES.html">COURSE_START_TIMES</a></li><li><a href="module-CourseSlotsModal.html">CourseSlotsModal</a></li><li><a href="module-CsvReader.html">CsvReader</a></li><li><a href="module-DAY_PERIODS.html">DAY_PERIODS</a></li><li><a href="module-DurationOfLesson.html">DurationOfLesson</a></li><li><a href="module-EndingOfLesson.html">EndingOfLesson</a></li><li><a href="module-Heatmap.html">Heatmap</a></li><li><a href="module-Home.html">Home</a></li><li><a href="module-MORNING_SHIFT.html">MORNING_SHIFT</a></li><li><a href="module-MultipleSelectCheckmarks.html">MultipleSelectCheckmarks</a></li><li><a href="module-NIGHT_SHIFT.html">NIGHT_SHIFT</a></li><li><a href="module-Navbar.html">Navbar</a></li><li><a href="module-NetworkGraph.html">NetworkGraph</a></li><li><a href="module-ROOMS.html">ROOMS</a></li><li><a href="module-ROOM_FEATURES.html">ROOM_FEATURES</a></li><li><a href="module-RemoteFile.html">RemoteFile</a></li><li><a href="module-ReplaceCourse.html">ReplaceCourse</a></li><li><a href="module-RoomFeatures.html">RoomFeatures</a></li><li><a href="module-Rooms_.html">Rooms</a></li><li><a href="module-RoomsTable.html">RoomsTable</a></li><li><a href="module-ScheduleTable.html">ScheduleTable</a></li><li><a href="module-ScheduleTableFilter.html">ScheduleTableFilter</a></li><li><a href="module-Shift.html">Shift</a></li><li><a href="module-SlotsTable.html">SlotsTable</a></li><li><a href="module-TYPE_FILTER_COMPARISON.html">TYPE_FILTER_COMPARISON</a></li><li><a href="module-TargetDate.html">TargetDate</a></li><li><a href="module-TimeOfDay.html">TimeOfDay</a></li><li><a href="module-WEEKDAYS.html">WEEKDAYS</a></li><li><a href="module-WeekDay.html">WeekDay</a></li><li><a href="module-atoms_modalReplaceCourse.html">atoms/modalReplaceCourse</a></li><li><a href="module-atoms_modalSlotsClass.html">atoms/modalSlotsClass</a></li><li><a href="module-atoms_rooms.html">atoms/rooms</a></li><li><a href="module-atoms_schedule.html">atoms/schedule</a></li><li><a href="module-constants.html">constants</a></li><li><a href="module-date-fns.html">date-fns</a></li><li><a href="module-date-fns_isBefore.html">date-fns/isBefore</a></li><li><a href="module-dayjs.html">dayjs</a></li><li><a href="module-graphology.html">graphology</a></li><li><a href="module-jotai.html">jotai</a></li><li><a href="module-jotai_useAtomValue.html">jotai/useAtomValue</a></li><li><a href="module-lib_replaceCourse.html">lib/replaceCourse</a></li><li><a href="module-papaparse.html">papaparse</a></li><li><a href="module-react.html">react</a></li><li><a href="module-react-csv-reader.html">react-csv-reader</a></li><li><a href="module-react-dom.html">react-dom</a></li><li><a href="module-react-dom_client.html">react-dom/client</a></li><li><a href="module-react-router-dom.html">react-router-dom</a></li><li><a href="module-react-tabulator.html">react-tabulator</a></li><li><a href="module-reportWebVitals.html">reportWebVitals</a></li><li><a href="module-roomsAtom.html">roomsAtom</a></li><li><a href="module-scheduleAtom.html">scheduleAtom</a></li><li><a href="module-slotsModalComponents_BeginingOfLesson.html">slotsModalComponents/BeginingOfLesson</a></li><li><a href="module-slotsModalComponents_DurationOfLesson.html">slotsModalComponents/DurationOfLesson</a></li><li><a href="module-slotsModalComponents_EndingOfLesson.html">slotsModalComponents/EndingOfLesson</a></li><li><a href="module-slotsModalComponents_RoomFeatures.html">slotsModalComponents/RoomFeatures</a></li><li><a href="module-slotsModalComponents_Rooms.html">slotsModalComponents/Rooms</a></li><li><a href="module-slotsModalComponents_TargetDate.html">slotsModalComponents/TargetDate</a></li><li><a href="module-slotsModalComponents_TimeOfDay.html">slotsModalComponents/TimeOfDay</a></li><li><a href="module-slotsModalComponents_WeekDay.html">slotsModalComponents/WeekDay</a></li><li><a href="module-utils.html">utils</a></li><li><a href="react-heatmap-grid%250DHeatmap%2520grid%2520component%2520used%2520in%2520this%2520file.module_.html">react-heatmap-gridHeatmap grid component used in this file.</a></li><li><a href="react-tabulator_css_tabulator_bootstrap3.module_css.html">css</a></li><li><a href="react-tabulator_css_tabulator_bootstrap3.module_css%2520-%2520The%2520bootstrap3%2520theme%2520for%2520the%2520tabulator..html">css - The bootstrap3 theme for the tabulator.</a></li><li><a href="react-tabulator_lib_css_tabulator.min.module_css.html">css</a></li><li><a href="react-tabulator_lib_styles.module_css.html">css</a></li><li><a href="utils%250DUtility%2520functions%2520used%2520in%2520this%2520file.module_.html">utilsUtility functions used in this file.</a></li></ul><h3>Externals</h3><ul><li><a href="external-Box.html">Box</a></li><li><a href="external-Button.html">Button</a></li><li><a href="external-Modal.html">Modal</a></li><li><a href="external-React.html">React</a></li><li><a href="external-Typography.html">Typography</a></li><li><a href="external-dayjs.html">dayjs</a></li><li><a href="external-jotai.html">jotai</a></li></ul><h3>Global</h3><ul><li><a href="global.html#reportWebVitals">reportWebVitals</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Thu Mar 14 2024 22:11:45 GMT+0000 (Hora padrão da Europa Ocidental)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Mon May 13 2024 18:14:12 GMT+0100 (Hora de verão da Europa Ocidental)
 </footer>
 
 <script> prettyPrint(); </script>

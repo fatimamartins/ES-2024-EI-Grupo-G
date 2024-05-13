@@ -27,18 +27,19 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @file This file contains utility functions for handling data.
+ * @file utils.js
+ * This file contains utility functions for handling data. It imports necessary modules such as format, getISOWeek, isSameDay, getDay from 'date-fns' and WEEKDAYS from './constants'.
  */
 
 /** @module date-fns */
-import { format, getISOWeek } from 'date-fns'
-/** @module dayjs */
+import { format, getISOWeek, isSameDay, getDay } from 'date-fns'
+/** @module constants */
+import { WEEKDAYS } from './constants'
 
 /**
- * Adds a week number to each row of the provided data based on the date.
- *
  * @function
  * @name addWeekNumber
+ * @description This function adds a week number to each row of the provided data based on the date.
  * @param {Object[]} defaultData - The data to add week numbers to.
  * @returns {Object[]} The data with added week numbers.
  */
@@ -51,10 +52,9 @@ export function addWeekNumber(defaultData) {
 }
 
 /**
- * Adds a semester week number to each row of the provided data.
- *
  * @function
  * @name addSemesterWeekNumber
+ * @description This function adds a semester week number to each row of the provided data.
  * @param {Object[]} defaultData - The data to add semester week numbers to.
  * @returns {Object[]} The data with added semester week numbers.
  */
@@ -77,10 +77,9 @@ export function addSemesterWeekNumber(defaultData) {
 }
 
 /**
- * Parses a date string in the format 'dd/mm/yyyy' and returns a Date object.
- *
  * @function
  * @name parseDate
+ * @description This function parses a string representation of a date into a Date object.
  * @param {string} dateString - The date string to parse.
  * @returns {Date} The parsed date.
  */
@@ -96,12 +95,11 @@ export function parseDate(dateString) {
 }
 
 /**
- * Parses a string representation of an hour into a numerical representation.
- *
  * @function
  * @name parseHour
- * @param {string} hourString - A string representing an hour in the format 'HH:MM:SS'.
- * @returns {number|null} The time value of the parsed hour in milliseconds since the Unix Epoch, or null if the input is not a string.
+ * @description This function parses a string representation of an hour into a numerical representation.
+ * @param {string} hourString - The hour string to parse.
+ * @returns {number} The parsed hour.
  */
 export function parseHour(hourString) {
     if (hourString) {
@@ -117,13 +115,28 @@ export function parseHour(hourString) {
 }
 
 /**
- * Compares two date strings and returns a number indicating their sort order.
- *
+ * @function
+ * @name getCourseDurationToMilliseconds
+ * @description This function calculates the duration of a course in milliseconds.
+ * @param {Object} course - The course object containing the start and end times.
+ * @returns {number} The duration of the course in milliseconds.
+ */
+export function getCourseDurationToMilliseconds(start, end) {
+    if (start &amp;&amp; end) {
+        const startHour = parseHour(start)
+        const endHour = parseHour(end)
+        const duration = endHour - startHour
+        return duration
+    }
+    return 0
+}
+
+/**
  * @function
  * @name sortDate
- * @param {string} a - The first date string to compare.
- * @param {string} b - The second date string to compare.
- * @returns {number} A negative number if `a` is earlier than `b`, a positive number if `a` is later than `b`, or 0 if they are the same.
+ * @description This function sorts an array of dates in ascending order.
+ * @param {Date[]} dates - The array of dates to sort.
+ * @returns {Date[]} The sorted array of dates.
  */
 export function sortDate(a, b) {
     // a, b - the two values being compared
@@ -135,13 +148,11 @@ export function sortDate(a, b) {
 }
 
 /**
- * Compares two weekday strings and returns a number indicating their sort order.
- *
  * @function
  * @name sortWeekDays
- * @param {string} a - The first weekday string to compare.
- * @param {string} b - The second weekday string to compare.
- * @returns {number} A negative number if `a` is earlier in the week than `b`, a positive number if `a` is later in the week than `b`, or 0 if they are the same.
+ * @description This function sorts an array of weekdays in ascending order.
+ * @param {string[]} weekdays - The array of weekdays to sort.
+ * @returns {string[]} The sorted array of weekdays.
  */
 export function sortWeekDays(a, b) {
     const weekDays = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']
@@ -149,15 +160,12 @@ export function sortWeekDays(a, b) {
 }
 
 /**
- * Checks if a room is available at a specific date and hour based on the provided schedule data.
- *
  * @function
  * @name validateRoomAvailability
- * @param {string} room - The room to check availability for.
- * @param {Date} date - The date to check availability for.
- * @param {Object} hour - The hour to check availability for, with hour, minute, and second components.
- * @param {Object[]} horario - The schedule data to check against.
- * @returns {boolean} `true` if the room is available, `false` otherwise.
+ * @description This function validates the availability of a room based on the provided schedule.
+ * @param {Object} room - The room object to validate.
+ * @param {Object[]} schedule - The schedule to validate against.
+ * @returns {boolean} Returns true if the room is available, false otherwise.
  */
 export function validateRoomAvailability(room, date, hour, horario) {
     const roomData = horario.filter(
@@ -173,12 +181,11 @@ export function validateRoomAvailability(room, date, hour, horario) {
 }
 
 /**
- * @function getFormattedDateTime
- * `getFormattedDateTime` is a function that formats a given date and time into a specific string format.
- *
- * @param {string} date - The date to format, in 'DD/MM/YYYY' format.
- * @param {string} time - The time to format, in 'HH:mm' format.
- * @returns {string} - Returns the formatted date and time as a string.
+ * @function
+ * @name getFormattedDateTime
+ * @description This function formats a Date object into a string representation.
+ * @param {Date} date - The date to format.
+ * @returns {string} The formatted date string.
  */
 export function getFormattedDateTime(date, time, formatStr) {
     if (date &amp;&amp; time) {
@@ -195,6 +202,69 @@ export function getFormattedDateTime(date, time, formatStr) {
     }
     return ''
 }
+
+/**
+ * @function
+ * @name getWeek
+ * @description This function gets the week number of a given date.
+ * @param {Date} date - The date to get the week number from.
+ * @returns {number} The week number.
+ */
+export function getWeek(date) {
+    return getISOWeek(parseDate(date))
+}
+
+/**
+ * @function
+ * @name getSemesterWeek
+ * @description This function gets the semester week number of a given date.
+ * @param {Date} date - The date to get the semester week number from.
+ * @returns {number} The semester week number.
+ */
+export function getSemesterWeek(oldDate, semesterWeek, newDate) {
+    const dif = getWeek(newDate) - getWeek(oldDate)
+    return semesterWeek + dif
+}
+
+/**
+ * @function
+ * @name getDayOfTheWeek
+ * @description This function gets the day of the week for a given date.
+ * @param {Date} date - The date to get the day of the week from.
+ * @returns {string} The day of the week.
+ */
+export function getDayOfTheWeek(date) {
+    const index = getDay(parseDate(date))
+    if (index === 0) return null // 0 is Sunday but is not a valid day for the application
+    return WEEKDAYS[index - 1] // Adjust the index to match the WEEKDAYS array. 0 is Monday
+}
+
+/**
+ * @function
+ * @name isSameDate
+ * @description This function checks if two dates are the same.
+ * @param {Date} date1 - The first date to compare.
+ * @param {Date} date2 - The second date to compare.
+ * @returns {boolean} Returns true if the dates are the same, false otherwise.
+ */
+export function isSameDate(date1, date2) {
+    return isSameDay(parseDate(date1), parseDate(date2))
+}
+
+/**
+ * @function
+ * @name randomColor
+ * @description This function generates a random color in hexadecimal format.
+ * @returns {string} The generated random color.
+ */
+export const randomColor = () => {
+    const digits = '0123456789abcdef'
+    let code = '#'
+    for (let i = 0; i &lt; 6; i++) {
+        code += digits.charAt(Math.floor(Math.random() * 16))
+    }
+    return code
+}
 </code></pre>
         </article>
     </section>
@@ -205,13 +275,13 @@ export function getFormattedDateTime(date, time, formatStr) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="@fontsource_roboto_300.module_css.html">css</a></li><li><a href="@fontsource_roboto_400.module_css.html">css</a></li><li><a href="@fontsource_roboto_500.module_css.html">css</a></li><li><a href="@fontsource_roboto_700.module_css.html">css</a></li><li><a href="@mui_icons-material_Delete%250DMaterial-UI%2520Icons%2520is%2520a%2520set%2520of%2520pre-designed%2520icons%2520following%2520Material%2520Design%2520guidelines.%250DHere,%2520the%2520Delete%2520icon%2520is%2520imported%2520for%2520use%2520in%2520the%2520application.module_.html">@mui/icons-material/DeleteMaterial-UI Icons is a set of pre-designed icons following Material Design guidelines.Here, the Delete icon is imported for use in the application.</a></li><li><a href="@mui_icons-material_FindReplace%250DMaterial-UI%2520Icons%2520is%2520a%2520set%2520of%2520pre-designed%2520icons%2520following%2520Material%2520Design%2520guidelines.%250DHere,%2520the%2520FindReplace%2520icon%2520is%2520imported%2520for%2520use%2520in%2520the%2520application.module_.html">@mui/icons-material/FindReplaceMaterial-UI Icons is a set of pre-designed icons following Material Design guidelines.Here, the FindReplace icon is imported for use in the application.</a></li><li><a href="@mui_material%250DMaterial-UI%2520is%2520a%2520popular%2520React%2520UI%2520framework%2520that%2520provides%2520a%2520set%2520of%2520pre-designed%2520components%2520following%2520Material%2520Design%2520guidelines.%250DHere,%2520several%2520components%2520are%2520imported%2520for%2520use%2520in%2520the%2520application.module_.html">@mui/materialMaterial-UI is a popular React UI framework that provides a set of pre-designed components following Material Design guidelines.Here, several components are imported for use in the application.</a></li><li><a href="App.module_css.html">css</a></li><li><a href="atoms_modalReplaceCourse%250DThis%2520module%2520exports%2520the%2520atomModalReplaceCourse%2520atom,%2520which%2520is%2520used%2520for%2520managing%2520the%2520state%2520of%2520the%2520modal%2520for%2520replacing%2520a%2520course%2520in%2520the%2520application.module_.html">atoms/modalReplaceCourseThis module exports the atomModalReplaceCourse atom, which is used for managing the state of the modal for replacing a course in the application.</a></li><li><a href="atoms_rooms%250DThis%2520module%2520exports%2520the%2520atomRooms%2520atom,%2520which%2520is%2520used%2520for%2520managing%2520the%2520state%2520of%2520rooms%2520in%2520the%2520application.module_.html">atoms/roomsThis module exports the atomRooms atom, which is used for managing the state of rooms in the application.</a></li><li><a href="atoms_schedule%250DThis%2520module%2520exports%2520the%2520atomSchedule%2520atom,%2520which%2520is%2520used%2520for%2520managing%2520the%2520state%2520of%2520the%2520schedule%2520in%2520the%2520application.module_.html">atoms/scheduleThis module exports the atomSchedule atom, which is used for managing the state of the schedule in the application.</a></li><li><a href="constants%250DThis%2520module%2520exports%2520constants%2520used%2520throughout%2520the%2520application.%250DHere,%2520AFTERNOON_SHIFT,%2520COURSE_END_TIMES,%2520COURSE_START_TIMES,%2520MORNING_SHIFT,%2520NIGHT_SHIFT,%2520ROOMS,%2520and%2520WEEKDAYS%2520are%2520imported%2520for%2520use%2520in%2520the%2520application.module_.html">constantsThis module exports constants used throughout the application.Here, AFTERNOON_SHIFT, COURSE_END_TIMES, COURSE_START_TIMES, MORNING_SHIFT, NIGHT_SHIFT, ROOMS, and WEEKDAYS are imported for use in the application.</a></li><li><a href="constants%250DThis%2520module%2520exports%2520constants%2520used%2520throughout%2520the%2520application.%250DHere,%2520ROOM_FEATURES%2520and%2520ROOMS%2520are%2520imported%2520for%2520use%2520in%2520the%2520application.module_.html">constantsThis module exports constants used throughout the application.Here, ROOM_FEATURES and ROOMS are imported for use in the application.</a></li><li><a href="constants%250DThis%2520module%2520exports%2520constants%2520used%2520throughout%2520the%2520application.%250DHere,%2520ROOM_FEATURES%2520and%2520TYPE_FILTER_COMPARISON%2520are%2520imported%2520for%2520use%2520in%2520the%2520application.module_.html">constantsThis module exports constants used throughout the application.Here, ROOM_FEATURES and TYPE_FILTER_COMPARISON are imported for use in the application.</a></li><li><a href="index.module_css.html">css</a></li><li><a href="jotai%250DJotai%2520is%2520a%2520primitive%2520and%2520flexible%2520state%2520management%2520library%2520for%2520React.%250DHere,%2520the%2520useAtomValue%2520and%2520useSetAtom%2520hooks%2520are%2520imported%2520for%2520use%2520in%2520the%2520application.module_.html">jotaiJotai is a primitive and flexible state management library for React.Here, the useAtomValue and useSetAtom hooks are imported for use in the application.</a></li><li><a href="jotai%250DJotai%2520is%2520a%2520primitive%2520and%2520flexible%2520state%2520management%2520library%2520for%2520React.%250DHere,%2520the%2520useAtomValue%2520hook%2520is%2520imported%2520for%2520use%2520in%2520the%2520application.module_.html">jotaiJotai is a primitive and flexible state management library for React.Here, the useAtomValue hook is imported for use in the application.</a></li><li><a href="module-@mui_material.html">@mui/material</a></li><li><a href="module-@mui_material_Checkbox.html">@mui/material/Checkbox</a></li><li><a href="module-@mui_material_FormControl.html">@mui/material/FormControl</a></li><li><a href="module-@mui_material_InputLabel.html">@mui/material/InputLabel</a></li><li><a href="module-@mui_material_ListItemText.html">@mui/material/ListItemText</a></li><li><a href="module-@mui_material_MenuItem.html">@mui/material/MenuItem</a></li><li><a href="module-@mui_material_Select.html">@mui/material/Select</a></li><li><a href="module-App.html">App</a></li><li><a href="module-CsvReader.html">CsvReader</a></li><li><a href="module-MultipleSelectCheckmarks.html">MultipleSelectCheckmarks</a></li><li><a href="module-RemoteFile.html">RemoteFile</a></li><li><a href="module-ReplaceCourse.html">ReplaceCourse</a></li><li><a href="module-RoomsTable.html">RoomsTable</a></li><li><a href="module-ScheduleTable.html">ScheduleTable</a></li><li><a href="module-ScheduleTableFilter.html">ScheduleTableFilter</a></li><li><a href="module-atoms_modalReplaceCourse.html">atoms/modalReplaceCourse</a></li><li><a href="module-atoms_schedule.html">atoms/schedule</a></li><li><a href="module-constants.html">constants</a></li><li><a href="module-date-fns.html">date-fns</a></li><li><a href="module-dayjs.html">dayjs</a></li><li><a href="module-lib_replaceCourse.html">lib/replaceCourse</a></li><li><a href="module-papaparse.html">papaparse</a></li><li><a href="module-react.html">react</a></li><li><a href="module-react-csv-reader.html">react-csv-reader</a></li><li><a href="module-react-dom.html">react-dom</a></li><li><a href="module-react-dom_client.html">react-dom/client</a></li><li><a href="module-react-tabulator.html">react-tabulator</a></li><li><a href="module-reportWebVitals.html">reportWebVitals</a></li><li><a href="module-utils.html">utils</a></li><li><a href="react-tabulator_lib_css_tabulator.min.module_css.html">css</a></li><li><a href="react-tabulator_lib_styles.module_css.html">css</a></li></ul><h3>Externals</h3><ul><li><a href="external-AdapterDayjs.html">AdapterDayjs</a></li><li><a href="external-Box.html">Box</a></li><li><a href="external-Button.html">Button</a></li><li><a href="external-Checkbox.html">Checkbox</a></li><li><a href="external-DateTimePicker.html">DateTimePicker</a></li><li><a href="external-DemoContainer.html">DemoContainer</a></li><li><a href="external-FormControl.html">FormControl</a></li><li><a href="external-FormControlLabel.html">FormControlLabel</a></li><li><a href="external-InputLabel.html">InputLabel</a></li><li><a href="external-ListItemText.html">ListItemText</a></li><li><a href="external-LocalizationProvider.html">LocalizationProvider</a></li><li><a href="external-MenuItem.html">MenuItem</a></li><li><a href="external-Modal.html">Modal</a></li><li><a href="external-Radio.html">Radio</a></li><li><a href="external-RadioGroup.html">RadioGroup</a></li><li><a href="external-React.html">React</a></li><li><a href="external-Select.html">Select</a></li><li><a href="external-Stack.html">Stack</a></li><li><a href="external-Typography.html">Typography</a></li><li><a href="external-dayjs.html">dayjs</a></li><li><a href="external-jotai.html">jotai</a></li></ul><h3>Global</h3><ul><li><a href="global.html#reportWebVitals">reportWebVitals</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="@fontsource_roboto_300.module_css.html">css</a></li><li><a href="@fontsource_roboto_400.module_css.html">css</a></li><li><a href="@fontsource_roboto_500.module_css.html">css</a></li><li><a href="@fontsource_roboto_700.module_css.html">css</a></li><li><a href="@mui_material%250DMaterial%2520UI%2520components%2520used%2520in%2520this%2520file.module_.html">@mui/materialMaterial UI components used in this file.</a></li><li><a href="@mui_x-date-pickers%250DDate%2520picker%2520components%2520used%2520in%2520this%2520file.module_.html">@mui/x-date-pickersDate picker components used in this file.</a></li><li><a href="@mui_x-date-pickers_AdapterDayjs%250DAdapter%2520for%2520the%2520date%2520picker%2520to%2520use%2520Day.js.module_.html">@mui/x-date-pickers/AdapterDayjsAdapter for the date picker to use Day.js.</a></li><li><a href="@mui_x-date-pickers_internals_demo%250DDemo%2520container%2520component%2520used%2520in%2520this%2520file.module_.html">@mui/x-date-pickers/internals/demoDemo container component used in this file.</a></li><li><a href="@react-sigma_core_lib_react-sigma.min.module_css.html">css</a></li><li><a href="App.html#.module:css">css</a></li><li><a href="atoms_rooms%250DAtom%2520representing%2520the%2520rooms%2520state.module_.html">atoms/roomsAtom representing the rooms state.</a></li><li><a href="atoms_schedule%250DAtom%2520representing%2520the%2520schedule%2520state.module_.html">atoms/scheduleAtom representing the schedule state.</a></li><li><a href="constants%250DConstants%2520used%2520in%2520this%2520file.module_.html">constantsConstants used in this file.</a></li><li><a href="date-fns%250DDate%2520utility%2520functions%2520used%2520in%2520this%2520file.module_.html">date-fnsDate utility functions used in this file.</a></li><li><a href="dayjs%250DDate%2520library%2520used%2520in%2520this%2520file.module_.html">dayjsDate library used in this file.</a></li><li><a href="index.module_css.html">css</a></li><li><a href="jotai%250DState%2520management%2520library%2520used%2520in%2520this%2520file.module_.html">jotaiState management library used in this file.</a></li><li><a href="module-._atoms_modalSlotsClass.html">./atoms/modalSlotsClass</a></li><li><a href="module-._atoms_rooms.html">/atoms/rooms</a></li><li><a href="module-._atoms_schedule.html">/atoms/schedule</a></li><li><a href="module-._lib_replaceCourse.html">/lib/replaceCourse</a></li><li><a href="module-._slotsModalComponents.html">/slotsModalComponents</a></li><li><a href="module-@mui_icons-material_Add.html">@mui/icons-material/Add</a></li><li><a href="module-@mui_icons-material_Delete.html">@mui/icons-material/Delete</a></li><li><a href="module-@mui_icons-material_FindReplace.html">@mui/icons-material/FindReplace</a></li><li><a href="module-@mui_icons-material_Menu.html">@mui/icons-material/Menu</a></li><li><a href="module-@mui_material.html">@mui/material</a></li><li><a href="module-@mui_material_AppBar.html">@mui/material/AppBar</a></li><li><a href="module-@mui_material_Box.html">@mui/material/Box</a></li><li><a href="module-@mui_material_Button.html">@mui/material/Button</a></li><li><a href="module-@mui_material_Checkbox.html">@mui/material/Checkbox</a></li><li><a href="module-@mui_material_Container.html">@mui/material/Container</a></li><li><a href="module-@mui_material_FormControl.html">@mui/material/FormControl</a></li><li><a href="module-@mui_material_IconButton.html">@mui/material/IconButton</a></li><li><a href="module-@mui_material_InputLabel.html">@mui/material/InputLabel</a></li><li><a href="module-@mui_material_ListItemText.html">@mui/material/ListItemText</a></li><li><a href="module-@mui_material_Menu.html">@mui/material/Menu</a></li><li><a href="module-@mui_material_MenuItem.html">@mui/material/MenuItem</a></li><li><a href="module-@mui_material_Select.html">@mui/material/Select</a></li><li><a href="module-@mui_material_Stack.html">@mui/material/Stack</a></li><li><a href="module-@mui_material_Toolbar.html">@mui/material/Toolbar</a></li><li><a href="module-@mui_material_Tooltip.html">@mui/material/Tooltip</a></li><li><a href="module-@mui_material_Typography.html">@mui/material/Typography</a></li><li><a href="module-@mui_x-data-grid.html">@mui/x-data-grid</a></li><li><a href="module-@mui_x-date-pickers_AdapterDayjs.html">@mui/x-date-pickers/AdapterDayjs</a></li><li><a href="module-@mui_x-date-pickers_DatePicker.html">@mui/x-date-pickers/DatePicker</a></li><li><a href="module-@mui_x-date-pickers_DateTimePicker.html">@mui/x-date-pickers/DateTimePicker</a></li><li><a href="module-@mui_x-date-pickers_LocalizationProvider.html">@mui/x-date-pickers/LocalizationProvider</a></li><li><a href="module-@mui_x-date-pickers_internals_demo.html">@mui/x-date-pickers/internals/demo</a></li><li><a href="module-@react-sigma_core.html">@react-sigma/core</a></li><li><a href="module-AFTERNOON_SHIFT.html">AFTERNOON_SHIFT</a></li><li><a href="module-App.html">App</a></li><li><a href="module-BeginningOfLesson.html">BeginningOfLesson</a></li><li><a href="module-COURSE_END_TIMES.html">COURSE_END_TIMES</a></li><li><a href="module-COURSE_START_TIMES.html">COURSE_START_TIMES</a></li><li><a href="module-CourseSlotsModal.html">CourseSlotsModal</a></li><li><a href="module-CsvReader.html">CsvReader</a></li><li><a href="module-DAY_PERIODS.html">DAY_PERIODS</a></li><li><a href="module-DurationOfLesson.html">DurationOfLesson</a></li><li><a href="module-EndingOfLesson.html">EndingOfLesson</a></li><li><a href="module-Heatmap.html">Heatmap</a></li><li><a href="module-Home.html">Home</a></li><li><a href="module-MORNING_SHIFT.html">MORNING_SHIFT</a></li><li><a href="module-MultipleSelectCheckmarks.html">MultipleSelectCheckmarks</a></li><li><a href="module-NIGHT_SHIFT.html">NIGHT_SHIFT</a></li><li><a href="module-Navbar.html">Navbar</a></li><li><a href="module-NetworkGraph.html">NetworkGraph</a></li><li><a href="module-ROOMS.html">ROOMS</a></li><li><a href="module-ROOM_FEATURES.html">ROOM_FEATURES</a></li><li><a href="module-RemoteFile.html">RemoteFile</a></li><li><a href="module-ReplaceCourse.html">ReplaceCourse</a></li><li><a href="module-RoomFeatures.html">RoomFeatures</a></li><li><a href="module-Rooms_.html">Rooms</a></li><li><a href="module-RoomsTable.html">RoomsTable</a></li><li><a href="module-ScheduleTable.html">ScheduleTable</a></li><li><a href="module-ScheduleTableFilter.html">ScheduleTableFilter</a></li><li><a href="module-Shift.html">Shift</a></li><li><a href="module-SlotsTable.html">SlotsTable</a></li><li><a href="module-TYPE_FILTER_COMPARISON.html">TYPE_FILTER_COMPARISON</a></li><li><a href="module-TargetDate.html">TargetDate</a></li><li><a href="module-TimeOfDay.html">TimeOfDay</a></li><li><a href="module-WEEKDAYS.html">WEEKDAYS</a></li><li><a href="module-WeekDay.html">WeekDay</a></li><li><a href="module-atoms_modalReplaceCourse.html">atoms/modalReplaceCourse</a></li><li><a href="module-atoms_modalSlotsClass.html">atoms/modalSlotsClass</a></li><li><a href="module-atoms_rooms.html">atoms/rooms</a></li><li><a href="module-atoms_schedule.html">atoms/schedule</a></li><li><a href="module-constants.html">constants</a></li><li><a href="module-date-fns.html">date-fns</a></li><li><a href="module-date-fns_isBefore.html">date-fns/isBefore</a></li><li><a href="module-dayjs.html">dayjs</a></li><li><a href="module-graphology.html">graphology</a></li><li><a href="module-jotai.html">jotai</a></li><li><a href="module-jotai_useAtomValue.html">jotai/useAtomValue</a></li><li><a href="module-lib_replaceCourse.html">lib/replaceCourse</a></li><li><a href="module-papaparse.html">papaparse</a></li><li><a href="module-react.html">react</a></li><li><a href="module-react-csv-reader.html">react-csv-reader</a></li><li><a href="module-react-dom.html">react-dom</a></li><li><a href="module-react-dom_client.html">react-dom/client</a></li><li><a href="module-react-router-dom.html">react-router-dom</a></li><li><a href="module-react-tabulator.html">react-tabulator</a></li><li><a href="module-reportWebVitals.html">reportWebVitals</a></li><li><a href="module-roomsAtom.html">roomsAtom</a></li><li><a href="module-scheduleAtom.html">scheduleAtom</a></li><li><a href="module-slotsModalComponents_BeginingOfLesson.html">slotsModalComponents/BeginingOfLesson</a></li><li><a href="module-slotsModalComponents_DurationOfLesson.html">slotsModalComponents/DurationOfLesson</a></li><li><a href="module-slotsModalComponents_EndingOfLesson.html">slotsModalComponents/EndingOfLesson</a></li><li><a href="module-slotsModalComponents_RoomFeatures.html">slotsModalComponents/RoomFeatures</a></li><li><a href="module-slotsModalComponents_Rooms.html">slotsModalComponents/Rooms</a></li><li><a href="module-slotsModalComponents_TargetDate.html">slotsModalComponents/TargetDate</a></li><li><a href="module-slotsModalComponents_TimeOfDay.html">slotsModalComponents/TimeOfDay</a></li><li><a href="module-slotsModalComponents_WeekDay.html">slotsModalComponents/WeekDay</a></li><li><a href="module-utils.html">utils</a></li><li><a href="react-heatmap-grid%250DHeatmap%2520grid%2520component%2520used%2520in%2520this%2520file.module_.html">react-heatmap-gridHeatmap grid component used in this file.</a></li><li><a href="react-tabulator_css_tabulator_bootstrap3.module_css.html">css</a></li><li><a href="react-tabulator_css_tabulator_bootstrap3.module_css%2520-%2520The%2520bootstrap3%2520theme%2520for%2520the%2520tabulator..html">css - The bootstrap3 theme for the tabulator.</a></li><li><a href="react-tabulator_lib_css_tabulator.min.module_css.html">css</a></li><li><a href="react-tabulator_lib_styles.module_css.html">css</a></li><li><a href="utils%250DUtility%2520functions%2520used%2520in%2520this%2520file.module_.html">utilsUtility functions used in this file.</a></li></ul><h3>Externals</h3><ul><li><a href="external-Box.html">Box</a></li><li><a href="external-Button.html">Button</a></li><li><a href="external-Modal.html">Modal</a></li><li><a href="external-React.html">React</a></li><li><a href="external-Typography.html">Typography</a></li><li><a href="external-dayjs.html">dayjs</a></li><li><a href="external-jotai.html">jotai</a></li></ul><h3>Global</h3><ul><li><a href="global.html#reportWebVitals">reportWebVitals</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Apr 03 2024 21:51:48 GMT+0100 (Hora de verão da Europa Ocidental)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Mon May 13 2024 18:14:12 GMT+0100 (Hora de verão da Europa Ocidental)
 </footer>
 
 <script> prettyPrint(); </script>

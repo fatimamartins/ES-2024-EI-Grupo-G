@@ -1,5 +1,9 @@
+/**
+ * @file modalReplaceCourse.js
+ * This file contains an atom that represents the state of the modal that allows the user to replace a course. It imports the atom function from 'jotai'.
+ */
+
+/** @module jotai */
 import { atom } from 'jotai'
 
-// Represents the state of the modal that allows the user to replace a course.
-// If null, the modal is closed. If not null, the modal is open with the info of the selected course.
 export const atomModalReplaceCourse = atom(null)

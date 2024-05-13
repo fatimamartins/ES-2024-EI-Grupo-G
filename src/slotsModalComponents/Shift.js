@@ -1,4 +1,15 @@
 /**
+ * @file
+ * @module Shift
+ * @description This file contains the `Shift` component.
+ * @requires module:@mui/material
+ * @requires module:react
+ */
+
+import React from 'react'
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
+
+/**
  * `Shift` is a React functional component that renders a form control for selecting a shift.
  *
  * @component
@@ -12,10 +23,6 @@
  *
  * @returns {React.Element} The rendered form control.
  */
-
-import React from 'react'
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
-
 const Shift = ({ options, rules, setRules }) => {
     return (
         <FormControl sx={{ minWidth: 180, marginLeft: 2 }}>

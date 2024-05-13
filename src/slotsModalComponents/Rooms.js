@@ -1,16 +1,10 @@
 /**
- * `Rooms` is a React functional component that renders a form control for selecting rooms.
- *
- * @component
- * @param {Object} props - The properties passed to the component.
- * @param {Object} props.rules - An object representing the current rules.
- * @param {Function} props.setRules - A function to update the rules.
- * @param {number} props.left - The left margin of the form control.
- *
- * @example
- * <Rooms rules={currentRules} setRules={updateRules} left={2} />
- *
- * @returns {React.Element} The rendered form control.
+ * @file
+ * @module Rooms
+ * @description This file contains the `Rooms` component.
+ * @requires module:@mui/material
+ * @requires module:react
+ * @requires module:../constants
  */
 import React from 'react'
 import { Checkbox, FormControl, InputLabel, ListItemText, MenuItem, Select, Tooltip } from '@mui/material'
@@ -29,6 +23,21 @@ const MenuProps = {
         },
     },
 }
+
+/**
+ * `Rooms` is a React functional component that renders a form control for selecting rooms.
+ *
+ * @component
+ * @param {Object} props - The properties passed to the component.
+ * @param {Object} props.rules - An object representing the current rules.
+ * @param {Function} props.setRules - A function to update the rules.
+ * @param {number} props.left - The left margin of the form control.
+ *
+ * @example
+ * <Rooms rules={currentRules} setRules={updateRules} left={2} />
+ *
+ * @returns {React.Element} The rendered form control.
+ */
 const Rooms = ({ rules, setRules, left }) => {
     return (
         <FormControl sx={{ width: 375, marginLeft: left }}>

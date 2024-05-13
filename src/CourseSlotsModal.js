@@ -1,24 +1,43 @@
 /**
- * @file SlotsClass
+ * @file CourseSlotsModal.js
  */
 
 /**
+ * External React library.
  * @external React
  * @see {@link https://reactjs.org/}
  */
 import * as React from 'react'
 
 /**
+ * External jotai library.
  * @external jotai
  * @see {@link https://jotai.pmnd.rs/}
  */
 import { useAtomValue, useSetAtom } from 'jotai'
 
 /**
- * @module lib/replaceCourse
+ * Module for managing modal slots class atoms.
+ * @module ./atoms/modalSlotsClass
  */
-
 import { atomModalSlotsClass } from './atoms/modalSlotsClass'
+
+/**
+ * Module for managing schedule atoms.
+ * @module ./atoms/schedule
+ */
+import { atomSchedule } from './atoms/schedule'
+
+/**
+ * Module for managing room atoms.
+ * @module ./atoms/rooms
+ */
+import { atomRooms } from './atoms/rooms'
+
+/**
+ * External MUI components for building UI.
+ * @module @mui/material
+ */
 import {
     Box,
     Button,
@@ -31,8 +50,30 @@ import {
     TextField,
     Typography,
 } from '@mui/material'
-import { atomSchedule } from './atoms/schedule'
+
+/**
+ * External date manipulation library.
+ * @module dayjs
+ */
 import dayjs from 'dayjs'
+
+/**
+ * Utility functions for slot management.
+ * @module ./lib/replaceCourse
+ */
+import { getNextWeekDate, lookupSlots } from './lib/replaceCourse'
+import { getDayOfTheWeek, parseDate } from './utils'
+
+/**
+ * External date-fns library for date manipulation.
+ * @module date-fns
+ */
+import { getWeek } from 'date-fns'
+
+/**
+ * Custom components for slots modal.
+ * @module ./slotsModalComponents
+ */
 import DurationOfLesson from './slotsModalComponents/DurationOfLesson'
 import BeginningOfLesson from './slotsModalComponents/BeginingOfLesson'
 import EndingOfLesson from './slotsModalComponents/EndingOfLesson'
@@ -41,14 +82,11 @@ import TimeOfDay from './slotsModalComponents/TimeOfDay'
 import RoomFeatures from './slotsModalComponents/RoomFeatures'
 import TargetDate from './slotsModalComponents/TargetDate'
 import Rooms from './slotsModalComponents/Rooms'
-import { getNextWeekDate, lookupSlots } from './lib/replaceCourse'
-import SlotsTable from './SlotsTable'
-import { atomRooms } from './atoms/rooms'
-import { getDayOfTheWeek, parseDate } from './utils'
-import { getWeek } from 'date-fns'
 import Shift from './slotsModalComponents/Shift'
+import SlotsTable from './SlotsTable'
 
 /**
+ * A style object used for positioning a modal at the center of the screen.
  * @constant
  * @name style
  * @type {Object}
@@ -70,10 +108,11 @@ const style = {
 }
 
 /**
- * CourseSlotsModal component is responsible for managing the alocation of lessons for a given course.
+ * CourseSlotsModal component is responsible for managing the allocation of lessons for a given course.
  * It displays a modal with slots and rules for choosing lessons for a course.
- *
- * @returns {JSX.Element} The SlotsClass component.
+ * @param {object} props - Component props.
+ * @param {React.Ref} props.tableRef - Ref for the SlotsTable component.
+ * @returns {JSX.Element} The CourseSlotsModal component.
  */
 const CourseSlotsModal = ({ tableRef }) => {
     const { isOpen } = useAtomValue(atomModalSlotsClass)

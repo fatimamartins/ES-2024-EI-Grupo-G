@@ -1,4 +1,16 @@
 /**
+ * @file
+ * @module BeginningOfLesson
+ * @description This file contains the `BeginningOfLesson` component.
+ * @requires module:@mui/material
+ * @requires module:react
+ * @requires module:../constants
+ */
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
+import React from 'react'
+import { COURSE_START_TIMES } from '../constants'
+
+/**
  * `BeginningOfLesson` is a React functional component that renders a form control for selecting the start time of a course.
  *
  * @component
@@ -11,10 +23,6 @@
  *
  * @returns {React.Element} The rendered form control.
  */
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
-import React from 'react'
-import { COURSE_START_TIMES } from '../constants'
-
 const BeginningOfLesson = ({ rules, setRules }) => {
     return (
         <FormControl sx={{ minWidth: 180 }}>

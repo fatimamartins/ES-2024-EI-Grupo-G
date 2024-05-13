@@ -1,4 +1,16 @@
 /**
+ * @file
+ * @module TimeOfDay
+ * @description This file contains the `TimeOfDay` component.
+ * @requires module:@mui/material
+ * @requires module:react
+ * @requires module:../constants
+ */
+import React from 'react'
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
+import { DAY_PERIODS } from '../constants'
+
+/**
  * `TimeOfDay` is a React functional component that renders a form control for selecting a time of day.
  *
  * @component
@@ -11,10 +23,6 @@
  *
  * @returns {React.Element} The rendered form control.
  */
-import React from 'react'
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
-import { DAY_PERIODS } from '../constants'
-
 const TimeOfDay = ({ rules, setRules }) => {
     return (
         <FormControl sx={{ minWidth: 180, marginLeft: 2 }}>
