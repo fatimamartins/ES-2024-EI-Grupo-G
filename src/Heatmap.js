@@ -296,24 +296,28 @@ export default function Heatmap() {
                     </Stack>
                 </form>
                 <Stack mt={6}>
-                    {heatmapData.length > 0 && (
-                        <HeatMap
-                            xLabels={formattedXLabels}
-                            yLabels={yLabels}
-                            data={heatmapData}
-                            squares
-                            yLabelWidth={80}
-                            cellStyle={(background, value, min, max, data, x, y) => ({
-                                background: `rgb(32, 95, 200, ${1 - (max - value) / (max - min)})`,
-                                fontSize: '12px',
-                                color: `${value === 0 ? 'white' : 'black'}`,
-                                borderRadius: '2px',
-                            })}
-                            cellRender={(value) => value && <div>{value}</div>}
-                        />
-                    )}
+                    <LoadHeatmap heatmapData={heatmapData} formattedXLabels={formattedXLabels} yLabels={yLabels} />
                 </Stack>
             </Stack>
         </Tooltip>
+    )
+}
+
+const LoadHeatmap = ({ heatmapData, formattedXLabels, yLabels }) => {
+    return (
+        <HeatMap
+            xLabels={formattedXLabels}
+            yLabels={yLabels}
+            data={heatmapData}
+            squares
+            yLabelWidth={80}
+            cellStyle={(background, value, min, max, data, x, y) => ({
+                background: `rgb(32, 95, 200, ${1 - (max - value) / (max - min)})`,
+                fontSize: '12px',
+                color: `${value === 0 ? 'white' : 'black'}`,
+                borderRadius: '2px',
+            })}
+            cellRender={(value) => value && <div>{value}</div>}
+        />
     )
 }
