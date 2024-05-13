@@ -45,7 +45,7 @@ const MenuProps = {
     },
 }
 
-export default function Home() {
+export default function NetworkGraph() {
     const schedule = useAtomValue(atomSchedule)
     const [roomType, setRoomType] = React.useState('')
     const [courses, setCourses] = React.useState([])

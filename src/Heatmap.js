@@ -34,7 +34,7 @@ import { eachDayOfInterval, format } from 'date-fns'
 
 const defaultTypeOfFilterComparison = ['=', '<', '>']
 
-export default function Home() {
+export default function Heatmap() {
     const schedule = useAtomValue(atomSchedule)
     const rooms = useAtomValue(atomRooms)
     const [roomType, setRoomType] = React.useState('')
