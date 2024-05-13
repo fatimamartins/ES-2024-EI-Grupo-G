@@ -45,7 +45,9 @@ export default function Heatmap() {
     const [isBusy, setIsBusy] = React.useState(true)
     const [heatmapData, setHeatmapData] = React.useState([])
     const [xLabels, setXLabels] = React.useState([]) // it changes according to the selected date range
+    const [formattedXLabels, setFormattedXLabels] = React.useState([]) // show only the day in xLabels
     const yLabels = [...new Set([...COURSE_START_TIMES, ...COURSE_END_TIMES])]
+    const [isWithinRange, setIsWithinRange] = React.useState(true)
 
     // Filter
     const clear = () => {
@@ -53,6 +55,14 @@ export default function Heatmap() {
         setStartDate(null)
         setEndDate(null)
         setRoomCapacity(null)
+        setHeatmapData([])
+        setIsWithinRange(true)
+    }
+
+    const checkIsWithinRange = (start, end) => {
+        if (start === null || end === null) return
+        const dates = eachDayOfInterval({ start: parseDate(startDate), end: parseDate(end) })
+        dates.length <= 31 ? setIsWithinRange(true) : setIsWithinRange(false)
     }
 
     const getRoomsByCapacity = () => {
@@ -71,8 +81,10 @@ export default function Heatmap() {
             : rooms
     }
 
+    // Get the date range based on the selected start and end dates, updates the xLabels and return an array of strings dates
     const getDataRange = () => {
         const dates = eachDayOfInterval({ start: parseDate(startDate), end: parseDate(endDate) })
+        setFormattedXLabels(dates.map((date) => format(date, 'dd')))
         return dates.map((date) => format(date, 'dd/MM/yyyy'))
     }
 
@@ -142,6 +154,8 @@ export default function Heatmap() {
         setHeatmapData(processData(roomsFiltered, dateRange))
     }
 
+    console.log('heatmapData', heatmapData)
+
     return (
         <Tooltip
             title={schedule.length === 0 || rooms.length === 0 ? 'Por favor carregue os ficheiros horário e salas' : ''}
@@ -178,41 +192,46 @@ export default function Heatmap() {
                             ))}
                         </Select>
                     </FormControl>
-                    <Stack direction="row" sx={{ marginBottom: '10px' }}>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DemoContainer components={['DatePicker']} sx={{ marginRight: '8px' }}>
-                                <DatePicker
-                                    label="Data de início *"
-                                    format="DD-MM-YYYY"
-                                    views={['day', 'month', 'year']}
-                                    value={startDate ? dayjs(startDate, 'DD/MM/YYYY') : null}
-                                    disabled={schedule.length === 0 || rooms.length === 0}
-                                    onChange={(newValue) => {
-                                        const dateString = newValue.format('DD/MM/YYYY')
-                                        setStartDate(dateString)
-                                    }}
-                                    sx={{ width: '420px' }}
-                                />
-                            </DemoContainer>
-                        </LocalizationProvider>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DemoContainer components={['DatePicker']}>
-                                <DatePicker
-                                    label="Data de fim *"
-                                    format="DD-MM-YYYY"
-                                    views={['day', 'month', 'year']}
-                                    value={endDate ? dayjs(endDate, 'DD/MM/YYYY') : null}
-                                    disabled={schedule.length === 0 || rooms.length === 0}
-                                    onChange={(newValue) => {
-                                        const dateString = newValue.format('DD/MM/YYYY')
-                                        setEndDate(dateString)
-                                    }}
-                                    sx={{ width: '420px' }}
-                                    minDate={startDate ? dayjs(startDate, 'DD/MM/YYYY') : null}
-                                />
-                            </DemoContainer>
-                        </LocalizationProvider>
-                    </Stack>
+                    <Tooltip title={!isWithinRange ? 'Selecione um intervalo de datas inferior a 31 dias' : ''}>
+                        <Stack direction="row" sx={{ marginBottom: '10px' }}>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DemoContainer components={['DatePicker']} sx={{ marginRight: '8px' }}>
+                                    <DatePicker
+                                        label="Data de início *"
+                                        format="DD-MM-YYYY"
+                                        views={['day', 'month', 'year']}
+                                        value={startDate ? dayjs(startDate, 'DD/MM/YYYY') : null}
+                                        disabled={schedule.length === 0 || rooms.length === 0}
+                                        onChange={(newValue) => {
+                                            const dateString = newValue.format('DD/MM/YYYY')
+                                            checkIsWithinRange(dateString, endDate)
+                                            setStartDate(dateString)
+                                        }}
+                                        sx={{ width: '420px' }}
+                                    />
+                                </DemoContainer>
+                            </LocalizationProvider>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DemoContainer components={['DatePicker']}>
+                                    <DatePicker
+                                        label="Data de fim *"
+                                        format="DD-MM-YYYY"
+                                        views={['day', 'month', 'year']}
+                                        value={endDate ? dayjs(endDate, 'DD/MM/YYYY') : null}
+                                        disabled={schedule.length === 0 || rooms.length === 0}
+                                        onChange={(newValue) => {
+                                            const dateString = newValue.format('DD/MM/YYYY')
+                                            checkIsWithinRange(startDate, dateString)
+                                            setEndDate(dateString)
+                                        }}
+                                        sx={{ width: '420px' }}
+                                        minDate={startDate ? dayjs(startDate, 'DD/MM/YYYY') : null}
+                                        maxDate={startDate ? dayjs(startDate, 'DD/MM/YYYY').add(1, 'month') : null}
+                                    />
+                                </DemoContainer>
+                            </LocalizationProvider>
+                        </Stack>
+                    </Tooltip>
                     <Stack direction="row">
                         <FormControl sx={{ marginRight: '8px', width: '150px' }}>
                             <Select
@@ -255,7 +274,13 @@ export default function Heatmap() {
                             variant="contained"
                             type="submit"
                             disabled={
-                                schedule.length === 0 || rooms.length === 0 || startDate === null || endDate === null
+                                schedule.length === 0 ||
+                                rooms.length === 0 ||
+                                startDate === null ||
+                                endDate === null ||
+                                startDate === 'Invalid Date' ||
+                                endDate === 'Invalid Date' ||
+                                !isWithinRange // monthly view of the heatmap
                             }
                         >
                             Desenhar heatmap
@@ -270,23 +295,20 @@ export default function Heatmap() {
                         </Button>
                     </Stack>
                 </form>
-                <Stack mt={6} sx={{ width: '100%', overflowX: 'scroll' }}>
+                <Stack mt={6}>
                     {heatmapData.length > 0 && (
                         <HeatMap
-                            xLabels={xLabels}
+                            xLabels={formattedXLabels}
                             yLabels={yLabels}
                             data={heatmapData}
-                            // squares
-                            xLabelWidth={100}
+                            squares
                             yLabelWidth={80}
                             cellStyle={(background, value, min, max, data, x, y) => ({
                                 background: `rgb(32, 95, 200, ${1 - (max - value) / (max - min)})`,
-                                fontSize: '11.5px',
-                                color: '#000',
-                                borderRadius: '4px',
-                                width: '100px',
+                                fontSize: '12px',
+                                color: `${value === 0 ? 'white' : 'black'}`,
+                                borderRadius: '2px',
                             })}
-                            // xLabelsVisibility não mostrar domingos
                             cellRender={(value) => value && <div>{value}</div>}
                         />
                     )}

@@ -54,8 +54,9 @@ export default function NetworkGraph() {
     const [endDate, setEndDate] = React.useState(null)
     const [degrees, setDegrees] = React.useState([])
     const [selectedDegrees, setSelectedDegrees] = React.useState([])
-    const [correlation, setCorrelation] = React.useState(1)
+    const [correlation, setCorrelation] = React.useState(0.34)
     const [graphData, setGraphData] = React.useState([])
+    const [displayGraph, setDisplayGraph] = React.useState(false)
 
     // get list of degrees and courses
     React.useEffect(() => {
@@ -78,6 +79,7 @@ export default function NetworkGraph() {
         setEndDate(null)
         setSelectedDegrees([])
         setGraphData([])
+        setCorrelation('')
     }
 
     const getFilters = () => {
@@ -108,6 +110,7 @@ export default function NetworkGraph() {
             const filters = getFilters()
             const filteredData = schedule.filter((appointment) => filters.every((filter) => filter(appointment)))
             setGraphData(filteredData)
+            setDisplayGraph(true)
         }
     }
 
@@ -125,13 +128,11 @@ export default function NetworkGraph() {
             map.set(id, appoitmentDuration)
         }
     })
-    console.log('🚀 ~ graphData.forEach ~ graphData:', graphData)
 
-    console.log('🚀 ~ Home ~ map:', map)
     const checkRelation = (node1, node2) => {
         const diff = Math.abs(node1 - node2)
         if (diff === 0) return false
-        // By default nodes are related if difference between them is less than 34%
+        // By default nodes are related if difference between them is less than correlation
         return diff / (node1 + node2) <= correlation
     }
     const potencialNodes = [...map.keys()]
@@ -181,7 +182,6 @@ export default function NetworkGraph() {
 
             // Load the graph in sigma
             loadGraph(graph)
-            // Apply the layout
         }, [loadGraph])
 
         return null
@@ -310,6 +310,7 @@ export default function NetworkGraph() {
                             variant="outlined"
                             disabled={schedule.length === 0}
                             required
+                            value={correlation}
                             onChange={(event) => {
                                 setCorrelation(event.target.value)
                             }}
@@ -322,7 +323,13 @@ export default function NetworkGraph() {
                         </span>
                     </FormControl>
                     <Stack direction="row" alignContent={'center'} sx={{ marginTop: '20px' }}>
-                        <Button variant="contained" type="submit" disabled={schedule.length === 0}>
+                        <Button
+                            variant="contained"
+                            type="submit"
+                            disabled={
+                                schedule.length === 0 || startDate === 'Invalid Date' || endDate === 'Invalid Date'
+                            }
+                        >
                             Desenhar grafo
                         </Button>
                         <Button
@@ -335,9 +342,25 @@ export default function NetworkGraph() {
                         </Button>
                     </Stack>
                 </form>
-                <SigmaContainer style={sigmaStyle} settings={settings}>
-                    <LoadGraph />
-                </SigmaContainer>
+                {displayGraph && edges.length === 0 ? (
+                    <Stack sx={{ marginTop: '100px' }}>
+                        <div
+                            style={{
+                                color: 'rgb(32, 95, 200)',
+                                fontSize: '20px',
+                                fontWeight: '600',
+                                marginRight: 'auto',
+                                marginLeft: 'auto',
+                            }}
+                        >
+                            Não foram encontradas relações entre os cursos
+                        </div>
+                    </Stack>
+                ) : (
+                    <SigmaContainer style={sigmaStyle} settings={settings}>
+                        <LoadGraph />
+                    </SigmaContainer>
+                )}
             </Stack>
         </Tooltip>
     )
