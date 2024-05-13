@@ -42,7 +42,7 @@ export default function Home() {
     const [endDate, setEndDate] = React.useState(null)
     const [roomCapacity, setRoomCapacity] = React.useState(null)
     const [capacityLogicOperator, setCapacityLogicOperator] = React.useState('>')
-    const [logicOperator, setLogicOperator] = React.useState('Ocupado')
+    const [isBusy, setIsBusy] = React.useState(true)
     const [heatmapData, setHeatmapData] = React.useState([])
     const [xLabels, setXLabels] = React.useState([]) // it changes according to the selected date range
     const yLabels = [...new Set([...COURSE_START_TIMES, ...COURSE_END_TIMES])]
@@ -122,7 +122,12 @@ export default function Home() {
             })
         })
 
-        return data
+        if (isBusy) {
+            return data
+        } else {
+            const totalRooms = roomsFilteredByCapacity.length
+            return data.map((row) => row.map((value) => totalRooms - value))
+        }
     }
 
     // Generate heatmap based on the selected filters
@@ -146,9 +151,9 @@ export default function Home() {
                     <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2, mb: 2 }}>
                         <Typography>Disponível</Typography>
                         <Switch
-                            checked={logicOperator === 'Ocupado'}
+                            checked={isBusy}
                             inputProps={{ 'aria-label': 'ant design' }}
-                            onChange={(e, c) => setLogicOperator(c ? 'Ocupado' : 'Disponível')}
+                            onChange={(e, c) => setIsBusy(c)}
                             disabled={schedule.length === 0 || rooms.length === 0}
                         />
                         <Typography>Ocupado</Typography>
