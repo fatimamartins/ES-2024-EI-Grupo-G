@@ -1,70 +1,26 @@
-# Getting Started with Create React App
+# Projeto de Engenharia de Software
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Grupo: Quarta-Feira-LEI-Grupo-G
 
-## Available Scripts
+### Membros
 
-In the project directory, you can run:
+- Fátima Martins - Nº 104524 - Username GitHub: fatimamartins
+- João Fernandes - Nº 100316 - Username GitHub: JoaoFernandes14
+- Pedro Ramos - Nº 100745 - Username GitHub: IKingRamosI
+- Tiago Oliveira - Nº 104366 - Username GitHub: tiagooliveira24
 
-### `npm start`
+### Descrição das tecnologias usadas no projeto
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Este projeto foi desenvolvido utilizando a tecnologia REACT.
+De forma a ser possível correr o projeto deve primeiro realizar o comando 'npm install', para instalar os packages necessários para a execução do site web.
+De seguida deve executar o comando 'npm start', para iniciar o servidor local e navegar pela plataforma.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Descrição do projeto
 
-### `npm test`
+O projeto consiste numa plataforma web de gestão de horários.
+Através do site é possível carregar o ficheiro com o horário do ano letivo e carregar o ficheiro com as caracteristicas das salas do ISCTE.
+Após o carregamento dos ficheiros, o site permite que sejam marcadas aulas de substituição e aulas extra, seguindo critérios definidos pelo utilizador.
+Feitas as alterações necessárias no horário, o utilizador pode fazer o download do ficheiro atualizado com as novas aulas.
+Através do horário e das caracteristicas das salas, o site torna possível a análise de conflitos entre aulas, através de um "network graph" e a visualização de um mapa com a ocupação das salas, recorrendo a um calendar heatmap.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Erros e funcionalidades não implementadas ou incompletas
