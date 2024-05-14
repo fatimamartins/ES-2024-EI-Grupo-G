@@ -287,16 +287,19 @@ const CourseSlotsModal = ({ tableRef }) => {
                                                       ),
                                                   }
                                                 : rulesToInclude
-                                        // update the rulesToInclude with the new date
-                                        setRulesToInclude(rulesToIncludeWithNewDate)
-                                        // find the slots for the week with the new date
-                                        const newSlots = lookupSlots(
-                                            { ...rulesToIncludeWithNewDate, data: 'mesmaSemana' },
-                                            { ...rulesToExclude, aulasSelecionadas },
-                                            [...schedule, ...aulasSelecionadas],
-                                            rooms
-                                        )
-                                        setSlots(newSlots)
+
+                                        if (aulasSelecionadas.length !== rulesToInclude?.numeroAulas) {
+                                            // update the rulesToInclude with the new date
+                                            setRulesToInclude(rulesToIncludeWithNewDate)
+                                            // find the slots for the week with the new date
+                                            const newSlots = lookupSlots(
+                                                { ...rulesToIncludeWithNewDate, data: 'mesmaSemana' },
+                                                { ...rulesToExclude, aulasSelecionadas },
+                                                [...schedule, ...aulasSelecionadas],
+                                                rooms
+                                            )
+                                            setSlots(newSlots)
+                                        }
                                     }}
                                     buttonTitle="Escolher slot"
                                 />
