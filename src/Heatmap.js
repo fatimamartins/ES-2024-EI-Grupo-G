@@ -168,13 +168,6 @@ export default function Heatmap() {
     /**
      * @constant
      * @type {Array}
-     * @name formattedXLabels
-     * @description The formatted x-axis labels state and its setter function. It shows only the day in xLabels.
-     */
-    const [formattedXLabels, setFormattedXLabels] = React.useState([]) // show only the day in xLabels
-    /**
-     * @constant
-     * @type {Array}
      * @name yLabels
      * @description An array of strings representing the y-axis labels of the heatmap.
      */
@@ -245,7 +238,7 @@ export default function Heatmap() {
     // Get the date range based on the selected start and end dates, updates the xLabels and return an array of strings dates
     const getDataRange = () => {
         const dates = eachDayOfInterval({ start: parseDate(startDate), end: parseDate(endDate) })
-        setFormattedXLabels(dates.map((date) => format(date, 'dd')))
+        setXLabels(dates.map((date) => format(date, 'dd')))
         return dates.map((date) => format(date, 'dd/MM/yyyy'))
     }
 
@@ -259,7 +252,7 @@ export default function Heatmap() {
      */
     function processData(roomsFilteredByCapacity, dateRange) {
         // Create a matrix of zeros with the same dimensions as the heatmap
-        const data = new Array(yLabels.length).fill(0).map(() => new Array(xLabels.length).fill(0))
+        const data = new Array(yLabels.length).fill(0).map(() => new Array(dateRange.length).fill(0))
 
         // Filter the ROOMS array to get rooms that have the specified roomType
         const filteredRoomNames = roomsFilteredByCapacity
@@ -287,7 +280,7 @@ export default function Heatmap() {
             const itemEndTime = parseHour(item['Hora fim da aula'])
 
             // Find the index of the day in the xLabels array
-            const dayIndex = xLabels.indexOf(item['Data da aula'])
+            const dayIndex = dateRange.indexOf(item['Data da aula'])
             if (dayIndex === -1) {
                 return
             }
@@ -320,16 +313,14 @@ export default function Heatmap() {
     // Generate heatmap based on the selected filters
     const calculateHeatmap = (e) => {
         e.preventDefault()
-        // get xLabels based on the selected date range
+        // get an array of string dates based on the selected date range
         const dateRange = getDataRange()
-        setXLabels(dateRange)
         // get rooms that match the room capacity filter
         const roomsFiltered = getRoomsByCapacity()
         // process the data to generate the heatmap
-        setHeatmapData(processData(roomsFiltered, dateRange))
+        const data = processData(roomsFiltered, dateRange)
+        setHeatmapData(data)
     }
-
-    console.log('heatmapData', heatmapData)
 
     return (
         <Tooltip
@@ -395,9 +386,11 @@ export default function Heatmap() {
                                         value={endDate ? dayjs(endDate, 'DD/MM/YYYY') : null}
                                         disabled={schedule.length === 0 || rooms.length === 0}
                                         onChange={(newValue) => {
-                                            const dateString = newValue.format('DD/MM/YYYY')
-                                            checkIsWithinRange(startDate, dateString)
-                                            setEndDate(dateString)
+                                            if (newValue.isValid()) {
+                                                const dateString = newValue.format('DD/MM/YYYY')
+                                                checkIsWithinRange(startDate, dateString)
+                                                setEndDate(dateString)
+                                            }
                                         }}
                                         sx={{ width: '420px' }}
                                         minDate={startDate ? dayjs(startDate, 'DD/MM/YYYY') : null}
@@ -471,7 +464,7 @@ export default function Heatmap() {
                     </Stack>
                 </form>
                 <Stack mt={6}>
-                    <LoadHeatmap heatmapData={heatmapData} formattedXLabels={formattedXLabels} yLabels={yLabels} />
+                    <LoadHeatmap heatmapData={heatmapData} xLabels={xLabels} yLabels={yLabels} />
                 </Stack>
             </Stack>
         </Tooltip>
@@ -488,10 +481,11 @@ export default function Heatmap() {
  * @param {Array} props.yLabels - The labels for the y-axis.
  * @returns {JSX.Element} The HeatMap component.
  */
-const LoadHeatmap = ({ heatmapData, formattedXLabels, yLabels }) => {
+const LoadHeatmap = ({ heatmapData, xLabels, yLabels }) => {
+    if (heatmapData.length === 0) return null
     return (
         <HeatMap
-            xLabels={formattedXLabels}
+            xLabels={xLabels}
             yLabels={yLabels}
             data={heatmapData}
             squares
