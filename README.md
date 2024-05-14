@@ -62,7 +62,12 @@ O projeto consiste no desenvolvimento de uma aplicação para suporte à gestão
 
 ![SonarCloud Screenshot][sonarcloud-screenshot]
 
+- Nota: O valor referido para a duplicação de código (48,7%) não corresponde à realidade do código. Analisando os ficheiros acusados com duplicação verificamos que os mesmos dizem respeito à documentação gerada pelo JSDoc. Além disso, tendo em conta que seguimos sempre a mesma estrutura de documentação, a mesma também é acusada como duplicação de código.
+
 ### Erros e funcionalidades não implementadas ou incompletas
+
+À data de entrega do projeto, todos os requisitos foram cumpridos.
+Não detatamos qualquer erro na aplicação.
 
 [sonarcloud-screenshot]: public/sonarcloud.png
 [testes-screenshot]: public/cobertura_testes.jpeg
