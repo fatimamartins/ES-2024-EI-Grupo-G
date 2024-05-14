@@ -425,6 +425,7 @@ export default function Heatmap() {
                                 placeholder="Capacidade da sala"
                                 label="Capacidade da sala"
                                 variant="outlined"
+                                value={roomCapacity || ''}
                                 disabled={schedule.length === 0 || rooms.length === 0}
                                 onChange={(event) => {
                                     if (event.target.value === '') {
