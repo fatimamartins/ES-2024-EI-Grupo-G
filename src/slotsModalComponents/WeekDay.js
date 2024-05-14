@@ -1,4 +1,16 @@
 /**
+ * @file
+ * @module WeekDay
+ * @description This file contains the `WeekDay` component.
+ * @requires module:@mui/material
+ * @requires module:react
+ * @requires module:../constants
+ */
+import React from 'react'
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
+import { WEEKDAYS } from '../constants'
+
+/**
  * `WeekDay` is a React functional component that renders a form control for selecting a day of the week.
  *
  * @component
@@ -11,10 +23,6 @@
  *
  * @returns {React.Element} The rendered form control.
  */
-import React from 'react'
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
-import { WEEKDAYS } from '../constants'
-
 const WeekDay = ({ rules, setRules }) => {
     return (
         <FormControl sx={{ minWidth: 180, marginLeft: 2 }}>

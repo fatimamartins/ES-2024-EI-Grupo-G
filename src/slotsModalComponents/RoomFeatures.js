@@ -1,15 +1,10 @@
 /**
- * `RoomFeatures` is a React functional component that renders a form control for selecting room features.
- *
- * @component
- * @param {Object} props - The properties passed to the component.
- * @param {Object} props.rules - An object representing the current rules.
- * @param {Function} props.setRules - A function to update the rules.
- *
- * @example
- * <RoomFeatures rules={currentRules} setRules={updateRules} />
- *
- * @returns {React.Element} The rendered form control.
+ * @file
+ * @module RoomFeatures
+ * @description This file contains the `RoomFeatures` component.
+ * @requires module:@mui/material
+ * @requires module:react
+ * @requires module:../constants
  */
 
 import React from 'react'
@@ -30,6 +25,19 @@ const MenuProps = {
     },
 }
 
+/**
+ * `RoomFeatures` is a React functional component that renders a form control for selecting room features.
+ *
+ * @component
+ * @param {Object} props - The properties passed to the component.
+ * @param {Object} props.rules - An object representing the current rules.
+ * @param {Function} props.setRules - A function to update the rules.
+ *
+ * @example
+ * <RoomFeatures rules={currentRules} setRules={updateRules} />
+ *
+ * @returns {React.Element} The rendered form control.
+ */
 const RoomFeatures = ({ rules, setRules }) => {
     return (
         <FormControl sx={{ width: 375, marginLeft: 2 }}>

@@ -1,12 +1,11 @@
 /**
- * @file This is a component for a filter of the shedule table using react-tabulator.
+ * @file ScheduleTableFilter.js
+ * This file is a component for a filter of the schedule table using react-tabulator. It imports necessary modules and components such as React, MUI material components, and the Cancel icon from MUI icons. It also defines constants for the default type of filter comparison and the default filter fields.
  */
 
-/**
- * @external React
- * @see {@link https://reactjs.org/}
- */
+/** @module react */
 import * as React from 'react'
+/** @module @mui/material */
 import {
     Button,
     Stack,
@@ -19,10 +18,21 @@ import {
     ListItemText,
     TextField,
 } from '@mui/material'
+/** @module @mui/icons-material/Delete */
 import Cancel from '@mui/icons-material/Delete'
 
+/**
+ * @constant
+ * @type {Array}
+ * @description This constant defines the default types of filter comparisons that can be used in the application.
+ */
 const defaultTypeOfFilterComparison = ['=', '!=', 'like', 'starts', 'ends', '<', '>', '<=', '>=']
 
+/**
+ * @constant
+ * @type {Array}
+ * @description This constant defines the default fields that can be used for filtering in the application. Each object in the array represents a field that can be used for filtering.
+ */
 const defaultFilterFields = [
     { title: 'Curso', field: 'Curso' },
     { title: 'Unidade Curricular', field: 'Unidade Curricular' },
@@ -39,14 +49,57 @@ const defaultFilterFields = [
     { title: 'Semana do semestre', field: 'Semana do semestre' },
 ]
 
+/**
+ * @function
+ * @name ScheduleTableFilter
+ * @description This function represents a component that renders a filter for the schedule table. It takes in props as parameters and returns a filter component.
+ * @param {Object} props - The properties passed to the component.
+ * @returns {React.Component} Returns a filter component that can be used to filter the schedule table.
+ */
 function ScheduleTableFilter({ tableRef, disabled }) {
+    /**
+     * @constant
+     * @type {Array}
+     * @description This constant defines a state variable and a function to update it. The state variable, selectedField, is used to store the currently selected field for filtering.
+     */
     const [selectedField, setSelectedField] = React.useState('')
+    /**
+     * @constant
+     * @type {Array}
+     * @description This constant defines a state variable and a function to update it. The state variable, value, is used to store the value for the selected field for filtering.
+     */
     const [value, setValue] = React.useState('')
+    /**
+     * @constant
+     * @type {Array}
+     * @description This constant defines a state variable and a function to update it. The state variable, logicOperator, is used to store the logic operator for filtering.
+     */
     const [logicOperator, setLogicOperator] = React.useState('AND')
+    /**
+     * @constant
+     * @type {Array}
+     * @description This constant defines a state variable and a function to update it. The state variable, type, is used to store the type of filter comparison.
+     */
     const [type, setType] = React.useState('=') // type of filter comparison. Example: =, <, >, <=, >=, !=  like starts ends
+    /**
+     * @constant
+     * @type {Array}
+     * @description This constant defines a state variable and a function to update it. The state variable, filters, is used to store the filters applied to the table.
+     */
     const [filters, setFilters] = React.useState([])
+    /**
+     * @constant
+     * @type {Array}
+     * @description This constant defines a state variable and a function to update it. The state variable, tabulatorFilter, is used to store the tabulator filter applied to the table.
+     */
     const [tabulatorFilter, setTabulatorFilter] = React.useState([])
 
+    /**
+     * @function
+     * @name addFilter
+     * @description This function adds a new filter to the filters state and updates the tabulator filter. It also resets the filter form fields.
+     * @param {Event} e - The event object.
+     */
     const addFilter = (e) => {
         e.preventDefault()
         setFilters([
@@ -67,6 +120,12 @@ function ScheduleTableFilter({ tableRef, disabled }) {
         setType('=')
     }
 
+    /**
+     * @function
+     * @name updateTabulatorFilter
+     * @description This function updates the tabulator filter state based on the new filter and the logic operator. It handles the cases for AND and OR logic operators.
+     * @param {Object} newFilter - The new filter to be added.
+     */
     const updateTabulatorFilter = (newFilter) => {
         if (logicOperator === 'AND') {
             setTabulatorFilter([...tabulatorFilter, newFilter])
@@ -82,6 +141,11 @@ function ScheduleTableFilter({ tableRef, disabled }) {
         }
     }
 
+    /**
+     * @function
+     * @name clear
+     * @description This function clears all filters and resets the filter form fields.
+     */
     const clear = () => {
         tableRef?.current.clearFilter()
         setFilters([]) // clear all filters
@@ -92,6 +156,12 @@ function ScheduleTableFilter({ tableRef, disabled }) {
         setTabulatorFilter([])
     }
 
+    /**
+     * @function
+     * @name deleteFilter
+     * @description This function deletes a filter from the filters state and updates the tabulator filter accordingly.
+     * @param {number} indexToRemove - The index of the filter to be removed.
+     */
     const deleteFilter = (indexToRemove) => {
         if (filters.length === 1) {
             clear()
@@ -148,6 +218,7 @@ function ScheduleTableFilter({ tableRef, disabled }) {
                             required
                             onChange={(event) => setSelectedField(event.target.value)}
                             disabled={disabled}
+                            sx={{ height: 57 }}
                         >
                             {defaultFilterFields.map((col) => {
                                 return (

@@ -1,5 +1,6 @@
 /**
- * @file ReplaceCourse
+ * @file ReplaceCourse.js
+ * This file contains the ReplaceCourse component of the application. This component is responsible for handling the replacement of a course in the application.
  */
 
 /**
@@ -44,27 +45,6 @@ import Typography from '@mui/material/Typography'
 import Modal from '@mui/material/Modal'
 
 /**
- * @external Checkbox
- * @see {@link https://mui.com/api/checkbox/}
- */
-/**
- * @external FormControlLabel
- * @see {@link https://mui.com/api/form-control-label/}
- */
-/**
- * @external ListItemText
- * @see {@link https://mui.com/api/list-item-text/}
- */
-/**
- * @external Radio
- * @see {@link https://mui.com/api/radio/}
- */
-/**
- * @external RadioGroup
- * @see {@link https://mui.com/api/radio-group/}
- */
-
-/**
  * @external dayjs
  * @see {@link https://day.js.org/}
  */
@@ -91,17 +71,53 @@ import { atomSchedule } from './atoms/schedule'
  * @module lib/replaceCourse
  */
 import { lookupSlots } from './lib/replaceCourse'
+/**
+ * @module atoms/rooms
+ */
 import { atomRooms } from './atoms/rooms'
+/**
+ * @module SlotsTable
+ */
 import SlotsTable from './SlotsTable'
+/**
+ * @module slotsModalComponents/BeginingOfLesson
+ */
 import BeginningOfLesson from './slotsModalComponents/BeginingOfLesson'
+/**
+ * @module slotsModalComponents/EndingOfLesson
+ */
 import EndingOfLesson from './slotsModalComponents/EndingOfLesson'
+/**
+ * @module slotsModalComponents/WeekDay
+ */
 import WeekDay from './slotsModalComponents/WeekDay'
+/**
+ * @module slotsModalComponents/TimeOfDay
+ */
 import TimeOfDay from './slotsModalComponents/TimeOfDay'
+/**
+ * @module slotsModalComponents/Rooms
+ */
 import Rooms from './slotsModalComponents/Rooms'
+/**
+ * @module slotsModalComponents/RoomFeatures
+ */
 import RoomFeatures from './slotsModalComponents/RoomFeatures'
+/**
+ * @module slotsModalComponents/DurationOfLesson
+ */
 import DurationOfLesson from './slotsModalComponents/DurationOfLesson'
+/**
+ * @module slotsModalComponents/TargetDate
+ */
 import TargetDate from './slotsModalComponents/TargetDate'
+/**
+ * @module @mui/material
+ */
 import { Stack } from '@mui/material'
+/**
+ * @module date-fns
+ */
 import { getWeek } from 'date-fns'
 
 /**
@@ -126,12 +142,25 @@ const style = {
 }
 
 /**
- * ReplaceCourse component is responsible for managing the replacement of a course.
- * It displays a modal with slots and rules for replacing a course.
+ * `ReplaceCourse` is a React functional component used to replace a course in a schedule.
  *
- * @returns {JSX.Element} The ReplaceCourse component.
+ * @component
+ * @param {Object} props - The properties that define the `ReplaceCourse` component.
+ * @param {Object} props.tableRef - A reference to a table in the parent component.
+ *
+ * @returns {React.Element} A React element that represents a form inside a modal for replacing a course.
  */
 const ReplaceCourse = ({ tableRef }) => {
+    /**
+     * @type {Object} schedule
+     * @type {Object} rooms
+     * @type {Object} selectedCourse
+     * @type {Function} setOpen
+     * @type {Array} rulesToInclude
+     * @type {Array} rulesToExclude
+     * @type {Array} slots
+     * @type {String} formattedDateTime
+     */
     const schedule = useAtomValue(atomSchedule)
     const rooms = useAtomValue(atomRooms)
     const selectedCourse = useAtomValue(atomModalReplaceCourse)
@@ -166,12 +195,31 @@ const ReplaceCourse = ({ tableRef }) => {
         setSlots([])
     }
 
+    /**
+     * @function
+     * @name updateTable
+     * @description This function updates the table with the selected slot's details. If the room is different, it gets the features of the new room. If the date is the same, it updates the row with the new slot's details. If the date is different, it updates the row with the new slot's details and additional information. After updating, it calls the handleCancel function.
+     * @param {Object} selectedSlot - The selected slot to replace a course.
+     *
+     * @property {string} roomFeatures - The features of the room. If the room is different, it gets the features of the new room.
+     * @property {Function} handleCancel - A function that resets the states and closes the modal.
+     */
     const updateTable = (selectedSlot) => {
+        const roomFeatures = // if room is different, get the features of the new room
+            selectedSlot['Sala atribuída à aula'] !== selectedCourse['Sala atribuída à aula']
+                ? schedule.find(
+                      (row) =>
+                          row['Sala atribuída à aula'] === selectedSlot['Sala atribuída à aula'] &&
+                          row['Características da sala pedida para a aula'] !== 'Não necessita de sala'
+                  )['Características da sala pedida para a aula']
+                : selectedCourse['Características da sala pedida para a aula']
+
         if (isSameDate(selectedCourse['Data da aula'], selectedSlot['Data da aula'])) {
             tableRef.current.updateRow(selectedCourse.id, {
                 'Data da aula': selectedSlot['Data da aula'],
                 'Hora início da aula': selectedSlot['Hora início da aula'],
                 'Hora fim da aula': selectedSlot['Hora fim da aula'],
+                'Características da sala pedida para a aula': roomFeatures,
                 'Sala atribuída à aula': selectedSlot['Sala atribuída à aula'],
             })
         } else {
@@ -179,6 +227,7 @@ const ReplaceCourse = ({ tableRef }) => {
                 'Data da aula': selectedSlot['Data da aula'],
                 'Hora início da aula': selectedSlot['Hora início da aula'],
                 'Hora fim da aula': selectedSlot['Hora fim da aula'],
+                'Características da sala pedida para a aula': roomFeatures,
                 'Sala atribuída à aula': selectedSlot['Sala atribuída à aula'],
                 'Dia da semana': getDayOfTheWeek(selectedSlot['Data da aula']),
                 'Semana do ano': getWeek(parseDate(selectedSlot['Data da aula'])),
@@ -192,6 +241,15 @@ const ReplaceCourse = ({ tableRef }) => {
         handleCancel()
     }
 
+    /**
+     * @function
+     * @name handleSubmit
+     * @description This function handles form submission. It prevents the default form submission event, looks up slots based on the rules, and sets the slots state.
+     * @param {Event} e - The form submission event.
+     *
+     * @property {Array} slots - The slots to replace a course.
+     * @property {Function} setSlots - A function that sets the slots state.
+     */
     const handleSubmit = (e) => {
         e.preventDefault()
         const slots = lookupSlots(rulesToInclude, rulesToExclude, schedule, rooms, selectedCourse.id)

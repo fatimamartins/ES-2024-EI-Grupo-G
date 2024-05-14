@@ -1,70 +1,73 @@
-# Getting Started with Create React App
+# Projeto de Engenharia de Software
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Grupo: Quarta-Feira-LEI-Grupo-G
 
-## Available Scripts
+### Membros
 
-In the project directory, you can run:
+- Fátima Martins - Nº 104524 - Username GitHub: fatimamartins
+- João Fernandes - Nº 100316 - Username GitHub: JoaoFernandes14
+- Pedro Ramos - Nº 100745 - Username GitHub: IKingRamosI
+- Tiago Oliveira - Nº 104366 - Username GitHub: tiagooliveira24
 
-### `npm start`
+### Links úteis
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- Trello - [Link](https://trello.com/invite/esgrupog/ATTI3225af1f8aabc1839257bfb77591583aEED0334E)
+- GitHub - [Link](https://github.com/fatimamartins/ES-2024-EI-Grupo-G)
+- SonarCloud - [Link](https://sonarcloud.io/project/overview?id=fatimamartins_ES-2024-EI-Grupo-G)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Link dos ficheiros a carregar no site
 
-### `npm test`
+- Horário de Exemplo - [Link](https://raw.githubusercontent.com/fatimamartins/ES-2024-EI-Grupo-G/main/public/HorarioDeExemplo.csv)
+- Caracterização das Salas - [Link](https://raw.githubusercontent.com/fatimamartins/ES-2024-EI-Grupo-G/main/public/Caracteriza%C3%A7%C3%A3oDasSalas.csv)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Descrição das tecnologias usadas no projeto
 
-### `npm run build`
+Este projeto foi desenvolvido utilizando a tecnologia REACT.
+De forma a ser possível correr o projeto deve primeiro realizar o comando 'npm install', para instalar os packages necessários para a execução do site web.
+De seguida deve executar o comando 'npm start', para iniciar o servidor local e navegar pela plataforma.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Bibliotecas de apoio ao desenvolvimento
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- [Tabulator](https://tabulator.info/docs/6.2/react)
+- [MaterialUI](https://mui.com/)
+- [Jest](https://jestjs.io/docs/tutorial-react)
+- [date-fns](https://date-fns.org/)
+- [react-csv-reader](https://www.npmjs.com/package/react-csv-reader)
+- [JSDoc](https://jsdoc.app/)
+- [ESLint](https://eslint.org/)
+- [Prettier](https://prettier.io/)
+- [Jotai](https://jotai.org/)
+- [Day.js](https://day.js.org/)
+- [react-heatmap-grid](https://www.npmjs.com/package/react-heatmap-grid)
+- [React Sigma](https://sim51.github.io/react-sigma/)
+- [react-router-dom](https://www.npmjs.com/package/react-router-dom)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Descrição do projeto
 
-### `npm run eject`
+O projeto consiste no desenvolvimento de uma aplicação para suporte à gestão de horários no Iscte, e permite:
+* O carregamento de um horário a partir de um ficheiro CSV;
+* Mostrar o horário e permitir navegar no horário, sob a forma de tabela;
+* Mostrar e permitir navegar no cadastro de salas do Iscte;
+* Gravar (em CSV e JSON) o horário que foi alterado;
+* Sugerir slots para alocação de uma aula de substituição;
+* Sugerir slots para alocação das aulas de uma UC;
+* Visualizar de forma gráfica as relações de conflitualidade entre aulas;
+* Visualizar de forma gráfica o mapa de ocupação das salas.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Cobertura dos testes
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+![Testes Screenshot][testes-screenshot]
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Preview do SonarCloud
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+![SonarCloud Screenshot][sonarcloud-screenshot]
 
-## Learn More
+- Nota: O valor referido para a duplicação de código (48,7%) não corresponde à realidade do código. Analisando os ficheiros acusados com duplicação verificamos que os mesmos dizem respeito à documentação gerada pelo JSDoc. Além disso, tendo em conta que seguimos sempre a mesma estrutura de documentação, a mesma também é acusada como duplicação de código.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Erros e funcionalidades não implementadas ou incompletas
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+À data de entrega do projeto, todos os requisitos foram cumpridos.
+Não detatamos qualquer erro na aplicação.
 
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+[sonarcloud-screenshot]: public/sonarcloud.png
+[testes-screenshot]: public/cobertura_testes.jpeg

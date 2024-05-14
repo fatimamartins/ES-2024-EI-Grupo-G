@@ -1,4 +1,20 @@
 /**
+ * @file
+ * @module TargetDate
+ * @description This file contains the `TargetDate` component.
+ * @requires module:@mui/material
+ * @requires module:@mui/x-date-pickers
+ * @requires module:@mui/x-date-pickers/AdapterDayjs
+ * @requires module:@mui/x-date-pickers/internals/demo
+ * @requires module:react
+ */
+import React from 'react'
+import { FormControl, FormControlLabel, Radio, RadioGroup, Stack } from '@mui/material'
+import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo'
+
+/**
  * `TargetDate` is a React functional component that renders a form control for selecting a target date.
  *
  * @component
@@ -13,12 +29,6 @@
  *
  * @returns {React.Element} The rendered form control.
  */
-import React from 'react'
-import { FormControl, FormControlLabel, Radio, RadioGroup, Stack } from '@mui/material'
-import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers'
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo'
-
 const TargetDate = ({ rules, setRules, options, defaultValue }) => {
     return (
         <div>
@@ -65,6 +75,7 @@ const TargetDate = ({ rules, setRules, options, defaultValue }) => {
                                 views={['day', 'month', 'year', 'hours', 'minutes']}
                                 value={rules?.dataFim || null}
                                 onChange={(e) => setRules({ ...rules, dataFim: e })}
+                                minDateTime={rules?.dataInicio}
                             />
                         </DemoContainer>
                     </LocalizationProvider>

@@ -1,28 +1,30 @@
 /**
- * @file This is the main App component of the application.
+ * @file App.js
+ * This is the main App component of the application.
  */
 
 /** @module App.css */
-import './App.css'
+import './App.css' // Styles for the App component
 /** @module react */
-import React from 'react'
+import React from 'react' // React library
 /** @module @mui/material */
-import { Container, Stack } from '@mui/material'
-/** @module ScheduleTable */
-import ScheduleTable from './ScheduleTable'
-/** @module CsvReader */
-import CsvReader from './CsvReader'
-/** @module RemoteFile */
-import RemoteFile from './RemoteFile'
-/** @module RoomsTable */
-import RoomsTable from './RoomsTable'
-import 'react-tabulator/lib/css/tabulator.min.css'
-import 'react-tabulator/lib/styles.css'
-// import 'react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
-// import 'react-tabulator/css/semantic-ui/tabulator_semantic-ui.css'
-import 'react-tabulator/css/tabulator_bootstrap3.css'
-// import 'react-tabulator/css/tabulator_semanticui.css'
-// import 'react-tabulator/css/tabulator_simple.css'
+import { Container } from '@mui/material' // Material-UI Container component
+/** @module Navbar */
+import Navbar from './Navbar' // Navbar component
+/** @module react-tabulator/lib/css/tabulator.min.css */
+import 'react-tabulator/lib/css/tabulator.min.css' // CSS for Tabulator library
+/** @module react-tabulator/lib/styles.css */
+import 'react-tabulator/lib/styles.css' // Additional styles for Tabulator library
+/** @module react-tabulator/css/tabulator_bootstrap3.css */
+import 'react-tabulator/css/tabulator_bootstrap3.css' // Bootstrap 3 theme for Tabulator
+/** @module Home */
+import Home from './Home' // Home component
+/** @module NetworkGraph */
+import NetworkGraph from './NetworkGraph' // NetworkGraph component
+/** @module Heatmap */
+import Heatmap from './Heatmap' // Heatmap component
+/** @module react-router-dom */
+import { Routes, Route } from 'react-router-dom' // React Router components for routing
 
 /**
  * This is the main App component of the application.
@@ -34,22 +36,15 @@ import 'react-tabulator/css/tabulator_bootstrap3.css'
  */
 export default function App() {
     return (
-        <Container sx={{ maxWidth: 1250, minWidth: 1250 }}>
-            <h1>Aplicação de suporte à gestão de horários</h1>
-            <h2>Horário</h2>
-            <Stack direction="row" alignItems="center" mt={6} mb={2}>
-                <CsvReader id="scheduleReader" />
-                <h4>OU</h4>
-                <RemoteFile id="scheduleFile" />
-            </Stack>
-            <ScheduleTable />
-            <h2>Salas</h2>
-            <Stack direction="row" alignItems="center" mt={4} mb={4}>
-                <CsvReader id="roomsReader" />
-                <h4>OU</h4>
-                <RemoteFile id="roomsFile" />
-            </Stack>
-            <RoomsTable />
-        </Container>
+        <div>
+            <Navbar />
+            <Container sx={{ maxWidth: 1250, minWidth: 1250 }}>
+                <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="Conflitualidade" element={<NetworkGraph />} />
+                    <Route path="Ocupacao" element={<Heatmap />} />
+                </Routes>
+            </Container>
+        </div>
     )
 }

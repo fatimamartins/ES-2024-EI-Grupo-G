@@ -1,11 +1,12 @@
 /**
- * @file constants
+ * @file constants.js
  * This file exports constants used throughout the application, such as COURSE_START_TIMES, which represents the time the courses start.
  */
 
+/** @module COURSE_START_TIMES */
 /**
- * @typedef {Object} COURSE_START_TIMES - Object representing the time the courses start
- * */
+ * @typedef {string[]} COURSE_START_TIMES - Object representing the time the courses start.
+ */
 export const COURSE_START_TIMES = [
     '08:00:00',
     '08:30:00',
@@ -36,9 +37,10 @@ export const COURSE_START_TIMES = [
     '21:30:00',
 ]
 
+/** @module COURSE_END_TIMES */
 /**
- * @typedef {Object} COURSE_END_TIMES - Object representing the time the courses end
- * */
+ * @typedef {string[]} COURSE_END_TIMES - Object representing the time the courses end.
+ */
 export const COURSE_END_TIMES = [
     '09:30:00',
     '10:00:00',
@@ -69,18 +71,21 @@ export const COURSE_END_TIMES = [
     '22:30:00',
 ]
 
+/** @module WEEKDAYS */
 /**
- * @typedef {Object} WEEKDAYS - Object representing the days of the week
- * */
+ * @typedef {string[]} WEEKDAYS - Object representing the days of the week.
+ */
 export const WEEKDAYS = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado']
 
+/** @module DAY_PERIODS */
 /**
- * @typedef {Object} DAY_PERIODS - Object representing the periods of the day
+ * @typedef {string[]} DAY_PERIODS - Object representing the periods of the day.
  */
 export const DAY_PERIODS = ['Manhã', 'Tarde', 'Noite']
 
+/** @module ROOMS */
 /**
- * @typedef {Object} ROOMS - Object representing a list of rooms.
+ * @typedef {string[]} ROOMS - Object representing a list of rooms.
  */
 export const ROOMS = [
     'Auditório Afonso de Barros',
@@ -216,8 +221,9 @@ export const ROOMS = [
     'Campo',
 ]
 
+/** @module ROOM_FEATURES */
 /**
- * @typedef {Object} ROOM_FEATURES - Object representing a list of rooms characteristics.
+ * @typedef {string[]} ROOM_FEATURES - Object representing a list of room characteristics.
  */
 export const ROOM_FEATURES = [
     'Anfiteatro aulas',
@@ -250,16 +256,17 @@ export const ROOM_FEATURES = [
     'Sala de Aulas normal',
     'videoconferência',
     'Átrio',
-    'Não necessita de sala',
 ]
 
+/** @module TYPE_FILTER_COMPARISON */
 /**
- * @typedef {Object} TYPE_FILTER_COMPARISON - Object representing a list of type filters comparison.
+ * @typedef {string[]} TYPE_FILTER_COMPARISON - Object representing a list of type filters comparison.
  */
 export const TYPE_FILTER_COMPARISON = ['=', '!=', 'like', 'starts', 'ends', '<', '>', '<=', '>=']
 
+/** @module MORNING_SHIFT */
 /**
- * @typedef {Object} MORNING_SHIFT - Object representing the morning shift.
+ * @typedef {string[]} MORNING_SHIFT - Object representing the morning shift.
  */
 export const MORNING_SHIFT = [
     '08:00:00',
@@ -273,8 +280,9 @@ export const MORNING_SHIFT = [
     '12:30:00',
 ]
 
+/** @module AFTERNOON_SHIFT */
 /**
- * @typedef {Object} AFTERNOON_SHIFT - Object representing the afternoon shift.
+ * @typedef {string[]} AFTERNOON_SHIFT - Object representing the afternoon shift.
  */
 export const AFTERNOON_SHIFT = [
     '13:00:00',
@@ -289,8 +297,9 @@ export const AFTERNOON_SHIFT = [
     '17:30:00',
 ]
 
+/** @module NIGHT_SHIFT */
 /**
- * @typedef {Object} NIGHT_SHIFT - Object representing the night shift.
+ * @typedef {string[]} NIGHT_SHIFT - Object representing the night shift.
  */
 export const NIGHT_SHIFT = [
     '18:00:00',
@@ -305,6 +314,12 @@ export const NIGHT_SHIFT = [
     '22:30:00',
 ]
 
+/**
+ * Object representing the course duration.
+ * @typedef {Object[]} COURSE_DURATION
+ * @property {string} key - Duration in HH:mm:ss format.
+ * @property {string} value - Duration in milliseconds.
+ */
 export const COURSE_DURATION = [
     { key: '00:30:00', value: '1800000' },
     { key: '01:00:00', value: '3600000' },

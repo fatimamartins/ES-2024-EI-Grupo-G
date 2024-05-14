@@ -1,27 +1,79 @@
 /**
- * @file SlotsClass
+ * @file CourseSlotsModal.js
  */
 
 /**
+ * External React library.
  * @external React
  * @see {@link https://reactjs.org/}
  */
 import * as React from 'react'
 
 /**
+ * External jotai library.
  * @external jotai
  * @see {@link https://jotai.pmnd.rs/}
  */
 import { useAtomValue, useSetAtom } from 'jotai'
 
 /**
- * @module lib/replaceCourse
+ * Module for managing modal slots class atoms.
+ * @module ./atoms/modalSlotsClass
  */
-
 import { atomModalSlotsClass } from './atoms/modalSlotsClass'
-import { Autocomplete, Box, Button, FormControl, Modal, Stack, TextField, Typography } from '@mui/material'
+
+/**
+ * Module for managing schedule atoms.
+ * @module ./atoms/schedule
+ */
 import { atomSchedule } from './atoms/schedule'
+
+/**
+ * Module for managing room atoms.
+ * @module ./atoms/rooms
+ */
+import { atomRooms } from './atoms/rooms'
+
+/**
+ * External MUI components for building UI.
+ * @module @mui/material
+ */
+import {
+    Box,
+    Button,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Modal,
+    Select,
+    Stack,
+    TextField,
+    Typography,
+} from '@mui/material'
+
+/**
+ * External date manipulation library.
+ * @module dayjs
+ */
 import dayjs from 'dayjs'
+
+/**
+ * Utility functions for slot management.
+ * @module ./lib/replaceCourse
+ */
+import { getNextWeekDate, lookupSlots } from './lib/replaceCourse'
+import { getDayOfTheWeek, parseDate } from './utils'
+
+/**
+ * External date-fns library for date manipulation.
+ * @module date-fns
+ */
+import { getWeek } from 'date-fns'
+
+/**
+ * Custom components for slots modal.
+ * @module ./slotsModalComponents
+ */
 import DurationOfLesson from './slotsModalComponents/DurationOfLesson'
 import BeginningOfLesson from './slotsModalComponents/BeginingOfLesson'
 import EndingOfLesson from './slotsModalComponents/EndingOfLesson'
@@ -30,14 +82,11 @@ import TimeOfDay from './slotsModalComponents/TimeOfDay'
 import RoomFeatures from './slotsModalComponents/RoomFeatures'
 import TargetDate from './slotsModalComponents/TargetDate'
 import Rooms from './slotsModalComponents/Rooms'
-import { getNextWeekDate, lookupSlots } from './lib/replaceCourse'
-import SlotsTable from './SlotsTable'
-import { atomRooms } from './atoms/rooms'
-import { getDayOfTheWeek, parseDate } from './utils'
-import { getWeek } from 'date-fns'
 import Shift from './slotsModalComponents/Shift'
+import SlotsTable from './SlotsTable'
 
 /**
+ * A style object used for positioning a modal at the center of the screen.
  * @constant
  * @name style
  * @type {Object}
@@ -59,10 +108,11 @@ const style = {
 }
 
 /**
- * CourseSlotsModal component is responsible for managing the alocation of lessons for a given course.
+ * CourseSlotsModal component is responsible for managing the allocation of lessons for a given course.
  * It displays a modal with slots and rules for choosing lessons for a course.
- *
- * @returns {JSX.Element} The SlotsClass component.
+ * @param {object} props - Component props.
+ * @param {React.Ref} props.tableRef - Ref for the SlotsTable component.
+ * @returns {JSX.Element} The CourseSlotsModal component.
  */
 const CourseSlotsModal = ({ tableRef }) => {
     const { isOpen } = useAtomValue(atomModalSlotsClass)
@@ -71,7 +121,6 @@ const CourseSlotsModal = ({ tableRef }) => {
     const setValue = useSetAtom(atomModalSlotsClass)
     const [courses, setCourses] = React.useState([])
     const [shifts, setShifts] = React.useState(null)
-    const [degree, setDegree] = React.useState(null)
     const [rulesToInclude, setRulesToInclude] = React.useState(null)
     const [rulesToExclude, setRulesToExclude] = React.useState(null)
     const [slots, setSlots] = React.useState([]) // list of possible slots
@@ -100,9 +149,6 @@ const CourseSlotsModal = ({ tableRef }) => {
                 if (item['Unidade Curricular'] === rulesToInclude?.unidadeCurricular) set.add(item.Turno)
             })
             setShifts([...set])
-            const item = schedule.find((item) => item['Unidade Curricular'] === rulesToInclude?.unidadeCurricular)
-            // save the degree of the course chosen to be used when inserting the slots in schedule
-            setDegree(item.Curso)
         }
     }, [rulesToInclude?.unidadeCurricular, schedule])
 
@@ -138,23 +184,23 @@ const CourseSlotsModal = ({ tableRef }) => {
                         <h3>Slots para alocação de aulas de Unidade Curricular</h3>
                         <Stack direction="row" mt={4} mb={4}>
                             <FormControl sx={{ minWidth: 380 }}>
-                                {/* FIX */}
-                                <Autocomplete
-                                    // value={rulesToInclude?.unidadeCurricular}
-                                    // disablePortal
-                                    id="combo-box-demo"
-                                    options={courses}
-                                    sx={{ width: 380 }}
-                                    value={rulesToInclude?.unidadeCurricular}
-                                    onChange={(event, newValue) => {
-                                        setRulesToInclude({ ...rulesToInclude, unidadeCurricular: newValue })
+                                <InputLabel id="label">Unidade Curricular *</InputLabel>
+                                <Select
+                                    labelId="label"
+                                    required
+                                    id="select4"
+                                    value={rulesToInclude?.unidadeCurricular || ''}
+                                    label="Unidade Curricular *"
+                                    onChange={(e) => {
+                                        setRulesToInclude({ ...rulesToInclude, unidadeCurricular: e.target.value })
                                     }}
-                                    renderInput={(params) => <TextField {...params} label="Unidade Curricular" />}
-                                    // onChange={(e, value) => {
-                                    //     console.log('🚀 ~ CourseSlotsModal ~ value:', value)
-                                    //     setRulesToInclude({ ...rulesToInclude, unidadeCurricular: value })
-                                    // }}
-                                />
+                                >
+                                    {courses.map((course, index) => (
+                                        <MenuItem key={index} value={course} name={course}>
+                                            {course}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
                             </FormControl>
                             {rulesToInclude?.unidadeCurricular && shifts?.length > 0 && (
                                 <Shift options={shifts} rules={rulesToInclude} setRules={setRulesToInclude} />
@@ -241,16 +287,19 @@ const CourseSlotsModal = ({ tableRef }) => {
                                                       ),
                                                   }
                                                 : rulesToInclude
-                                        // update the rulesToInclude with the new date
-                                        setRulesToInclude(rulesToIncludeWithNewDate)
-                                        // find the slots for the week with the new date
-                                        const newSlots = lookupSlots(
-                                            { ...rulesToIncludeWithNewDate, data: 'mesmaSemana' },
-                                            { ...rulesToExclude, aulasSelecionadas },
-                                            [...schedule, ...aulasSelecionadas],
-                                            rooms
-                                        )
-                                        setSlots(newSlots)
+
+                                        if (aulasSelecionadas.length !== rulesToInclude?.numeroAulas) {
+                                            // update the rulesToInclude with the new date
+                                            setRulesToInclude(rulesToIncludeWithNewDate)
+                                            // find the slots for the week with the new date
+                                            const newSlots = lookupSlots(
+                                                { ...rulesToIncludeWithNewDate, data: 'mesmaSemana' },
+                                                { ...rulesToExclude, aulasSelecionadas },
+                                                [...schedule, ...aulasSelecionadas],
+                                                rooms
+                                            )
+                                            setSlots(newSlots)
+                                        }
                                     }}
                                     buttonTitle="Escolher slot"
                                 />
@@ -271,17 +320,34 @@ const CourseSlotsModal = ({ tableRef }) => {
                                 <Button onClick={handleCancel}>Cancelar</Button>
                                 <Button
                                     onClick={() => {
-                                        const slotsAsTableRows = selectedSlots.map((slot) => ({
-                                            Curso: degree,
-                                            'Unidade Curricular': rulesToInclude.unidadeCurricular,
-                                            Turno: rulesToInclude.turno,
-                                            'Data da aula': slot['Data da aula'],
-                                            'Hora início da aula': slot['Hora início da aula'],
-                                            'Hora fim da aula': slot['Hora fim da aula'],
-                                            'Sala atribuída à aula': slot['Sala atribuída à aula'],
-                                            'Dia da semana': getDayOfTheWeek(slot['Data da aula']),
-                                            'Semana do ano': getWeek(parseDate(slot['Data da aula'])),
-                                        }))
+                                        const appointment = schedule.find(
+                                            (row) =>
+                                                row['Unidade Curricular'] === rulesToInclude?.unidadeCurricular &&
+                                                row.Turno === rulesToInclude?.turno
+                                        )
+
+                                        const slotsAsTableRows = selectedSlots.map((slot) => {
+                                            const roomFeatures = schedule.find(
+                                                (row) =>
+                                                    row['Sala atribuída à aula'] === slot['Sala atribuída à aula'] &&
+                                                    row['Características da sala pedida para a aula'] !==
+                                                        'Não necessita de sala'
+                                            )['Características da sala pedida para a aula']
+
+                                            return {
+                                                Curso: appointment.Curso,
+                                                'Unidade Curricular': rulesToInclude.unidadeCurricular,
+                                                Turno: rulesToInclude.turno,
+                                                'Inscritos no turno': appointment['Inscritos no turno'],
+                                                'Data da aula': slot['Data da aula'],
+                                                'Hora início da aula': slot['Hora início da aula'],
+                                                'Hora fim da aula': slot['Hora fim da aula'],
+                                                'Características da sala pedida para a aula': roomFeatures,
+                                                'Sala atribuída à aula': slot['Sala atribuída à aula'],
+                                                'Dia da semana': getDayOfTheWeek(slot['Data da aula']),
+                                                'Semana do ano': getWeek(parseDate(slot['Data da aula'])),
+                                            }
+                                        })
                                         tableRef.current.updateOrAddData(slotsAsTableRows)
                                         handleCancel()
                                     }}

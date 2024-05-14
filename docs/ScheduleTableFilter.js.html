@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: ScheduleTableFilter.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: ScheduleTableFilter.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @file ScheduleTableFilter.js
+ * This file is a component for a filter of the schedule table using react-tabulator. It imports necessary modules and components such as React, MUI material components, and the Cancel icon from MUI icons. It also defines constants for the default type of filter comparison and the default filter fields.
+ */
+
+/** @module react */
+import * as React from 'react'
+/** @module @mui/material */
+import {
+    Button,
+    Stack,
+    Typography,
+    Switch,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
+    ListItemText,
+    TextField,
+} from '@mui/material'
+/** @module @mui/icons-material/Delete */
+import Cancel from '@mui/icons-material/Delete'
+
+/**
+ * @constant
+ * @type {Array}
+ * @description This constant defines the default types of filter comparisons that can be used in the application.
+ */
+const defaultTypeOfFilterComparison = ['=', '!=', 'like', 'starts', 'ends', '&lt;', '>', '&lt;=', '>=']
+
+/**
+ * @constant
+ * @type {Array}
+ * @description This constant defines the default fields that can be used for filtering in the application. Each object in the array represents a field that can be used for filtering.
+ */
+const defaultFilterFields = [
+    { title: 'Curso', field: 'Curso' },
+    { title: 'Unidade Curricular', field: 'Unidade Curricular' },
+    { title: 'Turno', field: 'Turno' },
+    { title: 'Turma', field: 'Turma' },
+    { title: 'Inscritos no turno', field: 'Inscritos no turno' },
+    { title: 'Dia da semana', field: 'Dia da semana' },
+    { title: 'Hora início da aula', field: 'Hora início da aula' },
+    { title: 'Hora fim da aula', field: 'Hora fim da aula' },
+    { title: 'Data da aula', field: 'Data da aula' },
+    { title: 'Características da sala pedida para a aula', field: 'Características da sala pedida para a aula' },
+    { title: 'Sala atribuída à aula', field: 'Sala atribuída à aula' },
+    { title: 'Semana do ano', field: 'Semana do ano' },
+    { title: 'Semana do semestre', field: 'Semana do semestre' },
+]
+
+/**
+ * @function
+ * @name ScheduleTableFilter
+ * @description This function represents a component that renders a filter for the schedule table. It takes in props as parameters and returns a filter component.
+ * @param {Object} props - The properties passed to the component.
+ * @returns {React.Component} Returns a filter component that can be used to filter the schedule table.
+ */
+function ScheduleTableFilter({ tableRef, disabled }) {
+    /**
+     * @constant
+     * @type {Array}
+     * @description This constant defines a state variable and a function to update it. The state variable, selectedField, is used to store the currently selected field for filtering.
+     */
+    const [selectedField, setSelectedField] = React.useState('')
+    /**
+     * @constant
+     * @type {Array}
+     * @description This constant defines a state variable and a function to update it. The state variable, value, is used to store the value for the selected field for filtering.
+     */
+    const [value, setValue] = React.useState('')
+    /**
+     * @constant
+     * @type {Array}
+     * @description This constant defines a state variable and a function to update it. The state variable, logicOperator, is used to store the logic operator for filtering.
+     */
+    const [logicOperator, setLogicOperator] = React.useState('AND')
+    /**
+     * @constant
+     * @type {Array}
+     * @description This constant defines a state variable and a function to update it. The state variable, type, is used to store the type of filter comparison.
+     */
+    const [type, setType] = React.useState('=') // type of filter comparison. Example: =, &lt;, >, &lt;=, >=, !=  like starts ends
+    /**
+     * @constant
+     * @type {Array}
+     * @description This constant defines a state variable and a function to update it. The state variable, filters, is used to store the filters applied to the table.
+     */
+    const [filters, setFilters] = React.useState([])
+    /**
+     * @constant
+     * @type {Array}
+     * @description This constant defines a state variable and a function to update it. The state variable, tabulatorFilter, is used to store the tabulator filter applied to the table.
+     */
+    const [tabulatorFilter, setTabulatorFilter] = React.useState([])
+
+    /**
+     * @function
+     * @name addFilter
+     * @description This function adds a new filter to the filters state and updates the tabulator filter. It also resets the filter form fields.
+     * @param {Event} e - The event object.
+     */
+    const addFilter = (e) => {
+        e.preventDefault()
+        setFilters([
+            ...filters,
+            {
+                title: selectedField,
+                field: selectedField,
+                value,
+                logic: logicOperator,
+                type,
+            },
+        ])
+        const newFilter = { field: selectedField, type, value }
+        tableRef?.current.setFilter([newFilter])
+        updateTabulatorFilter(newFilter) // update tabulator filter
+        setSelectedField('') // reset all states
+        setValue('')
+        setType('=')
+    }
+
+    /**
+     * @function
+     * @name updateTabulatorFilter
+     * @description This function updates the tabulator filter state based on the new filter and the logic operator. It handles the cases for AND and OR logic operators.
+     * @param {Object} newFilter - The new filter to be added.
+     */
+    const updateTabulatorFilter = (newFilter) => {
+        if (logicOperator === 'AND') {
+            setTabulatorFilter([...tabulatorFilter, newFilter])
+        } else if (logicOperator === 'OR' &amp;&amp; tabulatorFilter.length === 0) {
+            // if logic operator is OR and there are no filters
+            setTabulatorFilter([newFilter])
+        } else {
+            const previousFilter = tabulatorFilter[tabulatorFilter.length - 1] // get last element
+            const newFilterArr = tabulatorFilter.slice(0, -1) // remove last element
+            Array.isArray(previousFilter)
+                ? setTabulatorFilter([...newFilterArr, [...previousFilter, newFilter]])
+                : setTabulatorFilter([...newFilterArr, [previousFilter, newFilter]])
+        }
+    }
+
+    /**
+     * @function
+     * @name clear
+     * @description This function clears all filters and resets the filter form fields.
+     */
+    const clear = () => {
+        tableRef?.current.clearFilter()
+        setFilters([]) // clear all filters
+        setLogicOperator('AND')
+        setType('=')
+        setValue('')
+        setSelectedField('')
+        setTabulatorFilter([])
+    }
+
+    /**
+     * @function
+     * @name deleteFilter
+     * @description This function deletes a filter from the filters state and updates the tabulator filter accordingly.
+     * @param {number} indexToRemove - The index of the filter to be removed.
+     */
+    const deleteFilter = (indexToRemove) => {
+        if (filters.length === 1) {
+            clear()
+        } else {
+            const newFilters = [...filters.slice(0, indexToRemove), ...filters.slice(indexToRemove + 1)]
+            setFilters(newFilters)
+            let tabulatorNewFilter = []
+            newFilters.forEach((f) => {
+                const newFilter = { field: f.field, type: f.type, value: f.value }
+                if (f.logic === 'AND') {
+                    tabulatorNewFilter = [...tabulatorNewFilter, newFilter]
+                } else if (f.logic === 'OR' &amp;&amp; tabulatorNewFilter.length === 0) {
+                    // if logic operator is OR and there are no filters
+                    tabulatorNewFilter = [newFilter]
+                } else {
+                    const previousFilter = tabulatorNewFilter[tabulatorNewFilter.length - 1] // get last element
+                    const newFilterArr = tabulatorNewFilter.slice(0, -1) // remove last element
+                    Array.isArray(previousFilter)
+                        ? (tabulatorNewFilter = [...newFilterArr, [...previousFilter, newFilter]])
+                        : (tabulatorNewFilter = [...newFilterArr, [previousFilter, newFilter]])
+                }
+            })
+            setTabulatorFilter(tabulatorNewFilter)
+        }
+    }
+
+    React.useEffect(() => {
+        if (tabulatorFilter.length !== 0) {
+            tableRef?.current.setFilter(tabulatorFilter)
+        }
+    }, [tableRef, tabulatorFilter])
+
+    return (
+        &lt;Stack mt={6} mb={4}>
+            &lt;Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2 }}>
+                &lt;Typography>OR&lt;/Typography>
+                &lt;Switch
+                    checked={logicOperator === 'AND'}
+                    inputProps={{ 'aria-label': 'ant design' }}
+                    onChange={(e, c) => setLogicOperator(c ? 'AND' : 'OR')}
+                    disabled={disabled}
+                />
+                &lt;Typography>AND&lt;/Typography>
+            &lt;/Stack>
+            &lt;form onSubmit={(e) => addFilter(e)}>
+                &lt;Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2, mb: 2 }}>
+                    &lt;FormControl sx={{ width: 350 }}>
+                        &lt;InputLabel id="simple-select-label1">Campo a filtrar&lt;/InputLabel>
+                        &lt;Select
+                            labelId="simple-select-label1"
+                            id="simple-select1"
+                            value={selectedField}
+                            label="Campo a filtrar"
+                            required
+                            onChange={(event) => setSelectedField(event.target.value)}
+                            disabled={disabled}
+                            sx={{ height: 57 }}
+                        >
+                            {defaultFilterFields.map((col) => {
+                                return (
+                                    &lt;MenuItem key={col.title} value={col.field}>
+                                        &lt;ListItemText primary={col.title} />
+                                    &lt;/MenuItem>
+                                )
+                            })}
+                        &lt;/Select>
+                    &lt;/FormControl>
+                    &lt;FormControl sx={{ width: 100, ml: 1 }}>
+                        &lt;InputLabel id="simple-select-label2">Tipo&lt;/InputLabel>
+                        &lt;Select
+                            labelId="simple-select-label2"
+                            id="simple-select2"
+                            value={type}
+                            label="Tipo"
+                            onChange={(event) => setType(event.target.value)}
+                            disabled={disabled}
+                        >
+                            {defaultTypeOfFilterComparison.map((t, index) => {
+                                return (
+                                    &lt;MenuItem key={index} value={t}>
+                                        {t}
+                                    &lt;/MenuItem>
+                                )
+                            })}
+                        &lt;/Select>
+                    &lt;/FormControl>
+                    &lt;TextField
+                        sx={{ ml: 1, width: 350 }}
+                        id="outlined-basic"
+                        placeholder="valor"
+                        variant="outlined"
+                        value={value}
+                        required
+                        onChange={(event) => {
+                            setValue(event.target.value)
+                        }}
+                        disabled={disabled}
+                    />
+                    &lt;Stack direction="row" alignContent={'center'}>
+                        &lt;Button variant="contained" type="submit" sx={{ ml: 1 }} disabled={disabled}>
+                            Adicionar filtro
+                        &lt;/Button>
+                        &lt;Button variant="text" onClick={clear} disabled={disabled}>
+                            Limpar filtros
+                        &lt;/Button>
+                    &lt;/Stack>
+                &lt;/Stack>
+            &lt;/form>
+            {filters &amp;&amp; filters.length > 0 &amp;&amp; (
+                &lt;Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2 }}>
+                    {filters.map((filter, index) => {
+                        if (index === 0) {
+                            return (
+                                &lt;Button
+                                    key={index}
+                                    variant="outlined"
+                                    endIcon={&lt;Cancel />}
+                                    onClick={(e) => deleteFilter(index)}
+                                >
+                                    {filters[0].title}: {filters[0].value}
+                                &lt;/Button>
+                            )
+                        } else {
+                            return (
+                                &lt;Stack direction="row" alignItems="center" key={index}>
+                                    {filter.logic ? filter.logic : ''}
+                                    &lt;Button
+                                        variant="outlined"
+                                        endIcon={&lt;Cancel />}
+                                        onClick={(e) => deleteFilter(index)}
+                                        sx={{ ml: 1 }}
+                                    >
+                                        {filter.title}: {filter.value}
+                                    &lt;/Button>
+                                &lt;/Stack>
+                            )
+                        }
+                    })}
+                &lt;/Stack>
+            )}
+        &lt;/Stack>
+    )
+}
+
+export default ScheduleTableFilter
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="@fontsource_roboto_300.module_css.html">css</a></li><li><a href="@fontsource_roboto_400.module_css.html">css</a></li><li><a href="@fontsource_roboto_500.module_css.html">css</a></li><li><a href="@fontsource_roboto_700.module_css.html">css</a></li><li><a href="@mui_material%250DMaterial%2520UI%2520components%2520used%2520in%2520this%2520file.module_.html">@mui/materialMaterial UI components used in this file.</a></li><li><a href="@mui_x-date-pickers%250DDate%2520picker%2520components%2520used%2520in%2520this%2520file.module_.html">@mui/x-date-pickersDate picker components used in this file.</a></li><li><a href="@mui_x-date-pickers_AdapterDayjs%250DAdapter%2520for%2520the%2520date%2520picker%2520to%2520use%2520Day.js.module_.html">@mui/x-date-pickers/AdapterDayjsAdapter for the date picker to use Day.js.</a></li><li><a href="@mui_x-date-pickers_internals_demo%250DDemo%2520container%2520component%2520used%2520in%2520this%2520file.module_.html">@mui/x-date-pickers/internals/demoDemo container component used in this file.</a></li><li><a href="@react-sigma_core_lib_react-sigma.min.module_css.html">css</a></li><li><a href="App.html#.module:css">css</a></li><li><a href="atoms_rooms%250DAtom%2520representing%2520the%2520rooms%2520state.module_.html">atoms/roomsAtom representing the rooms state.</a></li><li><a href="atoms_schedule%250DAtom%2520representing%2520the%2520schedule%2520state.module_.html">atoms/scheduleAtom representing the schedule state.</a></li><li><a href="constants%250DConstants%2520used%2520in%2520this%2520file.module_.html">constantsConstants used in this file.</a></li><li><a href="date-fns%250DDate%2520utility%2520functions%2520used%2520in%2520this%2520file.module_.html">date-fnsDate utility functions used in this file.</a></li><li><a href="dayjs%250DDate%2520library%2520used%2520in%2520this%2520file.module_.html">dayjsDate library used in this file.</a></li><li><a href="index.module_css.html">css</a></li><li><a href="jotai%250DState%2520management%2520library%2520used%2520in%2520this%2520file.module_.html">jotaiState management library used in this file.</a></li><li><a href="module-._atoms_modalSlotsClass.html">./atoms/modalSlotsClass</a></li><li><a href="module-._atoms_rooms.html">/atoms/rooms</a></li><li><a href="module-._atoms_schedule.html">/atoms/schedule</a></li><li><a href="module-._lib_replaceCourse.html">/lib/replaceCourse</a></li><li><a href="module-._slotsModalComponents.html">/slotsModalComponents</a></li><li><a href="module-@mui_icons-material_Add.html">@mui/icons-material/Add</a></li><li><a href="module-@mui_icons-material_Delete.html">@mui/icons-material/Delete</a></li><li><a href="module-@mui_icons-material_FindReplace.html">@mui/icons-material/FindReplace</a></li><li><a href="module-@mui_icons-material_Menu.html">@mui/icons-material/Menu</a></li><li><a href="module-@mui_material.html">@mui/material</a></li><li><a href="module-@mui_material_AppBar.html">@mui/material/AppBar</a></li><li><a href="module-@mui_material_Box.html">@mui/material/Box</a></li><li><a href="module-@mui_material_Button.html">@mui/material/Button</a></li><li><a href="module-@mui_material_Checkbox.html">@mui/material/Checkbox</a></li><li><a href="module-@mui_material_Container.html">@mui/material/Container</a></li><li><a href="module-@mui_material_FormControl.html">@mui/material/FormControl</a></li><li><a href="module-@mui_material_IconButton.html">@mui/material/IconButton</a></li><li><a href="module-@mui_material_InputLabel.html">@mui/material/InputLabel</a></li><li><a href="module-@mui_material_ListItemText.html">@mui/material/ListItemText</a></li><li><a href="module-@mui_material_Menu.html">@mui/material/Menu</a></li><li><a href="module-@mui_material_MenuItem.html">@mui/material/MenuItem</a></li><li><a href="module-@mui_material_Select.html">@mui/material/Select</a></li><li><a href="module-@mui_material_Stack.html">@mui/material/Stack</a></li><li><a href="module-@mui_material_Toolbar.html">@mui/material/Toolbar</a></li><li><a href="module-@mui_material_Tooltip.html">@mui/material/Tooltip</a></li><li><a href="module-@mui_material_Typography.html">@mui/material/Typography</a></li><li><a href="module-@mui_x-data-grid.html">@mui/x-data-grid</a></li><li><a href="module-@mui_x-date-pickers_AdapterDayjs.html">@mui/x-date-pickers/AdapterDayjs</a></li><li><a href="module-@mui_x-date-pickers_DatePicker.html">@mui/x-date-pickers/DatePicker</a></li><li><a href="module-@mui_x-date-pickers_DateTimePicker.html">@mui/x-date-pickers/DateTimePicker</a></li><li><a href="module-@mui_x-date-pickers_LocalizationProvider.html">@mui/x-date-pickers/LocalizationProvider</a></li><li><a href="module-@mui_x-date-pickers_internals_demo.html">@mui/x-date-pickers/internals/demo</a></li><li><a href="module-@react-sigma_core.html">@react-sigma/core</a></li><li><a href="module-AFTERNOON_SHIFT.html">AFTERNOON_SHIFT</a></li><li><a href="module-App.html">App</a></li><li><a href="module-BeginningOfLesson.html">BeginningOfLesson</a></li><li><a href="module-COURSE_END_TIMES.html">COURSE_END_TIMES</a></li><li><a href="module-COURSE_START_TIMES.html">COURSE_START_TIMES</a></li><li><a href="module-CourseSlotsModal.html">CourseSlotsModal</a></li><li><a href="module-CsvReader.html">CsvReader</a></li><li><a href="module-DAY_PERIODS.html">DAY_PERIODS</a></li><li><a href="module-DurationOfLesson.html">DurationOfLesson</a></li><li><a href="module-EndingOfLesson.html">EndingOfLesson</a></li><li><a href="module-Heatmap.html">Heatmap</a></li><li><a href="module-Home.html">Home</a></li><li><a href="module-MORNING_SHIFT.html">MORNING_SHIFT</a></li><li><a href="module-MultipleSelectCheckmarks.html">MultipleSelectCheckmarks</a></li><li><a href="module-NIGHT_SHIFT.html">NIGHT_SHIFT</a></li><li><a href="module-Navbar.html">Navbar</a></li><li><a href="module-NetworkGraph.html">NetworkGraph</a></li><li><a href="module-ROOMS.html">ROOMS</a></li><li><a href="module-ROOM_FEATURES.html">ROOM_FEATURES</a></li><li><a href="module-RemoteFile.html">RemoteFile</a></li><li><a href="module-ReplaceCourse.html">ReplaceCourse</a></li><li><a href="module-RoomFeatures.html">RoomFeatures</a></li><li><a href="module-Rooms_.html">Rooms</a></li><li><a href="module-RoomsTable.html">RoomsTable</a></li><li><a href="module-ScheduleTable.html">ScheduleTable</a></li><li><a href="module-ScheduleTableFilter.html">ScheduleTableFilter</a></li><li><a href="module-Shift.html">Shift</a></li><li><a href="module-SlotsTable.html">SlotsTable</a></li><li><a href="module-TYPE_FILTER_COMPARISON.html">TYPE_FILTER_COMPARISON</a></li><li><a href="module-TargetDate.html">TargetDate</a></li><li><a href="module-TimeOfDay.html">TimeOfDay</a></li><li><a href="module-WEEKDAYS.html">WEEKDAYS</a></li><li><a href="module-WeekDay.html">WeekDay</a></li><li><a href="module-atoms_modalReplaceCourse.html">atoms/modalReplaceCourse</a></li><li><a href="module-atoms_modalSlotsClass.html">atoms/modalSlotsClass</a></li><li><a href="module-atoms_rooms.html">atoms/rooms</a></li><li><a href="module-atoms_schedule.html">atoms/schedule</a></li><li><a href="module-constants.html">constants</a></li><li><a href="module-date-fns.html">date-fns</a></li><li><a href="module-date-fns_isBefore.html">date-fns/isBefore</a></li><li><a href="module-dayjs.html">dayjs</a></li><li><a href="module-graphology.html">graphology</a></li><li><a href="module-jotai.html">jotai</a></li><li><a href="module-jotai_useAtomValue.html">jotai/useAtomValue</a></li><li><a href="module-lib_replaceCourse.html">lib/replaceCourse</a></li><li><a href="module-papaparse.html">papaparse</a></li><li><a href="module-react.html">react</a></li><li><a href="module-react-csv-reader.html">react-csv-reader</a></li><li><a href="module-react-dom.html">react-dom</a></li><li><a href="module-react-dom_client.html">react-dom/client</a></li><li><a href="module-react-router-dom.html">react-router-dom</a></li><li><a href="module-react-tabulator.html">react-tabulator</a></li><li><a href="module-reportWebVitals.html">reportWebVitals</a></li><li><a href="module-roomsAtom.html">roomsAtom</a></li><li><a href="module-scheduleAtom.html">scheduleAtom</a></li><li><a href="module-slotsModalComponents_BeginingOfLesson.html">slotsModalComponents/BeginingOfLesson</a></li><li><a href="module-slotsModalComponents_DurationOfLesson.html">slotsModalComponents/DurationOfLesson</a></li><li><a href="module-slotsModalComponents_EndingOfLesson.html">slotsModalComponents/EndingOfLesson</a></li><li><a href="module-slotsModalComponents_RoomFeatures.html">slotsModalComponents/RoomFeatures</a></li><li><a href="module-slotsModalComponents_Rooms.html">slotsModalComponents/Rooms</a></li><li><a href="module-slotsModalComponents_TargetDate.html">slotsModalComponents/TargetDate</a></li><li><a href="module-slotsModalComponents_TimeOfDay.html">slotsModalComponents/TimeOfDay</a></li><li><a href="module-slotsModalComponents_WeekDay.html">slotsModalComponents/WeekDay</a></li><li><a href="module-utils.html">utils</a></li><li><a href="react-heatmap-grid%250DHeatmap%2520grid%2520component%2520used%2520in%2520this%2520file.module_.html">react-heatmap-gridHeatmap grid component used in this file.</a></li><li><a href="react-tabulator_css_tabulator_bootstrap3.module_css.html">css</a></li><li><a href="react-tabulator_css_tabulator_bootstrap3.module_css%2520-%2520The%2520bootstrap3%2520theme%2520for%2520the%2520tabulator..html">css - The bootstrap3 theme for the tabulator.</a></li><li><a href="react-tabulator_lib_css_tabulator.min.module_css.html">css</a></li><li><a href="react-tabulator_lib_styles.module_css.html">css</a></li><li><a href="utils%250DUtility%2520functions%2520used%2520in%2520this%2520file.module_.html">utilsUtility functions used in this file.</a></li></ul><h3>Externals</h3><ul><li><a href="external-Box.html">Box</a></li><li><a href="external-Button.html">Button</a></li><li><a href="external-Modal.html">Modal</a></li><li><a href="external-React.html">React</a></li><li><a href="external-Typography.html">Typography</a></li><li><a href="external-dayjs.html">dayjs</a></li><li><a href="external-jotai.html">jotai</a></li></ul><h3>Global</h3><ul><li><a href="global.html#reportWebVitals">reportWebVitals</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Mon May 13 2024 18:14:12 GMT+0100 (Hora de verão da Europa Ocidental)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

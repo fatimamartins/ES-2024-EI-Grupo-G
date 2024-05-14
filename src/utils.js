@@ -1,17 +1,17 @@
 /**
- * @file This file contains utility functions for handling data.
+ * @file utils.js
+ * This file contains utility functions for handling data. It imports necessary modules such as format, getISOWeek, isSameDay, getDay from 'date-fns' and WEEKDAYS from './constants'.
  */
 
 /** @module date-fns */
 import { format, getISOWeek, isSameDay, getDay } from 'date-fns'
+/** @module constants */
 import { WEEKDAYS } from './constants'
-/** @module dayjs */
 
 /**
- * Adds a week number to each row of the provided data based on the date.
- *
  * @function
  * @name addWeekNumber
+ * @description This function adds a week number to each row of the provided data based on the date.
  * @param {Object[]} defaultData - The data to add week numbers to.
  * @returns {Object[]} The data with added week numbers.
  */
@@ -24,10 +24,9 @@ export function addWeekNumber(defaultData) {
 }
 
 /**
- * Adds a semester week number to each row of the provided data.
- *
  * @function
  * @name addSemesterWeekNumber
+ * @description This function adds a semester week number to each row of the provided data.
  * @param {Object[]} defaultData - The data to add semester week numbers to.
  * @returns {Object[]} The data with added semester week numbers.
  */
@@ -50,10 +49,9 @@ export function addSemesterWeekNumber(defaultData) {
 }
 
 /**
- * Parses a date string in the format 'dd/mm/yyyy' and returns a Date object.
- *
  * @function
  * @name parseDate
+ * @description This function parses a string representation of a date into a Date object.
  * @param {string} dateString - The date string to parse.
  * @returns {Date} The parsed date.
  */
@@ -69,12 +67,11 @@ export function parseDate(dateString) {
 }
 
 /**
- * Parses a string representation of an hour into a numerical representation.
- *
  * @function
  * @name parseHour
- * @param {string} hourString - A string representing an hour in the format 'HH:MM:SS'.
- * @returns {number|null} The time value of the parsed hour in milliseconds since the Unix Epoch, or null if the input is not a string.
+ * @description This function parses a string representation of an hour into a numerical representation.
+ * @param {string} hourString - The hour string to parse.
+ * @returns {number} The parsed hour.
  */
 export function parseHour(hourString) {
     if (hourString) {
@@ -90,13 +87,11 @@ export function parseHour(hourString) {
 }
 
 /**
- * Parses a string representation of time into a numerical representation.
- *
  * @function
  * @name getCourseDurationToMilliseconds
- * @param {string} start - A string representing the start time for a course in the format 'HH:MM:SS'.
- * * @param {string} end - A string representing the end time for a course in the format 'HH:MM:SS'.
- * @returns {number|null} The duration of a course parsed in milliseconds
+ * @description This function calculates the duration of a course in milliseconds.
+ * @param {Object} course - The course object containing the start and end times.
+ * @returns {number} The duration of the course in milliseconds.
  */
 export function getCourseDurationToMilliseconds(start, end) {
     if (start && end) {
@@ -109,13 +104,11 @@ export function getCourseDurationToMilliseconds(start, end) {
 }
 
 /**
- * Compares two date strings and returns a number indicating their sort order.
- *
  * @function
  * @name sortDate
- * @param {string} a - The first date string to compare.
- * @param {string} b - The second date string to compare.
- * @returns {number} A negative number if `a` is earlier than `b`, a positive number if `a` is later than `b`, or 0 if they are the same.
+ * @description This function sorts an array of dates in ascending order.
+ * @param {Date[]} dates - The array of dates to sort.
+ * @returns {Date[]} The sorted array of dates.
  */
 export function sortDate(a, b) {
     // a, b - the two values being compared
@@ -127,13 +120,11 @@ export function sortDate(a, b) {
 }
 
 /**
- * Compares two weekday strings and returns a number indicating their sort order.
- *
  * @function
  * @name sortWeekDays
- * @param {string} a - The first weekday string to compare.
- * @param {string} b - The second weekday string to compare.
- * @returns {number} A negative number if `a` is earlier in the week than `b`, a positive number if `a` is later in the week than `b`, or 0 if they are the same.
+ * @description This function sorts an array of weekdays in ascending order.
+ * @param {string[]} weekdays - The array of weekdays to sort.
+ * @returns {string[]} The sorted array of weekdays.
  */
 export function sortWeekDays(a, b) {
     const weekDays = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']
@@ -141,15 +132,12 @@ export function sortWeekDays(a, b) {
 }
 
 /**
- * Checks if a room is available at a specific date and hour based on the provided schedule data.
- *
  * @function
  * @name validateRoomAvailability
- * @param {string} room - The room to check availability for.
- * @param {Date} date - The date to check availability for.
- * @param {Object} hour - The hour to check availability for, with hour, minute, and second components.
- * @param {Object[]} horario - The schedule data to check against.
- * @returns {boolean} `true` if the room is available, `false` otherwise.
+ * @description This function validates the availability of a room based on the provided schedule.
+ * @param {Object} room - The room object to validate.
+ * @param {Object[]} schedule - The schedule to validate against.
+ * @returns {boolean} Returns true if the room is available, false otherwise.
  */
 export function validateRoomAvailability(room, date, hour, horario) {
     const roomData = horario.filter(
@@ -165,12 +153,11 @@ export function validateRoomAvailability(room, date, hour, horario) {
 }
 
 /**
- * @function getFormattedDateTime
- * `getFormattedDateTime` is a function that formats a given date and time into a specific string format.
- *
- * @param {string} date - The date to format, in 'DD/MM/YYYY' format.
- * @param {string} time - The time to format, in 'HH:mm:ss' format.
- * @returns {string} - Returns the formatted date and time as a string.
+ * @function
+ * @name getFormattedDateTime
+ * @description This function formats a Date object into a string representation.
+ * @param {Date} date - The date to format.
+ * @returns {string} The formatted date string.
  */
 export function getFormattedDateTime(date, time, formatStr) {
     if (date && time) {
@@ -189,22 +176,22 @@ export function getFormattedDateTime(date, time, formatStr) {
 }
 
 /**
- * @function getWeek
- * `getWeek` is a function that return the week number of a given date.
- *
- * @param {string} date - The date to format, in 'DD/MM/YYYY' format.
- * @returns {string} - Returns the week number of the given date.
+ * @function
+ * @name getWeek
+ * @description This function gets the week number of a given date.
+ * @param {Date} date - The date to get the week number from.
+ * @returns {number} The week number.
  */
 export function getWeek(date) {
     return getISOWeek(parseDate(date))
 }
 
 /**
- * @function getSemesterWeek
- * `getSemesterWeek` is a function that return the semester week number of a given date.
- *
- * @param {string} date - The date to format, in 'DD/MM/YYYY' format.
- * @returns {string} - Returns the semester week number of a given date.
+ * @function
+ * @name getSemesterWeek
+ * @description This function gets the semester week number of a given date.
+ * @param {Date} date - The date to get the semester week number from.
+ * @returns {number} The semester week number.
  */
 export function getSemesterWeek(oldDate, semesterWeek, newDate) {
     const dif = getWeek(newDate) - getWeek(oldDate)
@@ -212,11 +199,11 @@ export function getSemesterWeek(oldDate, semesterWeek, newDate) {
 }
 
 /**
- * @function getDayOfTheWeek
- * `getDayOfTheWeek` is a function that return the day of the week of a given date.
- *
- * @param {string} date - The date to format, in 'DD/MM/YYYY' format.
- * @returns {string} - Returns the day of the week of a given date.
+ * @function
+ * @name getDayOfTheWeek
+ * @description This function gets the day of the week for a given date.
+ * @param {Date} date - The date to get the day of the week from.
+ * @returns {string} The day of the week.
  */
 export function getDayOfTheWeek(date) {
     const index = getDay(parseDate(date))
@@ -225,13 +212,28 @@ export function getDayOfTheWeek(date) {
 }
 
 /**
- * @function isSameDate
- * `isSameDate` is a function that return true if two dates are the same.
- *
- * @param {string} date - The date to format, in 'DD/MM/YYYY' format.
- * * @param {string} date - The date to format, in 'DD/MM/YYYY' format.
- * @returns {boolean} - Returns true if the two dates are the same.
+ * @function
+ * @name isSameDate
+ * @description This function checks if two dates are the same.
+ * @param {Date} date1 - The first date to compare.
+ * @param {Date} date2 - The second date to compare.
+ * @returns {boolean} Returns true if the dates are the same, false otherwise.
  */
 export function isSameDate(date1, date2) {
     return isSameDay(parseDate(date1), parseDate(date2))
+}
+
+/**
+ * @function
+ * @name randomColor
+ * @description This function generates a random color in hexadecimal format.
+ * @returns {string} The generated random color.
+ */
+export const randomColor = () => {
+    const digits = '0123456789abcdef'
+    let code = '#'
+    for (let i = 0; i < 6; i++) {
+        code += digits.charAt(Math.floor(Math.random() * 16))
+    }
+    return code
 }

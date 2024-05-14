@@ -1,5 +1,6 @@
 /**
- * @file This is the RoomsTable component of the application.
+ * @file RoomsTable.js
+ * This file defines the RoomsTable component of the application. It imports necessary modules and components from React, react-tabulator, and Material-UI.
  */
 
 /** @module react */
@@ -8,8 +9,6 @@ import React from 'react'
 import { ReactTabulator } from 'react-tabulator'
 /**
  * @module @mui/material
- * Material-UI is a popular React UI framework that provides a set of pre-designed components following Material Design guidelines.
- * Here, several components are imported for use in the application.
  */
 import {
     Button,
@@ -26,35 +25,45 @@ import {
 } from '@mui/material'
 /**
  * @module @mui/icons-material/Delete
- * Material-UI Icons is a set of pre-designed icons following Material Design guidelines.
- * Here, the Delete icon is imported for use in the application.
  */
 import Cancel from '@mui/icons-material/Delete'
 /**
  * @module jotai
- * Jotai is a primitive and flexible state management library for React.
- * Here, the useAtomValue hook is imported for use in the application.
  */
 import { useAtomValue } from 'jotai'
 /**
  * @module atoms/rooms
- * This module exports the atomRooms atom, which is used for managing the state of rooms in the application.
  */
 import { atomRooms } from './atoms/rooms'
 /**
  * @module constants
- * This module exports constants used throughout the application.
- * Here, ROOM_FEATURES and TYPE_FILTER_COMPARISON are imported for use in the application.
  */
 import { ROOM_FEATURES, TYPE_FILTER_COMPARISON, ROOMS } from './constants'
+/**
+ * @module atoms/schedule
+ */
 import { atomSchedule } from './atoms/schedule'
+/**
+ * @module @mui/x-date-pickers/internals/demo
+ */
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo'
+/**
+ * @module @mui/x-date-pickers/AdapterDayjs
+ */
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+/**
+ * @module @mui/x-date-pickers/LocalizationProvider
+ */
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+/**
+ * @module @mui/x-date-pickers/DateTimePicker
+ */
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
 
 /**
- * @constant {Object[]} defaultColumns - The default columns for the table.
+ * @constant
+ * @type {Array}
+ * @description This constant defines the default columns for the table in the application. Each object in the array represents a column in the table.
  */
 const defaultColumns = [
     {
@@ -133,7 +142,9 @@ const defaultColumns = [
 ]
 
 /**
- * @constant {Object[]} defaultFilterFields - Default filter fields for the RoomsTable component.
+ * @constant
+ * @type {Array}
+ * @description This constant defines the default fields that are used for filtering in the application. Each string in the array represents a field that can be used for filtering.
  */
 const defaultFilterFields = [
     'Edifício',
@@ -146,14 +157,11 @@ const defaultFilterFields = [
 ]
 
 /**
- * This is the RoomsTable component of the application.
- * It displays a table of rooms with various properties.
- *
  * @function
  * @name RoomsTable
+ * @description This function represents a component that renders a table of rooms. It takes in props as parameters and returns a table component.
  * @param {Object} props - The properties passed to the component.
- * @param {Object[]} props.data - The data to display in the table.
- * @returns {JSX.Element} The rendered RoomsTable component.
+ * @returns {React.Component} Returns a table component that displays the rooms.
  */
 export default function RoomsTable() {
     const defaultData = useAtomValue(atomRooms)
@@ -170,6 +178,12 @@ export default function RoomsTable() {
     const [startDateTime, setStartDateTime] = React.useState(null)
     const [endDateTime, setEndDateTime] = React.useState(null)
 
+    /**
+     * @function
+     * @name addFilter
+     * @description This function is used to add a new filter to the table. It checks if the selected field is 'Data e disponibilidade' and if the start and end date times are available. If so, it applies a time-based filter. If the selected field is not 'Data e disponibilidade' and a value is provided, it adds a new filter to the filters array and updates the tabulator filter.
+     * @param {Event} e - The event object.
+     */
     const addFilter = (e) => {
         e.preventDefault()
         // If both startDateTime and endDateTime are available, apply time-based filtering
@@ -205,6 +219,12 @@ export default function RoomsTable() {
         }
     }
 
+    /**
+     * @function
+     * @name updateTabulatorFilter
+     * @description This function is used to update the tabulator filter. It checks the logic operator and updates the tabulator filter accordingly. It also resets the table fields filter.
+     * @param {Object} newFilter - The new filter to be added.
+     */
     const updateTabulatorFilter = (newFilter) => {
         if (logicOperator === 'AND') {
             setTabulatorFilter([...tabulatorFilter, newFilter])
@@ -224,6 +244,11 @@ export default function RoomsTable() {
         setType('=')
     }
 
+    /**
+     * @function
+     * @name clear
+     * @description This function is used to clear all filters from the table and reset all filter fields.
+     */
     const clear = () => {
         tableRef?.current.clearFilter()
         setFilters([])
@@ -239,6 +264,11 @@ export default function RoomsTable() {
         setTimeFilterResult([])
     }
 
+    /**
+     * @function
+     * @name deleteTimeFilter
+     * @description This function is used to delete the time filter from the table and reset the time filter fields.
+     */
     const deleteTimeFilter = () => {
         setAvailableDecision('Disponível')
         setStartDateTime(null)
@@ -248,6 +278,12 @@ export default function RoomsTable() {
         setTabulatorFilter(filters)
     }
 
+    /**
+     * @function
+     * @name deleteFilter
+     * @description This function is used to delete a specific filter from the table. It takes an index as a parameter and removes the filter at that index from the filters array. It also updates the tabulator filter.
+     * @param {number} indexToRemove - The index of the filter to remove.
+     */
     const deleteFilter = (indexToRemove) => {
         let tabulatorNewFilter = []
         if (filters.length === 1) {
@@ -283,6 +319,12 @@ export default function RoomsTable() {
             : setTabulatorFilter(tabulatorNewFilter)
     }
 
+    /**
+     * @function
+     * @name filterRoomsByTime
+     * @description This function is used to filter rooms based on the start and end date times. It checks if the start and end date times are available and then filters the rooms accordingly. It returns an array of new filters.
+     * @returns {Array} Returns an array of new filters.
+     */
     const filterRoomsByTime = () => {
         if (startDateTime && endDateTime) {
             const formattedStartTime = startDateTime.format('HH:mm') + ':00'
@@ -366,7 +408,7 @@ export default function RoomsTable() {
                 <form onSubmit={(e) => addFilter(e)}>
                     <div>
                         <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 8, mb: 3 }}>
-                            <FormControl sx={{ width: 350, height: 56 }}>
+                            <FormControl sx={{ width: 350 }}>
                                 <InputLabel id="simple-select-label1">Tipo de filtro</InputLabel>
                                 <Select
                                     labelId="simple-select-label1"
@@ -376,6 +418,7 @@ export default function RoomsTable() {
                                     disabled={defaultData.length === 0}
                                     required
                                     onChange={(event) => setSelectedField(event.target.value)}
+                                    sx={{ height: 57 }}
                                 >
                                     {defaultFilterFields.map((col, index) => {
                                         const isTimeFilterDisabled =
@@ -472,6 +515,7 @@ export default function RoomsTable() {
                                                     onChange={(newValue) => {
                                                         setEndDateTime(newValue)
                                                     }}
+                                                    minDateTime={startDateTime}
                                                 />
                                             </DemoContainer>
                                         </LocalizationProvider>
