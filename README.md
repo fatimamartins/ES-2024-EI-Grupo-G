@@ -13,10 +13,11 @@
 
 - Trello - [Link](https://trello.com/invite/esgrupog/ATTI3225af1f8aabc1839257bfb77591583aEED0334E)
 - GitHub - [Link](https://github.com/fatimamartins/ES-2024-EI-Grupo-G)
+- SonarCloud - [Link](https://sonarcloud.io/project/overview?id=fatimamartins_ES-2024-EI-Grupo-G)
 
 ### Link dos ficheiros a carregar no site
 
-- Horário de Exmeplo - [Link](https://raw.githubusercontent.com/fatimamartins/ES-2024-EI-Grupo-G/main/public/HorarioDeExemplo.csv)
+- Horário de Exemplo - [Link](https://raw.githubusercontent.com/fatimamartins/ES-2024-EI-Grupo-G/main/public/HorarioDeExemplo.csv)
 - Caracterização das Salas - [Link](https://raw.githubusercontent.com/fatimamartins/ES-2024-EI-Grupo-G/main/public/Caracteriza%C3%A7%C3%A3oDasSalas.csv)
 
 ### Descrição das tecnologias usadas no projeto
@@ -37,16 +38,31 @@ De seguida deve executar o comando 'npm start', para iniciar o servidor local e 
 - [Prettier](https://prettier.io/)
 - [Jotai](https://jotai.org/)
 - [Day.js](https://day.js.org/)
-- [react-heatmap-grid]
+- [react-heatmap-grid](https://www.npmjs.com/package/react-heatmap-grid)
 - [React Sigma](https://sim51.github.io/react-sigma/)
 - [react-router-dom](https://www.npmjs.com/package/react-router-dom)
 
 ### Descrição do projeto
 
-O projeto consiste numa plataforma web de gestão de horários.
-Através do site é possível carregar o ficheiro com o horário do ano letivo e carregar o ficheiro com as caracteristicas das salas do ISCTE.
-Após o carregamento dos ficheiros, o site permite que sejam marcadas aulas de substituição e aulas extra, seguindo critérios definidos pelo utilizador.
-Feitas as alterações necessárias no horário, o utilizador pode fazer o download do ficheiro atualizado com as novas aulas.
-Através do horário e das caracteristicas das salas, o site torna possível a análise de conflitos entre aulas, através de um "network graph" e a visualização de um mapa com a ocupação das salas, recorrendo a um calendar heatmap.
+O projeto consiste no desenvolvimento de uma aplicação para suporte à gestão de horários no Iscte, e permite:
+* O carregamento de um horário a partir de um ficheiro CSV;
+* Mostrar o horário e permitir navegar no horário, sob a forma de tabela;
+* Mostrar e permitir navegar no cadastro de salas do Iscte;
+* Gravar (em CSV e JSON) o horário que foi alterado;
+* Sugerir slots para alocação de uma aula de substituição;
+* Sugerir slots para alocação das aulas de uma UC;
+* Visualizar de forma gráfica as relações de conflitualidade entre aulas;
+* Visualizar de forma gráfica o mapa de ocupação das salas.
+
+### Cobertura dos testes
+
+[![Testes Screenshot][testes-screenshot]]
+
+### Preview do SonarCloud
+
+[![SonarCloud Screenshot][sonarcloud-screenshot]]
 
 ### Erros e funcionalidades não implementadas ou incompletas
+
+[sonarcloud-screenshot]: public/sonarcloud.png
+[testes-screenshot]: public/cobertura_testes.jpeg
