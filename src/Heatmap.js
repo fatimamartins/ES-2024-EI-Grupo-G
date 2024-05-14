@@ -311,6 +311,7 @@ export default function Heatmap() {
      */
     // Generate heatmap based on the selected filters
     const calculateHeatmap = (e) => {
+        setHeatmapData([]) // clear the heatmap data before calculating a new one
         e.preventDefault()
         // get an array of string dates based on the selected date range
         const dateRange = getDataRange()
