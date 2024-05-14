@@ -217,7 +217,7 @@ export default function Heatmap() {
         return roomCapacity
             ? rooms.filter((room) => {
                   if (capacityLogicOperator === '=') {
-                      return (room['Capacidade Normal'] = roomCapacity)
+                      return room['Capacidade Normal'] === parseInt(roomCapacity)
                   } else if (capacityLogicOperator === '>') {
                       return room['Capacidade Normal'] > roomCapacity
                   } else if (capacityLogicOperator === '<') {
@@ -272,7 +272,6 @@ export default function Heatmap() {
 
             // Skip entries that don't match the date range
             if (!dateRange.includes(item['Data da aula'])) {
-                // console.log('Skipping due to date mismatch.')
                 return
             }
 
