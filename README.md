@@ -56,11 +56,11 @@ O projeto consiste no desenvolvimento de uma aplicação para suporte à gestão
 
 ### Cobertura dos testes
 
-[![Testes Screenshot][testes-screenshot]]
+![Testes Screenshot][testes-screenshot]
 
 ### Preview do SonarCloud
 
-[![SonarCloud Screenshot][sonarcloud-screenshot]]
+![SonarCloud Screenshot][sonarcloud-screenshot]
 
 ### Erros e funcionalidades não implementadas ou incompletas
 
