@@ -1,5 +1,6 @@
 /**
- * @file This is the page with the schedule and rooms.
+ * @file Home.js
+ * This file contains the Home component which is the page with the schedule and rooms.
  */
 
 /** @module App.css */
@@ -17,11 +18,24 @@ import RemoteFile from './RemoteFile'
 /** @module RoomsTable */
 import RoomsTable from './RoomsTable'
 
+/**
+ * @description Importing styles for the react-tabulator library.
+ * @see {@link https://www.npmjs.com/package/react-tabulator}
+ *
+ * @module react-tabulator/lib/css/tabulator.min.css - The minified CSS for the tabulator.
+ * @module react-tabulator/lib/styles.css - The default styles for the tabulator.
+ * @module react-tabulator/css/tabulator_bootstrap3.css - The bootstrap3 theme for the tabulator.
+ */
 import 'react-tabulator/lib/css/tabulator.min.css'
 import 'react-tabulator/lib/styles.css'
-// import 'react-tabulator/css/bootstrap/tabulator_bootstrap.min.css'
-// import 'react-tabulator/css/semantic-ui/tabulator_semantic-ui.css'
 import 'react-tabulator/css/tabulator_bootstrap3.css'
+
+/**
+ * @function
+ * @name Home
+ * @description A function component that renders the home page.
+ * @returns {JSX.Element} The rendered home page.
+ */
 export default function Home() {
     return (
         <div>

@@ -1,26 +1,13 @@
 /**
  * @file replaceCourse.js
  * This file defines and exports a function `doesDayMatch` that checks if a given slot matches the rules for inclusion.
- * It uses several utility functions and constants to perform this check.
  */
 
-/**
- * @module date-fns
- * date-fns is a modern JavaScript date utility library. Here, the getDay, getISOWeek, and isSameDay functions are imported for use in the application.
- *
- * @module utils
- * This module exports utility functions for manipulating and parsing dates.
- * Here, the getFormattedDateTime, parseDate, and parseHour functions are imported for use in the application.
- *
- * @module dayjs
- * Day.js is a minimalist JavaScript library that parses, validates, manipulates, and displays dates and times for modern browsers.
- *
- * @module constants
- * This module exports constants used throughout the application.
- * Here, AFTERNOON_SHIFT, COURSE_END_TIMES, COURSE_START_TIMES, MORNING_SHIFT, NIGHT_SHIFT, ROOMS, and WEEKDAYS are imported for use in the application.
- */
+/** @module date-fns */
 import { addWeeks, format, getDay, startOfWeek } from 'date-fns'
+/** @module utils */
 import { getFormattedDateTime, parseDate, parseHour } from '../utils'
+/** @module constants */
 import {
     AFTERNOON_SHIFT,
     COURSE_END_TIMES,
@@ -30,14 +17,15 @@ import {
     ROOMS,
     WEEKDAYS,
 } from '../constants'
+/** @module dayjs */
 import dayjs from 'dayjs'
 
 /**
- * @function hasRoom
- * `hasRoom` is a function that checks if a given row (representing a course slot) matches the room specified in the rules for inclusion.
- * @param {Object} rulesToInclude - The rules for inclusion. This object should include a `room` property that specifies the room to check for.
- * @param {Object} row - The row to check. This object should include a `room` property that specifies the room of the course slot.
- * @returns {boolean} - Returns true if the row's room matches the room specified in the rules for inclusion, false otherwise.
+ * @function
+ * @name hasRoom
+ * @description This function checks if a room is available for a given slot.
+ * @param {Object} slot - The slot to check room availability for.
+ * @returns {boolean} Returns true if the room is available, false otherwise.
  */
 export function hasRoom(rulesToInclude, row) {
     return rulesToInclude.salas.includes(row['Sala atribuída à aula'])
@@ -46,12 +34,11 @@ export function hasRoom(rulesToInclude, row) {
 // Exclusion filters
 
 /**
- * @function hasFeature
- * `hasFeature` is a function that checks if a given row (representing a course slot) matches the feature specified in the rules for inclusion.
- *
- * @param {Object} rulesToInclude - The rules for inclusion. This object should include a `features` property that specifies the features to check for.
- * @param {Object} row - The row to check. This object should include a `features` property that specifies the features of the course slot.
- * @returns {boolean} - Returns true if the row's features match any of the features specified in the rules for inclusion, false otherwise.
+ * @function
+ * @name doesStartHourMatch
+ * @description This function checks if the start hour of a given slot matches the rules for inclusion.
+ * @param {Object} slot - The slot to check the start hour for.
+ * @returns {boolean} Returns true if the start hour matches the rules, false otherwise.
  */
 export function doesStartHourMatch(rulesToExclude, slot) {
     if (!rulesToExclude['Hora início da aula'] || !slot['Hora início da aula']) return false
@@ -59,12 +46,11 @@ export function doesStartHourMatch(rulesToExclude, slot) {
 }
 
 /**
- * @function doesEndHourMatch
- * `doesEndHourMatch` is a function that checks if a given slot's end hour matches the end hour specified in the rules for exclusion.
- *
- * @param {Object} rulesToExclude - The rules for exclusion. This object should include a `Hora fim da aula` property that specifies the end hour to check for.
- * @param {Object} slot - The slot to check. This object should include a `Hora fim da aula` property that specifies the end hour of the slot.
- * @returns {boolean} - Returns true if the slot's end hour matches the end hour specified in the rules for exclusion, false otherwise.
+ * @function
+ * @name doesEndHourMatch
+ * @description This function checks if the end hour of a given slot matches the rules for inclusion.
+ * @param {Object} slot - The slot to check the end hour for.
+ * @returns {boolean} Returns true if the end hour matches the rules, false otherwise.
  */
 export function doesEndHourMatch(rulesToExclude, slot) {
     if (!rulesToExclude['Hora fim da aula'] || !slot['Hora fim da aula']) return false
@@ -72,12 +58,12 @@ export function doesEndHourMatch(rulesToExclude, slot) {
 }
 
 /**
- * @function isBetweenHours
- * `isBetweenHours` is a function that checks if a given slot's time falls within the time range specified by the rules for exclusion.
- *
- * @param {Object} rulesToExclude - The rules for exclusion. This object should include `Hora início da aula` and `Hora fim da aula` properties that define the range.
- * @param {Object} slot - The slot to check. This object should include `Hora início da aula` and `Hora fim da aula` properties that specify the time of the slot.
- * @returns {boolean} - Returns true if the slot's time falls within the specified range, false otherwise.
+ * @function
+ * @name isBetweenHours
+ * @description This function checks if a given time is between two specified hours.
+ * @param {Object} rulesToExclude - The rules that specify the start and end hours.
+ * @param {Object} slot - The slot to check.
+ * @returns {boolean} Returns true if the slot is between the hours specified in the rulesToExclude, false otherwise.
  */
 export function isBetweenHours(rulesToExclude, slot) {
     if (
@@ -100,12 +86,12 @@ export function isBetweenHours(rulesToExclude, slot) {
 }
 
 /**
- * @function isSameWeekDay
- * `isSameWeekDay` is a function that checks if a given slot falls on the same weekday as specified in the rules for exclusion.
- *
- * @param {Object} rulesToExclude - The rules for exclusion. This object should include a `diaDaSemana` property that specifies the weekday to check for.
- * @param {Object} slot - The slot to check. This object should include a `Data da aula` property that specifies the date of the slot.
- * @returns {boolean} - Returns true if the slot's date falls on the same weekday as specified in the rules for exclusion, false otherwise.
+ * @function
+ * @name isSameWeekDay
+ * @description This function checks if two dates fall on the same day of the week.
+ * @param {Object} rulesToExclude - The rules that specify the weekday.
+ * @param {Object} slot - The slot to check.
+ * @returns {boolean} Returns true if the slot falls on the same weekday as specified in the rulesToExclude, false otherwise.
  */
 export function isSameWeekDay(rulesToExclude, slot) {
     if (!rulesToExclude.diaDaSemana || !slot['Data da aula']) return false
@@ -116,12 +102,12 @@ export function isSameWeekDay(rulesToExclude, slot) {
 }
 
 /**
- * @function isSameShift
- * `isSameShift` is a function that checks if a given slot falls within the same shift (morning or afternoon) as specified in the rules for exclusion.
- *
- * @param {Object} rulesToExclude - The rules for exclusion. This object should include a `turno` property that specifies the shift to check for.
- * @param {Object} slot - The slot to check. This object should include a `Hora início da aula` property that specifies the start hour of the slot.
- * @returns {boolean} - Returns true if the slot's start hour falls within the same shift as specified in the rules for exclusion, false otherwise.
+ * @function
+ * @name isSameShift
+ * @description This function checks if a given slot falls within the same shift as specified in the rules.
+ * @param {Object} rules - The rules that specify the shift.
+ * @param {Object} slot - The slot to check.
+ * @returns {boolean} Returns true if the slot falls within the same shift as specified in the rules, false otherwise.
  */
 export function isSameShift(rulesToExclude, slot) {
     if (!rulesToExclude.turno || !slot['Hora início da aula']) return false
@@ -137,11 +123,11 @@ export function isSameShift(rulesToExclude, slot) {
 }
 
 /**
- * @function getFiltersExcludeToApply
- * `getFiltersExcludeToApply` is a function that generates an array of filter functions based on the rules for exclusion.
- *
- * @param {Object} rulesToExclude - The rules for exclusion. This object may include various properties depending on the exclusion rules.
- * @returns {Array} - Returns an array of filter functions to be applied.
+ * @function
+ * @name getFiltersExcludeToApply
+ * @description This function retrieves the filters to be applied for exclusion based on the provided rules.
+ * @param {Object} rulesToExclude - The rules that specify the filters for exclusion.
+ * @returns {Array<Function>} Returns an array of filter functions to be applied for exclusion.
  */
 export function getFiltersExcludeToApply(rulesToExclude) {
     const filters = []
@@ -169,11 +155,12 @@ export function getFiltersExcludeToApply(rulesToExclude) {
 // Calculate all slots available for a given time interval
 
 /**
- * @function getFiltersExcludeToApply
- * `getFiltersExcludeToApply` is a function that generates an array of filter functions based on the rules for exclusion.
- *
- * @param {Object} rulesToExclude - The rules for exclusion. This object may include various properties depending on the exclusion rules.
- * @returns {Array} - Returns an array of filter functions to be applied.
+ * @function
+ * @name getAllSlots
+ * @description This function retrieves all slots based on the provided parameters.
+ * @param {Object} rulesToInclude - The rules that specify the criteria for retrieving slots.
+ * @param {Array<string>} rooms - The rooms in which to check for available slots.
+ * @returns {Array<Object>} Returns an array of slots that match the provided criteria and are available in the provided rooms.
  */
 export function getAllSlots(rulesToInclude, rooms) {
     const combinations = []
@@ -219,12 +206,12 @@ export function getAllSlots(rulesToInclude, rooms) {
 }
 
 /**
- * Calculates the duration of a time slot.
- *
- * @param {string} start - The start time of the slot in 'HH:mm:ss' format.
- * @param {string} end - The end time of the slot in 'HH:mm:ss' format.
- *
- * @returns {number} The duration of the slot in hours. This is calculated as the difference between the end time and the start time.
+ * @function
+ * @name getSlotTime
+ * @description This function retrieves the time of a given slot.
+ * @param {Date} start - The start time of the slot.
+ * @param {Date} end - The end time of the slot.
+ * @returns {Date} Returns the time of the slot with the provided start and end times.
  */
 function getSlotTime(start, end) {
     const startHour = parseHour(start)
@@ -233,13 +220,12 @@ function getSlotTime(start, end) {
 }
 
 /**
- * Filters the provided rooms based on the selected features.
- *
- * @param {Object} rulesToInclude - The rules to consider when filtering the rooms.
- * @param {Array} rooms - The list of all rooms.
- * @param {Array} rulesToInclude.caracteristicas - The selected features.
- *
- * @returns {Array} An array of rooms that have the selected features. A room is considered to have a feature if the value of the feature property in the room object is 'X'.
+ * @function
+ * @name getRoomsWithSelectedFeature
+ * @description This function retrieves all rooms that have a specific feature.
+ * @param {Object} rulesToInclude - The rules that specify the features to check for in the rooms.
+ * @param {Array<string>} rooms - The rooms to check for the specified features.
+ * @returns {Array<string>} Returns an array of rooms that have the features specified in rulesToInclude.
  */
 function getRoomsWithSelectedFeature(rulesToInclude, rooms) {
     return rooms.filter((room) =>
@@ -248,14 +234,12 @@ function getRoomsWithSelectedFeature(rulesToInclude, rooms) {
 }
 
 /**
- * Determines the rooms to iterate over based on the provided rules.
- *
- * @param {Object} rulesToInclude - The rules to consider when determining the rooms.
- * @param {Array} rooms - The list of all rooms.
- * @param {Array} rulesToInclude.salas - The selected rooms.
- * @param {Array} rulesToInclude.caracteristicas - The selected features.
- *
- * @returns {Array} An array of rooms. If rooms are specified in the rules, the array will only include those rooms. If features are specified in the rules, the array will include rooms that have those features. If neither rooms nor features are specified, the array will include all rooms.
+ * @function
+ * @name getRoomsToIterate
+ * @description This function retrieves the rooms that need to be iterated over based on the provided parameters.
+ * @param {Object} rulesToInclude - The rules that specify the criteria for retrieving rooms.
+ * @param {Array<string>} rooms - The rooms to check against the specified criteria.
+ * @returns {Array<string>} Returns an array of rooms that match the criteria specified in rulesToInclude.
  */
 function getRoomsToIterate(rulesToInclude, rooms) {
     // The application only allows filtering by rooms if no features are selected and vice versa.
@@ -270,12 +254,11 @@ function getRoomsToIterate(rulesToInclude, rooms) {
 }
 
 /**
- * Retrieves the start times for a course based on the provided rules.
- *
- * @param {Object} rulesToInclude - The rules to consider when determining the start times.
- * @param {moment} rulesToInclude.dataInicio - The start time of the course as a moment object.
- *
- * @returns {Array} An array of start times. If a start time is specified in the rules, the array will only include times that are the same or later. If no start time is specified, the array will include all possible start times.
+ * @function
+ * @name getStartTime
+ * @description This function retrieves the start time of a given course.
+ * @param {Object} rulesToInclude - The rules that specify the start time.
+ * @returns {Date} Returns the start time specified in the rulesToInclude.
  */
 function getStartTime(rulesToInclude) {
     if (rulesToInclude?.dataInicio) {
@@ -286,9 +269,11 @@ function getStartTime(rulesToInclude) {
 }
 
 /**
- * Retrieves the end time of a certain event or process.
- *
- * @returns {string} The end time in a string format.
+ * @function
+ * @name getEndTime
+ * @description This function retrieves the end time specified in the rules.
+ * @param {Object} rulesToInclude - The rules that specify the end time.
+ * @returns {Date} Returns the end time specified in the rulesToInclude.
  */
 function getEndTime(rulesToInclude) {
     if (rulesToInclude?.dataFim) {
@@ -299,11 +284,11 @@ function getEndTime(rulesToInclude) {
 }
 
 /**
- * @function getEndDate
- * `getEndDate` is a function that calculates the end date for a given set of rules for inclusion.
- *
- * @param {Object} rulesToInclude - The rules for inclusion. This object may include `data`, `dataInicio`, and `dataFim` properties that specify the date range.
- * @returns {string} - Returns the end date in 'DD/MM/YYYY' format.
+ * @function
+ * @name getEndDate
+ * @description This function retrieves the end date specified in the rules.
+ * @param {Object} rulesToInclude - The rules that specify the end date.
+ * @returns {Date} Returns the end date specified in the rulesToInclude.
  */
 export function getEndDate(rulesToInclude) {
     if (rulesToInclude?.data === 'mesmaSemana') {
@@ -319,12 +304,12 @@ export function getEndDate(rulesToInclude) {
 }
 
 /**
- * @function getDatesExcludingSundays
- * `getDatesExcludingSundays` is a function that generates an array of dates between two given dates, excluding Sundays.
- *
- * @param {string} startDate - The start date in 'DD/MM/YYYY' format.
- * @param {string} endDate - The end date in 'DD/MM/YYYY' format.
- * @returns {Array} - Returns an array of dates in 'DD/MM/YYYY' format, excluding Sundays.
+ * @function
+ * @name getDatesExcludingSundays
+ * @description This function retrieves all dates within a specified range, excluding Sundays.
+ * @param {Date} startDate - The start date of the range.
+ * @param {Date} endDate - The end date of the range.
+ * @returns {Array<Date>} Returns an array of dates within the specified range, excluding Sundays.
  */
 export function getDatesExcludingSundays(startDate, endDate) {
     const result = []
@@ -352,22 +337,22 @@ export function getDatesExcludingSundays(startDate, endDate) {
 // Transform schedule and slots array into a map for easier access
 
 /**
- * @function mkId
- * `mkId` is a function that generates a unique identifier for a given course slot.
- *
- * @param {Object} slot - The course slot for which to generate an identifier. This object may include various properties depending on the structure of a course slot.
- * @returns {string} - Returns a unique identifier for the given course slot.
+ * @function
+ * @name mkId
+ * @description This function generates a unique identifier.
+ * @param {Object} entry - The entry based on which the unique identifier is to be generated.
+ * @returns {string} Returns a unique identifier based on the provided entry.
  */
 export function mkId(entry) {
     return `${entry['Data da aula']}-${entry['Hora início da aula']}-${entry['Hora fim da aula']}-${entry['Sala atribuída à aula']}`
 }
 
 /**
- * @function mkSheduleMap
- * `mkSheduleMap` is a function that generates a map (object) where each key-value pair represents a course slot and its corresponding schedule.
- *
- * @param {Array} slots - An array of course slots. Each slot is an object that may include various properties depending on the structure of a course slot.
- * @returns {Object} - Returns a map where each key is a unique identifier for a course slot, and each value is the corresponding schedule.
+ * @function
+ * @name mkSheduleMap
+ * @description This function generates a schedule map based on the provided parameters.
+ * @param {Array<Object>} appointments - The appointments to include in the schedule map.
+ * @returns {Map<string, Object>} Returns a schedule map based on the provided appointments.
  */
 export function mkSheduleMap(appointments) {
     const map = new Map()
@@ -380,12 +365,12 @@ export function mkSheduleMap(appointments) {
 
 // Remove slots that are already in the schedule
 /**
- * @function removeSheduledSlots
- * `removeSheduledSlots` is a function that removes scheduled slots from a given array of slots.
- *
- * @param {Array} slots - An array of course slots. Each slot is an object that may include various properties depending on the structure of a course slot.
- * @param {Object} scheduleMap - A map where each key is a unique identifier for a course slot, and each value is the corresponding schedule.
- * @returns {Array} - Returns a new array of slots, excluding those that are already scheduled.
+ * @function
+ * @name removeSheduledSlots
+ * @description This function removes scheduled slots from the provided schedule map.
+ * @param {Map<string, Object>} map - The map to remove slots from.
+ * @param {Array<Object>} slots - The slots to remove from the map.
+ * @returns {Map<string, Object>} Returns the updated map after removing the specified slots.
  */
 export function removeSheduledSlots(map, slots) {
     return slots.reduce((acc, slot) => {
@@ -395,12 +380,12 @@ export function removeSheduledSlots(map, slots) {
 }
 
 /**
- * @function isOverlapping
- * `isOverlapping` is a function that returns true if the slot overlaps with the schedule
- *
- * @param {Object} slot - The slot to check. This object should include `Hora início da aula` and `Hora fim da aula` properties that specify the time of the slot.
- * @param {Array} schedule - An array of course slots. Each slot is an object that may include various properties depending on the structure of a course slot.
- * @returns {boolean} - Returns true if the slot's time overlaps with the schedule, false otherwise.
+ * @function
+ * @name isOverlapping
+ * @description This function checks if two time periods overlap.
+ * @param {Object} slot - The slot to check for overlap.
+ * @param {Array<Object>} schedule - The schedule to check against.
+ * @returns {boolean} Returns true if the slot overlaps with any slot in the schedule, false otherwise.
  */
 function isOverlapping(slot, schedule) {
     return schedule.some((appointment) => {
@@ -414,6 +399,14 @@ function isOverlapping(slot, schedule) {
     })
 }
 
+/**
+ * @function
+ * @name getNextWeekDate
+ * @description This function retrieves the date of the same day of the week in the next week.
+ * @param {Date} date - The date to get the next week's date for.
+ * @param {string} time - The time to get the next week's time for.
+ * @returns {Date} Returns the date and time of the same day of the week in the next week.
+ */
 export function getNextWeekDate(date, time) {
     const currentWeekStartDate = startOfWeek(parseDate(date), { weekStartsOn: 1 }) // Assuming Monday is the start of the week (change as needed)
     // Add 1 week to get the start date of the next week
@@ -423,12 +416,15 @@ export function getNextWeekDate(date, time) {
 
 // Lookup function which returns the available slots
 /**
- * @function lookupSlots
- * `lookupSlots` is a function that retrieves the slots associated with a given course from a schedule map.
- *
- * @param {Object} scheduleMap - A map where each key is a unique identifier for a course slot, and each value is the corresponding schedule.
- * @param {string} course - The course for which to retrieve the slots.
- * @returns {Array} - Returns an array of slots associated with the given course.
+ * @function
+ * @name lookupSlots
+ * @description This function looks up the slots in a given schedule.
+ * @param {Array<Object>} rulesToInclude - The rules to include when looking up slots.
+ * @param {Array<Object>} rulesToExclude - The rules to exclude when looking up slots.
+ * @param {Array<Object>} schedule - The schedule to look up slots in.
+ * @param {Array<Object>} rooms - The rooms to consider when looking up slots.
+ * @param {string} selectedLessonID - The ID of the selected lesson to consider when looking up slots.
+ * @returns {Array<Object>} Returns an array of slots found in the schedule based on the provided rules and selected lesson ID.
  */
 export function lookupSlots(rulesToInclude, rulesToExclude, schedule, rooms, selectedLessonID) {
     // Get all available slots based on the rules to include

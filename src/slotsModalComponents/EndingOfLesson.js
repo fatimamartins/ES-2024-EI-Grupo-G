@@ -1,4 +1,17 @@
 /**
+ * @file
+ * @module EndingOfLesson
+ * @description This file contains the `EndingOfLesson` component.
+ * @requires module:@mui/material
+ * @requires module:react
+ * @requires module:../constants
+ */
+
+import React from 'react'
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
+import { COURSE_END_TIMES } from '../constants'
+
+/**
  * `EndingOfLesson` is a React functional component that renders a form control for selecting the end time of a course.
  *
  * @component
@@ -11,11 +24,6 @@
  *
  * @returns {React.Element} The rendered form control.
  */
-
-import React from 'react'
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
-import { COURSE_END_TIMES } from '../constants'
-
 const EndingOfLesson = ({ rules, setRules }) => {
     return (
         <FormControl sx={{ minWidth: 180, marginLeft: 2 }}>

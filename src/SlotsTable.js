@@ -1,19 +1,20 @@
 /**
- * @file SlotsTable
+ * @file SlotsTable.js
+ * This file is a component for displaying the slots available for replacing a course. It imports necessary modules and components such as React, DataGrid from MUI X DataGrid, and Button and Stack from MUI Material. It also defines a constant for the columns of the DataGrid.
  */
 
-/**
- * @external React
- * @see {@link https://reactjs.org/}
- */
+/** @module react */
 import * as React from 'react'
-/**
- * @external jotai
- * @see {@link https://jotai.pmnd.rs/}
- */
+/** @module @mui/x-data-grid */
 import { DataGrid } from '@mui/x-data-grid'
+/** @module @mui/material */
 import { Button, Stack } from '@mui/material'
 
+/**
+ * @constant
+ * @type {Array}
+ * @description This constant defines the columns for the DataGrid in the application. Each object in the array represents a column in the DataGrid.
+ */
 const columns = [
     {
         field: 'Data da aula',
@@ -27,9 +28,11 @@ const columns = [
 ]
 
 /**
- * SlotsTable component is responsible for managing the slots available for replacing of a course.
- *
- * @returns {JSX.Element} The SlotsTable component.
+ * @function
+ * @name SlotsTable
+ * @description This function represents a component that renders a DataGrid for the slots available for replacing a course. It takes in props as parameters and returns a DataGrid component.
+ * @param {Object} props - The properties passed to the component.
+ * @returns {React.Component} Returns a DataGrid component that displays the slots available for replacing a course.
  */
 const SlotsTable = ({ slots, handleCancel, handleSelection, buttonTitle, top }) => {
     const [selectedSlot, setSelectedSlot] = React.useState(null)
@@ -80,9 +83,4 @@ const SlotsTable = ({ slots, handleCancel, handleSelection, buttonTitle, top }) 
     )
 }
 
-/**
- * Represents a table with the results of the slots available for replacing a course.
- * @class
- * @exports ReplaceCourse
- */
 export default SlotsTable

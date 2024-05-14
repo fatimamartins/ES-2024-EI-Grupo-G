@@ -1,12 +1,16 @@
 /**
- * @file This is the page with the schedule and rooms.
+ * @file Heatmap.js
+ * This is the page with the schedule and rooms.
  */
 
 /** @module App.css */
 import './App.css'
 /** @module react */
 import React from 'react'
-
+/**
+ * @module @mui/material
+ * Material UI components used in this file.
+ */
 import {
     Button,
     FormControl,
@@ -20,35 +24,167 @@ import {
     Tooltip,
     Typography,
 } from '@mui/material'
+/**
+ * @module jotai
+ * State management library used in this file.
+ */
 import { useAtomValue } from 'jotai'
+/**
+ * @module atoms/schedule
+ * Atom representing the schedule state.
+ */
 import { atomSchedule } from './atoms/schedule'
+/**
+ * @module atoms/rooms
+ * Atom representing the rooms state.
+ */
 import { atomRooms } from './atoms/rooms'
+/**
+ * @module constants
+ * Constants used in this file.
+ */
 import { COURSE_END_TIMES, COURSE_START_TIMES, ROOM_FEATURES } from './constants'
+/**
+ * @module @mui/x-date-pickers
+ * Date picker components used in this file.
+ */
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
+/**
+ * @module @mui/x-date-pickers/internals/demo
+ * Demo container component used in this file.
+ */
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo'
+/**
+ * @module @mui/x-date-pickers/AdapterDayjs
+ * Adapter for the date picker to use Day.js.
+ */
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+/**
+ * @module dayjs
+ * Date library used in this file.
+ */
 import dayjs from 'dayjs'
+/**
+ * @module react-heatmap-grid
+ * Heatmap grid component used in this file.
+ */
 import HeatMap from 'react-heatmap-grid'
+/**
+ * @module utils
+ * Utility functions used in this file.
+ */
 import { parseDate, parseHour } from './utils'
+/**
+ * @module date-fns
+ * Date utility functions used in this file.
+ */
 import { eachDayOfInterval, format } from 'date-fns'
 
+/**
+ * @constant
+ * @type {string[]}
+ * @name defaultTypeOfFilterComparison
+ * @description An array of strings representing the default types of filter comparisons.
+ */
 const defaultTypeOfFilterComparison = ['=', '<', '>']
 
+/**
+ * @function
+ * @name Heatmap
+ * @description A function component that renders the heatmap.
+ * @returns {JSX.Element} The rendered heatmap.
+ */
 export default function Heatmap() {
+    /**
+     * @constant
+     * @type {Object}
+     * @name schedule
+     * @description The schedule state, retrieved from the atom.
+     */
     const schedule = useAtomValue(atomSchedule)
+    /**
+     * @constant
+     * @type {Object}
+     * @name rooms
+     * @description The rooms state, retrieved from the atom.
+     */
     const rooms = useAtomValue(atomRooms)
+    /**
+     * @constant
+     * @type {Array}
+     * @name roomType
+     * @description The room type state and its setter function.
+     */
     const [roomType, setRoomType] = React.useState('')
+    /**
+     * @constant
+     * @type {Array}
+     * @name startDate
+     * @description The start date state and its setter function.
+     */
     const [startDate, setStartDate] = React.useState(null)
+    /**
+     * @constant
+     * @type {Array}
+     * @name endDate
+     * @description The end date state and its setter function.
+     */
     const [endDate, setEndDate] = React.useState(null)
+    /**
+     * @constant
+     * @type {Array}
+     * @name roomCapacity
+     * @description The room capacity state and its setter function.
+     */
     const [roomCapacity, setRoomCapacity] = React.useState(null)
+    /**
+     * @constant
+     * @type {Array}
+     * @name capacityLogicOperator
+     * @description The capacity logic operator state and its setter function.
+     */
     const [capacityLogicOperator, setCapacityLogicOperator] = React.useState('>')
+    /**
+     * @constant
+     * @type {Array}
+     * @name isBusy
+     * @description The busy state and its setter function.
+     */
     const [isBusy, setIsBusy] = React.useState(true)
+    /**
+     * @constant
+     * @type {Array}
+     * @name heatmapData
+     * @description The heatmap data state and its setter function.
+     */
     const [heatmapData, setHeatmapData] = React.useState([])
-    const [xLabels, setXLabels] = React.useState([]) // it changes according to the selected date range. It is an array of days
+    /**
+     * @constant
+     * @type {Array}
+     * @name xLabels
+     * @description The x-axis labels state and its setter function. It changes according to the selected date range.
+     */
+    const [xLabels, setXLabels] = React.useState([]) // it changes according to the selected date range
+    /**
+     * @constant
+     * @type {Array}
+     * @name yLabels
+     * @description An array of strings representing the y-axis labels of the heatmap.
+     */
     const yLabels = [...new Set([...COURSE_START_TIMES, ...COURSE_END_TIMES])]
+    /**
+     * @constant
+     * @type {Array}
+     * @name isWithinRange
+     * @description The within range state and its setter function.
+     */
     const [isWithinRange, setIsWithinRange] = React.useState(true)
 
-    // Filter
+    /**
+     * @function
+     * @name clear
+     * @description A function that clears the state variables.
+     */
     const clear = () => {
         setRoomType('')
         setStartDate(null)
@@ -58,12 +194,25 @@ export default function Heatmap() {
         setIsWithinRange(true)
     }
 
+    /**
+     * @function
+     * @name checkIsWithinRange
+     * @description A function that checks if the selected date range is within 31 days.
+     * @param {Date} start - The start date.
+     * @param {Date} end - The end date.
+     */
     const checkIsWithinRange = (start, end) => {
         if (start === null || end === null) return
         const dates = eachDayOfInterval({ start: parseDate(startDate), end: parseDate(end) })
         dates.length <= 31 ? setIsWithinRange(true) : setIsWithinRange(false)
     }
 
+    /**
+     * @function
+     * @name getRoomsByCapacity
+     * @description A function that filters the rooms by their capacity.
+     * @returns {Array} The filtered rooms.
+     */
     const getRoomsByCapacity = () => {
         return roomCapacity
             ? rooms.filter((room) => {
@@ -80,6 +229,12 @@ export default function Heatmap() {
             : rooms
     }
 
+    /**
+     * @function
+     * @name getDataRange
+     * @description A function that gets the date range based on the selected start and end dates, updates the xLabels and returns an array of string dates.
+     * @returns {Array} The date range.
+     */
     // Get the date range based on the selected start and end dates, updates the xLabels and return an array of strings dates
     const getDataRange = () => {
         const dates = eachDayOfInterval({ start: parseDate(startDate), end: parseDate(endDate) })
@@ -87,6 +242,14 @@ export default function Heatmap() {
         return dates.map((date) => format(date, 'dd/MM/yyyy'))
     }
 
+    /**
+     * @function
+     * @name processData
+     * @description A function that processes the data to generate a heatmap.
+     * @param {Array} roomsFilteredByCapacity - The rooms filtered by capacity.
+     * @param {Array} dateRange - The date range.
+     * @returns {Array} The processed data for the heatmap.
+     */
     function processData(roomsFilteredByCapacity, dateRange) {
         // Create a matrix of zeros with the same dimensions as the heatmap
         const data = new Array(yLabels.length).fill(0).map(() => new Array(dateRange.length).fill(0))
@@ -141,6 +304,12 @@ export default function Heatmap() {
         }
     }
 
+    /**
+     * @function
+     * @name calculateHeatmap
+     * @description A function that generates a heatmap based on the selected filters.
+     * @param {Event} e - The event object.
+     */
     // Generate heatmap based on the selected filters
     const calculateHeatmap = (e) => {
         e.preventDefault()
@@ -302,6 +471,16 @@ export default function Heatmap() {
     )
 }
 
+/**
+ * @function
+ * @name LoadHeatmap
+ * @description A function component that renders a HeatMap component with the provided data, labels, and styling.
+ * @param {Object} props - The properties passed to the component.
+ * @param {Array} props.heatmapData - The data for the heatmap.
+ * @param {Array} props.formattedXLabels - The labels for the x-axis.
+ * @param {Array} props.yLabels - The labels for the y-axis.
+ * @returns {JSX.Element} The HeatMap component.
+ */
 const LoadHeatmap = ({ heatmapData, xLabels, yLabels }) => {
     if (heatmapData.length === 0) return null
     return (

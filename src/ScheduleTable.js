@@ -1,5 +1,6 @@
 /**
- * @file This is a component for a table using react-tabulator.
+ * @file ScheduleTable.js
+ * This file is a component for a table using react-tabulator. It imports necessary modules and components such as React, ReactDOM, ReactTabulator, utility functions, MultipleSelectCheckmarks component, MUI material components, ScheduleTableFilter component, and Jotai for state management.
  */
 
 /** @module react */
@@ -9,65 +10,56 @@ import { renderToString } from 'react-dom/server'
 /** @module react-tabulator */
 import { ReactTabulator } from 'react-tabulator'
 /**
- * Utility functions for manipulating and sorting dates.
  * @module utils
  */
 import { addSemesterWeekNumber, addWeekNumber, sortWeekDays } from './utils'
 /**
- * Custom multiple select component.
  * @module MultipleSelectCheckmarks
  */
 import MultipleSelectCheckmarks from './MultipleSelectCheckmarks'
 /** @module @mui/material */
 import { Button, Stack, Tooltip } from '@mui/material'
 /**
- * Custom schedule table filter component.
  * @module ScheduleTableFilter
  */
 import ScheduleTableFilter from './ScheduleTableFilter'
 /**
  * @module jotai
- * Jotai is a primitive and flexible state management library for React.
- * Here, the useAtomValue and useSetAtom hooks are imported for use in the application.
  */
 import { useAtomValue, useSetAtom } from 'jotai'
 /**
  * @module atoms/modalReplaceCourse
- * This module exports the atomModalReplaceCourse atom, which is used for managing the state of the modal for replacing a course in the application.
  */
 import { atomModalReplaceCourse } from './atoms/modalReplaceCourse'
 /**
  * @module @mui/icons-material/FindReplace
- * Material-UI Icons is a set of pre-designed icons following Material Design guidelines.
- * Here, the FindReplace icon is imported for use in the application.
  */
 import FindReplaceIcon from '@mui/icons-material/FindReplace'
 /**
  * @module constants
- * This module exports constants used throughout the application.
- * Here, ROOM_FEATURES and ROOMS are imported for use in the application.
  */
 import { ROOM_FEATURES, ROOMS } from './constants'
 /**
  * @module atoms/schedule
- * This module exports the atomSchedule atom, which is used for managing the state of the schedule in the application.
  */
 import { atomSchedule } from './atoms/schedule'
+/** @module ReplaceCourse */
 import ReplaceCourse from './ReplaceCourse'
+/** @module atoms/rooms */
 import { atomRooms } from './atoms/rooms'
+/** @module atoms/modalSlotsClass */
 import { atomModalSlotsClass } from './atoms/modalSlotsClass'
+/** @module CourseSlotsModal */
 import CourseSlotsModal from './CourseSlotsModal'
+/** @module @mui/icons-material/Add */
 import AddIcon from '@mui/icons-material/Add'
 
 /**
- * This is the ScheduleTable component of the application.
- * It displays a table of schedules with various properties.
- *
  * @function
  * @name ScheduleTable
+ * @description This function represents a component that renders a schedule table. It takes in props as parameters and returns a table component.
  * @param {Object} props - The properties passed to the component.
- * @param {Object[]} props.data - The data to display in the table.
- * @returns {JSX.Element} The rendered ScheduleTable component.
+ * @returns {React.Component} Returns a table component that displays the schedule.
  */
 export default function ScheduleTable() {
     const defaultData = useAtomValue(atomSchedule)
@@ -78,7 +70,9 @@ export default function ScheduleTable() {
     const setModalSlotsToOpen = useSetAtom(atomModalSlotsClass)
 
     /**
-     * @constant {Object[]} defaultColumns - The default columns for the table.
+     * @constant
+     * @type {Array}
+     * @description This constant defines the columns for the schedule table in the application. Each object in the array represents a column in the table.
      */
     const columns = [
         {
