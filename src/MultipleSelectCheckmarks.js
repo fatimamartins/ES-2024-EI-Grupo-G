@@ -1,5 +1,6 @@
 /**
- * @file This is the MultipleSelectCheckmarks component of the application.
+ * @file MultipleSelectCheckmarks.js
+ * This is the MultipleSelectCheckmarks component of the application.
  */
 
 /** @module react */
@@ -16,13 +17,24 @@ import Select from '@mui/material/Select'
 import InputLabel from '@mui/material/InputLabel'
 /** @module @mui/material/ListItemText */
 import ListItemText from '@mui/material/ListItemText'
+/** @module @mui/material/Stack */
 import { Stack } from '@mui/material'
 
-/** @constant {number} ITEM_HEIGHT - The height of each item in the select menu. */
+/**
+ * @constant {number} ITEM_HEIGHT
+ * @description The height of each item in the select menu.
+ */
 const ITEM_HEIGHT = 48
-/** @constant {number} ITEM_PADDING_TOP - The padding at the top of each item in the select menu. */
+/**
+ * @constant {number} ITEM_PADDING_TOP
+ * @description The padding at the top of each item in the select menu.
+ */
 const ITEM_PADDING_TOP = 8
-/** @constant {object} MenuProps - The properties for the select menu. */
+/**
+ * @constant {object} MenuProps
+ * @description The properties for the select menu. It includes the style properties for the Paper component used in the menu.
+ * The maxHeight is calculated based on the ITEM_HEIGHT and ITEM_PADDING_TOP constants, and the width is set to 50.
+ */
 const MenuProps = {
     PaperProps: {
         style: {
@@ -32,7 +44,10 @@ const MenuProps = {
     },
 }
 
-/** @constant {string[]} colName - The names of the columns in the select menu. */
+/**
+ * @constant {string[]} colName
+ * @description The names of the columns in the select menu. These names represent different aspects of a course schedule, such as the course name, the day of the week, the start and end time of the class, the date of the class, the characteristics of the requested room for the class, the room assigned to the class, the week of the year, and the week of the semester.
+ */
 const colName = [
     'Curso',
     'Unidade Curricular',
@@ -50,16 +65,31 @@ const colName = [
 ]
 
 /**
- * This is the MultipleSelectCheckmarks component of the application.
+ * @description This is the MultipleSelectCheckmarks component of the application.
  * It manages the selection of multiple items with checkboxes.
  *
  * @function
  * @name MultipleSelectCheckmarks
+ * @param {object} props - The properties passed to the component.
+ * @param {React.MutableRefObject} props.tableRef - The reference to the table.
+ * @param {boolean} props.disabled - The state of the component's interactivity.
  * @returns {JSX.Element} The rendered MultipleSelectCheckmarks component.
  */
 export default function MultipleSelectCheckmarks({ tableRef, disabled }) {
+    /**
+     * @description The state and setter for the selectedColumns state variable.
+     * The default value is all columns because all columns are visible by default.
+     * @constant {Array} selectedColumns
+     * @function setSelectedColumns
+     */
     const [selectedColumns, setSelectedColumns] = useState(colName) // the default value is all columns because all columns are visible by default
 
+    /**
+     * @description Handles the change event of the select menu.
+     * It checks if the selected columns have changed and toggles their visibility accordingly.
+     * @function handleChange
+     * @param {Event} event - The change event.
+     */
     const handleChange = (event) => {
         const {
             target: { value },

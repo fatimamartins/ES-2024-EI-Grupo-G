@@ -1,11 +1,28 @@
 /**
- * @file This is the page with the network graph of the lessons conflicts.
+ * @file NetworkGraph.js
+ * This file contains the page with the network graph of the lessons conflicts.
  */
 
 /** @module react */
 import React, { useEffect } from 'react'
 
+/**
+ * @module date-fns/isAfter
+ * @module date-fns/isBefore
+ */
 import { isAfter, isBefore } from 'date-fns'
+/**
+ * @module @mui/material/Button
+ * @module @mui/material/Checkbox
+ * @module @mui/material/FormControl
+ * @module @mui/material/InputLabel
+ * @module @mui/material/ListItemText
+ * @module @mui/material/MenuItem
+ * @module @mui/material/Select
+ * @module @mui/material/Stack
+ * @module @mui/material/TextField
+ * @module @mui/material/Tooltip
+ */
 import {
     Button,
     Checkbox,
@@ -18,17 +35,29 @@ import {
     TextField,
     Tooltip,
 } from '@mui/material'
+/** @module jotai/useAtomValue */
 import { useAtomValue } from 'jotai'
+/** @module atoms/schedule */
 import { atomSchedule } from './atoms/schedule'
+/** @module graphology */
 import Graph from 'graphology'
+/** @module @react-sigma/core */
 import { SigmaContainer, useLoadGraph } from '@react-sigma/core'
+/** @module @react-sigma/core/lib/react-sigma.min.css */
 import '@react-sigma/core/lib/react-sigma.min.css'
+/** @module utils */
 import { getCourseDurationToMilliseconds, parseDate, randomColor } from './utils'
+/** @module constants */
 import { ROOM_FEATURES } from './constants'
+/** @module @mui/x-date-pickers/DatePicker */
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+/** @module @mui/x-date-pickers/LocalizationProvider */
 import { LocalizationProvider } from '@mui/x-date-pickers'
+/** @module @mui/x-date-pickers/internals/demo */
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo'
+/** @module @mui/x-date-pickers/AdapterDayjs */
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+/** @module dayjs */
 import dayjs from 'dayjs'
 
 /** @constant {number} ITEM_HEIGHT - The height of each item in the select menu. */
@@ -45,19 +74,73 @@ const MenuProps = {
     },
 }
 
+/**
+ * @function
+ * @name NetworkGraph
+ * @description This is a React component that renders the network graph of the lessons conflicts. It uses various state variables and hooks to manage and display the data. The graph is rendered using the SigmaContainer component from the @react-sigma/core library.
+ *
+ * @returns {JSX.Element} The rendered NetworkGraph component.
+ */
 export default function NetworkGraph() {
+    /**
+     * @constant schedule - The schedule data retrieved from the atomSchedule atom using the useAtomValue hook from jotai.
+     */
     const schedule = useAtomValue(atomSchedule)
+    /**
+     * @constant roomType - The state variable for the room type. It is initialized as an empty string.
+     * @function setRoomType - The setter function for updating the roomType state.
+     */
     const [roomType, setRoomType] = React.useState('')
+    /**
+     * @constant courses - The state variable for the courses. It is initialized as an empty array.
+     * @function setCourses - The setter function for updating the courses state.
+     */
     const [courses, setCourses] = React.useState([])
+    /**
+     * @constant selectedCourses - The state variable for the selected courses. It is initialized as an empty array.
+     * @function setSelectedCourses - The setter function for updating the selectedCourses state.
+     */
     const [selectedCourses, setSelectedCourses] = React.useState([])
+    /**
+     * @constant startDate - The state variable for the start date. It is initialized as null.
+     * @function setStartDate - The setter function for updating the startDate state.
+     */
     const [startDate, setStartDate] = React.useState(null)
+    /**
+     * @constant endDate - The state variable for the end date. It is initialized as null.
+     * @function setEndDate - The setter function for updating the endDate state.
+     */
     const [endDate, setEndDate] = React.useState(null)
+    /**
+     * @constant degrees - The state variable for the degrees. It is initialized as an empty array.
+     * @function setDegrees - The setter function for updating the degrees state.
+     */
     const [degrees, setDegrees] = React.useState([])
+    /**
+     * @constant selectedDegrees - The state variable for the selected degrees. It is initialized as an empty array.
+     * @function setSelectedDegrees - The setter function for updating the selectedDegrees state.
+     */
     const [selectedDegrees, setSelectedDegrees] = React.useState([])
+    /**
+     * @constant correlation - The state variable for the correlation. It is initialized as 0.34.
+     * @function setCorrelation - The setter function for updating the correlation state.
+     */
     const [correlation, setCorrelation] = React.useState(0.34)
+    /**
+     * @constant graphData - The state variable for the graph data. It is initialized as an empty array.
+     * @function setGraphData - The setter function for updating the graphData state.
+     */
     const [graphData, setGraphData] = React.useState([])
+    /**
+     * @constant displayGraph - The state variable for the display graph flag. It is initialized as false.
+     * @function setDisplayGraph - The setter function for updating the displayGraph state.
+     */
     const [displayGraph, setDisplayGraph] = React.useState(false)
 
+    /**
+     * @function useEffect
+     * @description React hook that is triggered when the schedule or setCourses changes. It populates the degrees and courses sets with unique values from the schedule, then updates the state variables for courses and degrees.
+     */
     // get list of degrees and courses
     React.useEffect(() => {
         if (schedule?.length > 0) {
@@ -72,6 +155,10 @@ export default function NetworkGraph() {
         }
     }, [schedule, setCourses])
 
+    /**
+     * @function clear
+     * @description Function that resets all the state variables to their initial states.
+     */
     const clear = () => {
         setRoomType('')
         setSelectedCourses([])
@@ -82,6 +169,11 @@ export default function NetworkGraph() {
         setCorrelation('')
     }
 
+    /**
+     * @function getFilters
+     * @description Function that creates an array of filter functions based on the current state of the roomType, selectedDegrees, selectedCourses, startDate, and endDate variables.
+     * @returns {Array} An array of filter functions.
+     */
     const getFilters = () => {
         const filters = []
         if (roomType) {
@@ -103,6 +195,11 @@ export default function NetworkGraph() {
         return filters
     }
 
+    /**
+     * @function calculateGraphDate
+     * @description Function that is triggered on form submission. It applies all the filters from getFilters to the schedule and updates the graphData state variable with the filtered data.
+     * @param {Event} e - The form submission event.
+     */
     // updating graph data based on the selected field and value
     const calculateGraphDate = (e) => {
         e.preventDefault()
@@ -129,6 +226,13 @@ export default function NetworkGraph() {
         }
     })
 
+    /**
+     * @function checkRelation
+     * @description Function that checks if two nodes are related based on their weights. Nodes are considered related if the absolute difference between their weights divided by the sum of their weights is less than or equal to the correlation.
+     * @param {number} node1 - The weight of the first node.
+     * @param {number} node2 - The weight of the second node.
+     * @returns {boolean} True if the nodes are related, false otherwise.
+     */
     const checkRelation = (node1, node2) => {
         const diff = Math.abs(node1 - node2)
         if (diff === 0) return false
@@ -156,6 +260,12 @@ export default function NetworkGraph() {
 
     // Component that load the graph
     const sigmaStyle = { height: '75vh', width: '80%', marginTop: '70px' }
+
+    /**
+     * @function LoadGraph
+     * @description React component that loads the graph into the SigmaContainer. It creates a new Graph object, adds nodes and edges to it based on the nodes and edges arrays, then loads the graph using the useLoadGraph hook.
+     * @returns {null} The component does not render anything.
+     */
     const LoadGraph = () => {
         // Hook to load the graph
         const loadGraph = useLoadGraph()
@@ -187,6 +297,11 @@ export default function NetworkGraph() {
         return null
     }
 
+    /**
+     * @function useMemo
+     * @description React hook that memoizes the settings object for the SigmaContainer. The settings object is only recalculated if its dependencies change.
+     * @returns {Object} The settings object for the SigmaContainer.
+     */
     const settings = React.useMemo(() => {
         return {
             renderEdgeLabels: true,

@@ -1,5 +1,6 @@
 /**
- * @file This is the RemoteFile component of the application.
+ * @file RemoteFile.js
+ * This file contains the RemoteFile component of the application. This component is responsible for fetching remote CSV files and passing the data to the parent component.
  */
 
 /** @module react */
@@ -8,19 +9,25 @@ import React, { useState } from 'react'
 import Papa from 'papaparse'
 /** @module @mui/material */
 import { Button, Input, Stack } from '@mui/material'
+/** @module atoms/schedule */
 import { atomSchedule } from './atoms/schedule'
+/** @module jotai */
 import { useSetAtom } from 'jotai'
+/** @module atoms/rooms */
 import { atomRooms } from './atoms/rooms'
 
 /**
- * This is the RemoteFile component of the application.
- * It manages the fetching of remote CSV files and passes the data to the parent component.
- *
  * @function
  * @name RemoteFile
+ * @description This is a React component that fetches a CSV file from a provided URL, parses it, and updates the state with the parsed data. The state updated depends on the id prop passed to the component.
  * @param {Object} props - The properties passed to the component.
- * @param {Function} props.setData - The function to call with the data from the CSV file.
+ * @param {string} props.id - The id of the component. Determines which state to update with the parsed data.
  * @returns {JSX.Element} The rendered RemoteFile component.
+ *
+ * @property {Function} setData - A function that updates the state. The state updated depends on the id prop.
+ * @property {string} fileName - The URL of the file to be fetched.
+ * @property {Function} handleFileChange - A function that updates the fileName state with the value of the file input.
+ * @property {Function} handleFileUpload - A function that fetches the file from the provided URL, parses it as CSV, and updates the state with the parsed data.
  */
 export default function RemoteFile({ id }) {
     const setData = useSetAtom(id === 'scheduleFile' ? atomSchedule : atomRooms)

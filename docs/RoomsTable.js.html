@@ -27,7 +27,8 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @file This is the RoomsTable component of the application.
+ * @file RoomsTable.js
+ * This file defines the RoomsTable component of the application. It imports necessary modules and components from React, react-tabulator, and Material-UI.
  */
 
 /** @module react */
@@ -36,8 +37,6 @@ import React from 'react'
 import { ReactTabulator } from 'react-tabulator'
 /**
  * @module @mui/material
- * Material-UI is a popular React UI framework that provides a set of pre-designed components following Material Design guidelines.
- * Here, several components are imported for use in the application.
  */
 import {
     Button,
@@ -50,33 +49,49 @@ import {
     MenuItem,
     ListItemText,
     TextField,
+    Tooltip,
 } from '@mui/material'
 /**
  * @module @mui/icons-material/Delete
- * Material-UI Icons is a set of pre-designed icons following Material Design guidelines.
- * Here, the Delete icon is imported for use in the application.
  */
 import Cancel from '@mui/icons-material/Delete'
 /**
  * @module jotai
- * Jotai is a primitive and flexible state management library for React.
- * Here, the useAtomValue hook is imported for use in the application.
  */
 import { useAtomValue } from 'jotai'
 /**
  * @module atoms/rooms
- * This module exports the atomRooms atom, which is used for managing the state of rooms in the application.
  */
 import { atomRooms } from './atoms/rooms'
 /**
  * @module constants
- * This module exports constants used throughout the application.
- * Here, ROOM_FEATURES and TYPE_FILTER_COMPARISON are imported for use in the application.
  */
-import { ROOM_FEATURES, TYPE_FILTER_COMPARISON } from './constants'
+import { ROOM_FEATURES, TYPE_FILTER_COMPARISON, ROOMS } from './constants'
+/**
+ * @module atoms/schedule
+ */
+import { atomSchedule } from './atoms/schedule'
+/**
+ * @module @mui/x-date-pickers/internals/demo
+ */
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo'
+/**
+ * @module @mui/x-date-pickers/AdapterDayjs
+ */
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+/**
+ * @module @mui/x-date-pickers/LocalizationProvider
+ */
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+/**
+ * @module @mui/x-date-pickers/DateTimePicker
+ */
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
 
 /**
- * @constant {Object[]} defaultColumns - The default columns for the table.
+ * @constant
+ * @type {Array}
+ * @description This constant defines the default columns for the table in the application. Each object in the array represents a column in the table.
  */
 const defaultColumns = [
     {
@@ -94,18 +109,19 @@ const defaultColumns = [
         title: 'Capacidade Normal',
         field: 'Capacidade Normal',
         hozAlign: 'left',
-        sorter: 'string',
+        sorter: 'number',
     },
     {
         title: 'Capacidade Exame',
         field: 'Capacidade Exame',
         hozAlign: 'left',
-        sorter: 'string',
+        sorter: 'number',
     },
     {
         title: 'Nº características',
         field: 'Nº características',
         hozAlign: 'left',
+        sorter: 'number',
     },
     { title: 'Anfiteatro aulas', field: 'Anfiteatro aulas', visible: false },
     { title: 'Arq 1', field: 'Arq 1', visible: false },
@@ -154,7 +170,9 @@ const defaultColumns = [
 ]
 
 /**
- * @constant {Object[]} defaultFilterFields - Default filter fields for the RoomsTable component.
+ * @constant
+ * @type {Array}
+ * @description This constant defines the default fields that are used for filtering in the application. Each string in the array represents a field that can be used for filtering.
  */
 const defaultFilterFields = [
     'Edifício',
@@ -163,51 +181,78 @@ const defaultFilterFields = [
     'Capacidade Exame',
     'Nº características',
     'Tipo de sala',
+    'Data e disponibilidade',
 ]
 
 /**
- * This is the RoomsTable component of the application.
- * It displays a table of rooms with various properties.
- *
  * @function
  * @name RoomsTable
+ * @description This function represents a component that renders a table of rooms. It takes in props as parameters and returns a table component.
  * @param {Object} props - The properties passed to the component.
- * @param {Object[]} props.data - The data to display in the table.
- * @returns {JSX.Element} The rendered RoomsTable component.
+ * @returns {React.Component} Returns a table component that displays the rooms.
  */
 export default function RoomsTable() {
     const defaultData = useAtomValue(atomRooms)
+    const defaultScheduleData = useAtomValue(atomSchedule)
     const tableRef = React.useRef(null)
     const [selectedField, setSelectedField] = React.useState('')
     const [value, setValue] = React.useState('')
     const [logicOperator, setLogicOperator] = React.useState('AND')
     const [type, setType] = React.useState('=') // type of filter comparison. Example: =, &lt;, >, &lt;=, >=, !=  like starts ends
     const [filters, setFilters] = React.useState([])
+    const [timeFilterResult, setTimeFilterResult] = React.useState([])
+    const [availableDecision, setAvailableDecision] = React.useState('Disponível')
     const [tabulatorFilter, setTabulatorFilter] = React.useState([])
+    const [startDateTime, setStartDateTime] = React.useState(null)
+    const [endDateTime, setEndDateTime] = React.useState(null)
 
-    const addFilter = () => {
-        setFilters([
-            ...filters,
-            {
-                title: defaultFilterFields.find((f) => f === selectedField),
-                field: selectedField,
-                value,
-                logic: logicOperator,
-                type,
-            },
-        ])
-        // if selectedField is 'Tipo de sala' then field is equal to value (room type) and value is equal to 'X'
-        const newFilter =
-            selectedField === 'Tipo de sala'
-                ? { field: value, type: '=', value: 'X' }
-                : { field: selectedField, type, value }
+    /**
+     * @function
+     * @name addFilter
+     * @description This function is used to add a new filter to the table. It checks if the selected field is 'Data e disponibilidade' and if the start and end date times are available. If so, it applies a time-based filter. If the selected field is not 'Data e disponibilidade' and a value is provided, it adds a new filter to the filters array and updates the tabulator filter.
+     * @param {Event} e - The event object.
+     */
+    const addFilter = (e) => {
+        e.preventDefault()
+        // If both startDateTime and endDateTime are available, apply time-based filtering
+        if (
+            selectedField === 'Data e disponibilidade' &amp;&amp;
+            startDateTime &amp;&amp;
+            endDateTime &amp;&amp;
+            startDateTime.diff(endDateTime) !== 0
+        ) {
+            const roomsToFilter = filterRoomsByTime() // get rooms to filter
+            setLogicOperator('AND') // the time filter is always "AND" with the other filters
+            setTimeFilterResult(roomsToFilter) // we can only have one time filter
+            updateTabulatorFilter(roomsToFilter)
+        }
+        if (selectedField !== 'Data e disponibilidade' &amp;&amp; value) {
+            setFilters([
+                ...filters,
+                {
+                    title: defaultFilterFields.find((f) => f === selectedField),
+                    field: selectedField,
+                    value,
+                    logic: logicOperator,
+                    type,
+                },
+            ])
+            // if selectedField is 'Tipo de sala' then field is equal to value (room type) and value is equal to 'X'
+            const newFilter =
+                selectedField === 'Tipo de sala'
+                    ? { field: value, type: '=', value: 'X' }
+                    : { field: selectedField, type, value }
 
-        updateTabulatorFilter(newFilter) // update tabulator filter
-        setSelectedField('') // reset all states
-        setValue('')
-        setType('=')
+            updateTabulatorFilter(newFilter) // update tabulator filter
+        }
     }
 
+    /**
+     * @function
+     * @name updateTabulatorFilter
+     * @description This function is used to update the tabulator filter. It checks the logic operator and updates the tabulator filter accordingly. It also resets the table fields filter.
+     * @param {Object} newFilter - The new filter to be added.
+     */
     const updateTabulatorFilter = (newFilter) => {
         if (logicOperator === 'AND') {
             setTabulatorFilter([...tabulatorFilter, newFilter])
@@ -221,25 +266,63 @@ export default function RoomsTable() {
                 ? setTabulatorFilter([...newFilterArr, [...previousFilter, newFilter]])
                 : setTabulatorFilter([...newFilterArr, [previousFilter, newFilter]])
         }
+        // reset table fields filter
+        setSelectedField('')
+        setValue('')
+        setType('=')
     }
 
+    /**
+     * @function
+     * @name clear
+     * @description This function is used to clear all filters from the table and reset all filter fields.
+     */
     const clear = () => {
         tableRef?.current.clearFilter()
-        setFilters([]) // clear all filters
+        setFilters([])
         setLogicOperator('AND')
         setType('=')
         setValue('')
         setSelectedField('')
         setTabulatorFilter([])
+        // time filters fields
+        setAvailableDecision('Disponível')
+        setStartDateTime(null)
+        setEndDateTime(null)
+        setTimeFilterResult([])
     }
 
+    /**
+     * @function
+     * @name deleteTimeFilter
+     * @description This function is used to delete the time filter from the table and reset the time filter fields.
+     */
+    const deleteTimeFilter = () => {
+        setAvailableDecision('Disponível')
+        setStartDateTime(null)
+        setEndDateTime(null)
+        setTimeFilterResult([])
+        setSelectedField('')
+        setTabulatorFilter(filters)
+    }
+
+    /**
+     * @function
+     * @name deleteFilter
+     * @description This function is used to delete a specific filter from the table. It takes an index as a parameter and removes the filter at that index from the filters array. It also updates the tabulator filter.
+     * @param {number} indexToRemove - The index of the filter to remove.
+     */
     const deleteFilter = (indexToRemove) => {
+        let tabulatorNewFilter = []
         if (filters.length === 1) {
-            clear()
+            setFilters([])
+            setLogicOperator('AND')
+            setType('=')
+            setValue('')
+            setSelectedField('')
         } else {
             const newFilters = [...filters.slice(0, indexToRemove), ...filters.slice(indexToRemove + 1)]
             setFilters(newFilters)
-            let tabulatorNewFilter = []
             newFilters.forEach((f) => {
                 const newFilter =
                     f.title === 'Tipo de sala'
@@ -258,147 +341,328 @@ export default function RoomsTable() {
                         : (tabulatorNewFilter = [...newFilterArr, [previousFilter, newFilter]])
                 }
             })
-            setTabulatorFilter(tabulatorNewFilter)
+        }
+        timeFilterResult.length !== 0
+            ? setTabulatorFilter([...tabulatorNewFilter, timeFilterResult])
+            : setTabulatorFilter(tabulatorNewFilter)
+    }
+
+    /**
+     * @function
+     * @name filterRoomsByTime
+     * @description This function is used to filter rooms based on the start and end date times. It checks if the start and end date times are available and then filters the rooms accordingly. It returns an array of new filters.
+     * @returns {Array} Returns an array of new filters.
+     */
+    const filterRoomsByTime = () => {
+        if (startDateTime &amp;&amp; endDateTime) {
+            const formattedStartTime = startDateTime.format('HH:mm') + ':00'
+            const formattedEndTime = endDateTime.format('HH:mm') + ':00'
+            const formattedDate = startDateTime.format('DD/MM/YYYY')
+
+            // Devo validar se amabas as datas coincidem ou se forem datas diferentes deve resultar na mesma?
+
+            if (availableDecision === 'Ocupado') {
+                const availableRooms = defaultScheduleData.filter((item) => {
+                    const itemStartTime = item['Hora início da aula']
+                    const itemEndTime = item['Hora fim da aula']
+                    const itemDate = item['Data da aula']
+
+                    const overlaps =
+                        (itemStartTime &lt;= formattedStartTime &amp;&amp; itemEndTime > formattedStartTime) ||
+                        (itemStartTime &lt; formattedEndTime &amp;&amp; itemEndTime >= formattedEndTime) ||
+                        (itemStartTime >= formattedStartTime &amp;&amp; itemEndTime &lt;= formattedEndTime)
+
+                    const onDate = itemDate === formattedDate
+
+                    return overlaps &amp;&amp; onDate
+                })
+
+                const availableRoomIds = availableRooms.map((item) => item['Sala atribuída à aula'])
+
+                return availableRoomIds.map((roomId) => {
+                    const newFilter = {
+                        title: 'Nome sala',
+                        field: 'Nome sala',
+                        type: '=',
+                        value: roomId.trim(), // Remove espaços em branco no início e no final da string
+                    }
+
+                    return newFilter
+                })
+            } else if (availableDecision === 'Disponível') {
+                const availableRooms = defaultScheduleData.filter((item) => {
+                    const itemStartTime = item['Hora início da aula']
+                    const itemEndTime = item['Hora fim da aula']
+                    const itemDate = item['Data da aula']
+
+                    const overlaps =
+                        (itemStartTime &lt;= formattedStartTime &amp;&amp; itemEndTime > formattedStartTime) ||
+                        (itemStartTime &lt; formattedEndTime &amp;&amp; itemEndTime >= formattedEndTime) ||
+                        (itemStartTime >= formattedStartTime &amp;&amp; itemEndTime &lt;= formattedEndTime)
+
+                    const onDate = itemDate === formattedDate
+
+                    return overlaps &amp;&amp; onDate
+                })
+
+                const availableRoomIds = availableRooms.map((item) => item['Sala atribuída à aula'].trim())
+
+                // Filter out occupied rooms from available rooms
+                const availableRoomsNotOccupied = ROOMS.filter((room) => !availableRoomIds.includes(room))
+
+                return availableRoomsNotOccupied.map((roomId) => {
+                    const newFilter = {
+                        title: 'Nome sala',
+                        field: 'Nome sala',
+                        type: '=',
+                        value: roomId.trim(), // Remove espaços em branco no início e no final da string
+                    }
+
+                    return newFilter
+                })
+            }
         }
     }
 
     React.useEffect(() => {
-        if (tabulatorFilter.length !== 0) {
+        if (tableRef?.current) {
             tableRef?.current.setFilter(tabulatorFilter)
         }
     }, [tabulatorFilter])
 
     return (
-        &lt;div>
-            &lt;Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2 }}>
-                &lt;Typography>OR&lt;/Typography>
-                &lt;Switch
-                    defaultChecked
-                    inputProps={{ 'aria-label': 'ant design' }}
-                    onChange={(e, c) => setLogicOperator(c ? 'AND' : 'OR')}
-                />
-                &lt;Typography>AND&lt;/Typography>
-            &lt;/Stack>
-            &lt;Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2, mb: 2 }}>
-                &lt;FormControl sx={{ width: 350 }}>
-                    &lt;InputLabel id="simple-select-label1">Campo a filtrar&lt;/InputLabel>
-                    &lt;Select
-                        labelId="simple-select-label1"
-                        id="simple-select1"
-                        value={selectedField}
-                        label="Campo a filtrar"
-                        onChange={(event) => setSelectedField(event.target.value)}
-                    >
-                        {defaultFilterFields.map((col, index) => {
-                            return (
-                                &lt;MenuItem key={index} value={col}>
-                                    &lt;ListItemText primary={col} />
-                                &lt;/MenuItem>
-                            )
-                        })}
-                    &lt;/Select>
-                &lt;/FormControl>
-                &lt;FormControl sx={{ width: 100 }}>
-                    &lt;InputLabel id="simple-select-label2">Tipo&lt;/InputLabel>
-                    &lt;Select
-                        labelId="simple-select-label2"
-                        id="simple-select2"
-                        value={type}
-                        label="Tipo"
-                        onChange={(event) => setType(event.target.value)}
-                    >
-                        {TYPE_FILTER_COMPARISON.map((t, index) => {
-                            return (
-                                &lt;MenuItem key={index} value={t}>
-                                    {t}
-                                &lt;/MenuItem>
-                            )
-                        })}
-                    &lt;/Select>
-                &lt;/FormControl>
-                {selectedField !== 'Tipo de sala' ? (
-                    &lt;TextField
-                        sx={{ ml: 1, width: 350 }}
-                        id="outlined-basic"
-                        placeholder="valor"
-                        variant="outlined"
-                        value={value}
-                        onChange={(event) => {
-                            setValue(event.target.value)
-                        }}
-                    />
-                ) : (
-                    &lt;FormControl sx={{ ml: 1, width: 350 }}>
-                        &lt;Select
-                            sx={{ height: 65 }}
-                            value={value}
-                            defaultValue=""
-                            displayEmpty
-                            onChange={(event) => {
-                                setValue(event.target.value)
-                            }}
-                        >
-                            {ROOM_FEATURES.map((col) => (
-                                &lt;MenuItem key={col} value={col}>
-                                    &lt;ListItemText primary={col} />
-                                &lt;/MenuItem>
-                            ))}
-                        &lt;/Select>
-                    &lt;/FormControl>
-                )}
-                &lt;Button variant="contained" onClick={addFilter} sx={{ ml: 1 }}>
-                    Adicionar filtro
-                &lt;/Button>
-                &lt;Button variant="text" onClick={clear}>
-                    Limpar filtros
-                &lt;/Button>
-            &lt;/Stack>
-            {filters &amp;&amp; filters.length > 0 &amp;&amp; (
-                &lt;Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2 }}>
-                    {filters.map((filter, index) => {
-                        if (index === 0) {
-                            return (
-                                &lt;Button
-                                    key={index}
-                                    variant="outlined"
-                                    endIcon={&lt;Cancel />}
-                                    onClick={(e) => deleteFilter(index)}
+        &lt;Tooltip title={defaultData.length === 0 ? 'Por favor carregue o ficheiro salas' : ''}>
+            &lt;div>
+                &lt;form onSubmit={(e) => addFilter(e)}>
+                    &lt;div>
+                        &lt;Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 8, mb: 3 }}>
+                            &lt;FormControl sx={{ width: 350 }}>
+                                &lt;InputLabel id="simple-select-label1">Tipo de filtro&lt;/InputLabel>
+                                &lt;Select
+                                    labelId="simple-select-label1"
+                                    id="simple-select1"
+                                    value={selectedField}
+                                    label="Tipo de filtro"
+                                    disabled={defaultData.length === 0}
+                                    required
+                                    onChange={(event) => setSelectedField(event.target.value)}
+                                    sx={{ height: 57 }}
                                 >
-                                    {filters[0].title}: {filters[0].value}
-                                &lt;/Button>
-                            )
-                        } else {
-                            return (
-                                &lt;Stack direction="row" alignItems="center" key={index}>
-                                    {filter.logic ? filter.logic : ''}
-                                    &lt;Button
-                                        variant="outlined"
-                                        endIcon={&lt;Cancel />}
-                                        onClick={(e) => deleteFilter(index)}
-                                        sx={{ ml: 1 }}
+                                    {defaultFilterFields.map((col, index) => {
+                                        const isTimeFilterDisabled =
+                                            timeFilterResult.length > 0 &amp;&amp; col === 'Data e disponibilidade'
+                                        return (
+                                            &lt;MenuItem key={index} value={col} disabled={isTimeFilterDisabled}>
+                                                &lt;ListItemText
+                                                    primary={
+                                                        isTimeFilterDisabled
+                                                            ? col + ' &lt;>Este filtro só pode ser utilizado uma vez&lt;>'
+                                                            : col
+                                                    }
+                                                />
+                                            &lt;/MenuItem>
+                                        )
+                                    })}
+                                &lt;/Select>
+                            &lt;/FormControl>
+                            {selectedField !== 'Data e disponibilidade' &amp;&amp; (
+                                &lt;FormControl sx={{ width: 90 }}>
+                                    &lt;InputLabel id="simple-select-label2">Tipo&lt;/InputLabel>
+                                    &lt;Select
+                                        labelId="simple-select-label2"
+                                        id="simple-select2"
+                                        value={type}
+                                        label="Tipo"
+                                        required
+                                        disabled={defaultData.length === 0}
+                                        onChange={(event) => setType(event.target.value)}
                                     >
-                                        {filter.title}: {filter.value}
-                                    &lt;/Button>
+                                        {TYPE_FILTER_COMPARISON.map((t, index) => {
+                                            return (
+                                                &lt;MenuItem key={index} value={t}>
+                                                    {t}
+                                                &lt;/MenuItem>
+                                            )
+                                        })}
+                                    &lt;/Select>
+                                &lt;/FormControl>
+                            )}
+                            {selectedField === 'Tipo de sala' &amp;&amp; (
+                                &lt;FormControl sx={{ ml: 1, width: 350 }}>
+                                    &lt;Select
+                                        sx={{ height: 65 }}
+                                        value={value}
+                                        defaultValue=""
+                                        displayEmpty
+                                        disabled={defaultData.length === 0}
+                                        required
+                                        onChange={(event) => {
+                                            setValue(event.target.value)
+                                        }}
+                                    >
+                                        {ROOM_FEATURES.map((col) => (
+                                            &lt;MenuItem key={col} value={col}>
+                                                &lt;ListItemText primary={col} />
+                                            &lt;/MenuItem>
+                                        ))}
+                                    &lt;/Select>
+                                &lt;/FormControl>
+                            )}
+                            {selectedField === 'Data e disponibilidade' &amp;&amp; (
+                                &lt;Tooltip
+                                    title={
+                                        defaultScheduleData.length === 0 ? 'Por favor carregue o ficheiro horário' : ''
+                                    }
+                                >
+                                    &lt;Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2, mb: 2 }}>
+                                        &lt;LocalizationProvider dateAdapter={AdapterDayjs}>
+                                            &lt;DemoContainer components={['DateTimePicker']} sx={{ width: 350 }}>
+                                                &lt;DateTimePicker
+                                                    label="Início"
+                                                    format="DD-MM-YYYY HH:mm"
+                                                    views={['day', 'month', 'year', 'hours', 'minutes']}
+                                                    value={startDateTime}
+                                                    disabled={defaultScheduleData.length === 0}
+                                                    onChange={(newValue) => {
+                                                        setStartDateTime(newValue)
+                                                    }}
+                                                />
+                                            &lt;/DemoContainer>
+                                        &lt;/LocalizationProvider>
+                                        &lt;LocalizationProvider dateAdapter={AdapterDayjs}>
+                                            &lt;DemoContainer
+                                                components={['DateTimePicker']}
+                                                sx={{ width: 350, marginLeft: 2 }}
+                                            >
+                                                &lt;DateTimePicker
+                                                    label="Fim"
+                                                    format="DD-MM-YYYY HH:mm"
+                                                    views={['day', 'month', 'year', 'hours', 'minutes']}
+                                                    value={endDateTime}
+                                                    disabled={defaultScheduleData.length === 0}
+                                                    onChange={(newValue) => {
+                                                        setEndDateTime(newValue)
+                                                    }}
+                                                    minDateTime={startDateTime}
+                                                />
+                                            &lt;/DemoContainer>
+                                        &lt;/LocalizationProvider>
+                                        &lt;Stack direction="row" alignItems="center">
+                                            &lt;Typography>Ocupado&lt;/Typography>
+                                            &lt;Switch
+                                                checked={availableDecision === 'Disponível'}
+                                                inputProps={{ 'aria-label': 'ant design' }}
+                                                disabled={defaultScheduleData.length === 0}
+                                                onChange={(e, c) => setAvailableDecision(c ? 'Disponível' : 'Ocupado')}
+                                            />
+                                            &lt;Typography>Disponível&lt;/Typography>
+                                        &lt;/Stack>
+                                    &lt;/Stack>
+                                &lt;/Tooltip>
+                            )}
+                            {selectedField !== 'Tipo de sala' &amp;&amp; selectedField !== 'Data e disponibilidade' &amp;&amp; (
+                                &lt;TextField
+                                    sx={{ ml: 1, width: 350 }}
+                                    id="outlined-basic"
+                                    placeholder="valor"
+                                    variant="outlined"
+                                    value={value}
+                                    disabled={defaultData.length === 0}
+                                    required
+                                    onChange={(event) => {
+                                        setValue(event.target.value)
+                                    }}
+                                />
+                            )}
+                            {selectedField !== 'Data e disponibilidade' &amp;&amp; (
+                                &lt;Stack direction="row" alignItems="center">
+                                    &lt;Typography>OR&lt;/Typography>
+                                    &lt;Switch
+                                        checked={logicOperator === 'AND'}
+                                        inputProps={{ 'aria-label': 'ant design' }}
+                                        onChange={(e, c) => setLogicOperator(c ? 'AND' : 'OR')}
+                                        disabled={defaultData.length === 0}
+                                    />
+                                    &lt;Typography>AND&lt;/Typography>
                                 &lt;/Stack>
-                            )
-                        }
-                    })}
-                &lt;/Stack>
-            )}
-            &lt;ReactTabulator
-                onRef={(r) => (tableRef.current = r.current)}
-                data={defaultData}
-                columns={defaultColumns}
-                options={{
-                    pagination: 'local',
-                    paginationSize: 10,
-                    paginationSizeSelector: [6, 10, 15, 20],
-                    movableColumns: true,
-                    paginationCounter: 'rows',
-                    layout: 'fitColumns',
-                }}
-            />
-        &lt;/div>
+                            )}
+                        &lt;/Stack>
+                        &lt;Stack flexDirection="row" justifyContent="end" marginBottom={4}>
+                            &lt;Button
+                                variant="contained"
+                                type="submit"
+                                disabled={
+                                    defaultData.length === 0 ||
+                                    (selectedField === 'Data e disponibilidade' &amp;&amp; defaultScheduleData.length === 0)
+                                }
+                            >
+                                Adicionar filtro
+                            &lt;/Button>
+                            &lt;Button variant="text" onClick={clear} disabled={defaultData.length === 0}>
+                                Limpar filtros
+                            &lt;/Button>
+                        &lt;/Stack>
+                    &lt;/div>
+                &lt;/form>
+                {filters &amp;&amp; filters.length > 0 &amp;&amp; (
+                    &lt;Stack direction="row" spacing={1} alignItems="center" marginBottom={4} sx={{ mt: 2 }}>
+                        {filters
+                            .filter((item) => !item.isTimeFilter)
+                            .map((filter, index) => {
+                                if (index === 0) {
+                                    return (
+                                        &lt;Button
+                                            key={index}
+                                            variant="outlined"
+                                            endIcon={&lt;Cancel />}
+                                            onClick={(e) => deleteFilter(index)}
+                                        >
+                                            {filters[0].title}: {filters[0].value}
+                                        &lt;/Button>
+                                    )
+                                } else {
+                                    return (
+                                        &lt;Stack direction="row" alignItems="center" key={index}>
+                                            {filter.logic ? filter.logic : ''}
+                                            &lt;Button
+                                                variant="outlined"
+                                                endIcon={&lt;Cancel />}
+                                                onClick={(e) => deleteFilter(index)}
+                                                sx={{ ml: 1 }}
+                                            >
+                                                {filter.title}: {filter.value}
+                                            &lt;/Button>
+                                        &lt;/Stack>
+                                    )
+                                }
+                            })}
+                    &lt;/Stack>
+                )}
+                {timeFilterResult &amp;&amp; timeFilterResult.length > 0 &amp;&amp; (
+                    &lt;Stack direction="row" spacing={1} alignItems="center" marginBottom={4} sx={{ mt: 2 }}>
+                        &lt;Button variant="outlined" endIcon={&lt;Cancel />} onClick={deleteTimeFilter}>
+                            {availableDecision} {'  '} {'  '}
+                            {startDateTime.format('DD/MM/YYYY HH:mm')}
+                            {'  '} - {'  '}
+                            {endDateTime.format('DD/MM/YYYY HH:mm')}
+                        &lt;/Button>
+                    &lt;/Stack>
+                )}
+                &lt;ReactTabulator
+                    onRef={(r) => (tableRef.current = r.current)}
+                    data={defaultData}
+                    columns={defaultColumns}
+                    options={{
+                        pagination: 'local',
+                        paginationSize: 10,
+                        paginationSizeSelector: [6, 10, 15, 20],
+                        movableColumns: true,
+                        paginationCounter: 'rows',
+                        layout: 'fitColumns',
+                    }}
+                />
+            &lt;/div>
+        &lt;/Tooltip>
     )
 }
 </code></pre>
@@ -411,13 +675,13 @@ export default function RoomsTable() {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="@fontsource_roboto_300.module_css.html">css</a></li><li><a href="@fontsource_roboto_400.module_css.html">css</a></li><li><a href="@fontsource_roboto_500.module_css.html">css</a></li><li><a href="@fontsource_roboto_700.module_css.html">css</a></li><li><a href="@mui_icons-material_Delete%250DMaterial-UI%2520Icons%2520is%2520a%2520set%2520of%2520pre-designed%2520icons%2520following%2520Material%2520Design%2520guidelines.%250DHere,%2520the%2520Delete%2520icon%2520is%2520imported%2520for%2520use%2520in%2520the%2520application.module_.html">@mui/icons-material/DeleteMaterial-UI Icons is a set of pre-designed icons following Material Design guidelines.Here, the Delete icon is imported for use in the application.</a></li><li><a href="@mui_icons-material_FindReplace%250DMaterial-UI%2520Icons%2520is%2520a%2520set%2520of%2520pre-designed%2520icons%2520following%2520Material%2520Design%2520guidelines.%250DHere,%2520the%2520FindReplace%2520icon%2520is%2520imported%2520for%2520use%2520in%2520the%2520application.module_.html">@mui/icons-material/FindReplaceMaterial-UI Icons is a set of pre-designed icons following Material Design guidelines.Here, the FindReplace icon is imported for use in the application.</a></li><li><a href="@mui_material%250DMaterial-UI%2520is%2520a%2520popular%2520React%2520UI%2520framework%2520that%2520provides%2520a%2520set%2520of%2520pre-designed%2520components%2520following%2520Material%2520Design%2520guidelines.%250DHere,%2520several%2520components%2520are%2520imported%2520for%2520use%2520in%2520the%2520application.module_.html">@mui/materialMaterial-UI is a popular React UI framework that provides a set of pre-designed components following Material Design guidelines.Here, several components are imported for use in the application.</a></li><li><a href="App.module_css.html">css</a></li><li><a href="atoms_modalReplaceCourse%250DThis%2520module%2520exports%2520the%2520atomModalReplaceCourse%2520atom,%2520which%2520is%2520used%2520for%2520managing%2520the%2520state%2520of%2520the%2520modal%2520for%2520replacing%2520a%2520course%2520in%2520the%2520application.module_.html">atoms/modalReplaceCourseThis module exports the atomModalReplaceCourse atom, which is used for managing the state of the modal for replacing a course in the application.</a></li><li><a href="atoms_rooms%250DThis%2520module%2520exports%2520the%2520atomRooms%2520atom,%2520which%2520is%2520used%2520for%2520managing%2520the%2520state%2520of%2520rooms%2520in%2520the%2520application.module_.html">atoms/roomsThis module exports the atomRooms atom, which is used for managing the state of rooms in the application.</a></li><li><a href="atoms_schedule%250DThis%2520module%2520exports%2520the%2520atomSchedule%2520atom,%2520which%2520is%2520used%2520for%2520managing%2520the%2520state%2520of%2520the%2520schedule%2520in%2520the%2520application.module_.html">atoms/scheduleThis module exports the atomSchedule atom, which is used for managing the state of the schedule in the application.</a></li><li><a href="constants%250DThis%2520module%2520exports%2520constants%2520used%2520throughout%2520the%2520application.%250DHere,%2520AFTERNOON_SHIFT,%2520COURSE_END_TIMES,%2520COURSE_START_TIMES,%2520MORNING_SHIFT,%2520NIGHT_SHIFT,%2520ROOMS,%2520and%2520WEEKDAYS%2520are%2520imported%2520for%2520use%2520in%2520the%2520application.module_.html">constantsThis module exports constants used throughout the application.Here, AFTERNOON_SHIFT, COURSE_END_TIMES, COURSE_START_TIMES, MORNING_SHIFT, NIGHT_SHIFT, ROOMS, and WEEKDAYS are imported for use in the application.</a></li><li><a href="constants%250DThis%2520module%2520exports%2520constants%2520used%2520throughout%2520the%2520application.%250DHere,%2520ROOM_FEATURES%2520and%2520ROOMS%2520are%2520imported%2520for%2520use%2520in%2520the%2520application.module_.html">constantsThis module exports constants used throughout the application.Here, ROOM_FEATURES and ROOMS are imported for use in the application.</a></li><li><a href="constants%250DThis%2520module%2520exports%2520constants%2520used%2520throughout%2520the%2520application.%250DHere,%2520ROOM_FEATURES%2520and%2520TYPE_FILTER_COMPARISON%2520are%2520imported%2520for%2520use%2520in%2520the%2520application.module_.html">constantsThis module exports constants used throughout the application.Here, ROOM_FEATURES and TYPE_FILTER_COMPARISON are imported for use in the application.</a></li><li><a href="index.module_css.html">css</a></li><li><a href="jotai%250DJotai%2520is%2520a%2520primitive%2520and%2520flexible%2520state%2520management%2520library%2520for%2520React.%250DHere,%2520the%2520useAtomValue%2520and%2520useSetAtom%2520hooks%2520are%2520imported%2520for%2520use%2520in%2520the%2520application.module_.html">jotaiJotai is a primitive and flexible state management library for React.Here, the useAtomValue and useSetAtom hooks are imported for use in the application.</a></li><li><a href="jotai%250DJotai%2520is%2520a%2520primitive%2520and%2520flexible%2520state%2520management%2520library%2520for%2520React.%250DHere,%2520the%2520useAtomValue%2520hook%2520is%2520imported%2520for%2520use%2520in%2520the%2520application.module_.html">jotaiJotai is a primitive and flexible state management library for React.Here, the useAtomValue hook is imported for use in the application.</a></li><li><a href="module-@mui_material.html">@mui/material</a></li><li><a href="module-@mui_material_Checkbox.html">@mui/material/Checkbox</a></li><li><a href="module-@mui_material_FormControl.html">@mui/material/FormControl</a></li><li><a href="module-@mui_material_InputLabel.html">@mui/material/InputLabel</a></li><li><a href="module-@mui_material_ListItemText.html">@mui/material/ListItemText</a></li><li><a href="module-@mui_material_MenuItem.html">@mui/material/MenuItem</a></li><li><a href="module-@mui_material_Select.html">@mui/material/Select</a></li><li><a href="module-App.html">App</a></li><li><a href="module-CsvReader.html">CsvReader</a></li><li><a href="module-MultipleSelectCheckmarks.html">MultipleSelectCheckmarks</a></li><li><a href="module-RemoteFile.html">RemoteFile</a></li><li><a href="module-ReplaceCourse.html">ReplaceCourse</a></li><li><a href="module-RoomsTable.html">RoomsTable</a></li><li><a href="module-ScheduleTable.html">ScheduleTable</a></li><li><a href="module-ScheduleTableFilter.html">ScheduleTableFilter</a></li><li><a href="module-atoms_modalReplaceCourse.html">atoms/modalReplaceCourse</a></li><li><a href="module-atoms_schedule.html">atoms/schedule</a></li><li><a href="module-constants.html">constants</a></li><li><a href="module-date-fns.html">date-fns</a></li><li><a href="module-dayjs.html">dayjs</a></li><li><a href="module-lib_replaceCourse.html">lib/replaceCourse</a></li><li><a href="module-papaparse.html">papaparse</a></li><li><a href="module-react.html">react</a></li><li><a href="module-react-csv-reader.html">react-csv-reader</a></li><li><a href="module-react-dom.html">react-dom</a></li><li><a href="module-react-dom_client.html">react-dom/client</a></li><li><a href="module-react-tabulator.html">react-tabulator</a></li><li><a href="module-reportWebVitals.html">reportWebVitals</a></li><li><a href="module-utils.html">utils</a></li><li><a href="react-tabulator_lib_css_tabulator.min.module_css.html">css</a></li><li><a href="react-tabulator_lib_styles.module_css.html">css</a></li></ul><h3>Externals</h3><ul><li><a href="external-AdapterDayjs.html">AdapterDayjs</a></li><li><a href="external-Box.html">Box</a></li><li><a href="external-Button.html">Button</a></li><li><a href="external-Checkbox.html">Checkbox</a></li><li><a href="external-DateTimePicker.html">DateTimePicker</a></li><li><a href="external-DemoContainer.html">DemoContainer</a></li><li><a href="external-FormControl.html">FormControl</a></li><li><a href="external-FormControlLabel.html">FormControlLabel</a></li><li><a href="external-InputLabel.html">InputLabel</a></li><li><a href="external-ListItemText.html">ListItemText</a></li><li><a href="external-LocalizationProvider.html">LocalizationProvider</a></li><li><a href="external-MenuItem.html">MenuItem</a></li><li><a href="external-Modal.html">Modal</a></li><li><a href="external-Radio.html">Radio</a></li><li><a href="external-RadioGroup.html">RadioGroup</a></li><li><a href="external-React.html">React</a></li><li><a href="external-Select.html">Select</a></li><li><a href="external-Stack.html">Stack</a></li><li><a href="external-Typography.html">Typography</a></li><li><a href="external-dayjs.html">dayjs</a></li><li><a href="external-jotai.html">jotai</a></li></ul><h3>Global</h3><ul><li><a href="global.html#reportWebVitals">reportWebVitals</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="@fontsource_roboto_300.module_css.html">css</a></li><li><a href="@fontsource_roboto_400.module_css.html">css</a></li><li><a href="@fontsource_roboto_500.module_css.html">css</a></li><li><a href="@fontsource_roboto_700.module_css.html">css</a></li><li><a href="@mui_material%250DMaterial%2520UI%2520components%2520used%2520in%2520this%2520file.module_.html">@mui/materialMaterial UI components used in this file.</a></li><li><a href="@mui_x-date-pickers%250DDate%2520picker%2520components%2520used%2520in%2520this%2520file.module_.html">@mui/x-date-pickersDate picker components used in this file.</a></li><li><a href="@mui_x-date-pickers_AdapterDayjs%250DAdapter%2520for%2520the%2520date%2520picker%2520to%2520use%2520Day.js.module_.html">@mui/x-date-pickers/AdapterDayjsAdapter for the date picker to use Day.js.</a></li><li><a href="@mui_x-date-pickers_internals_demo%250DDemo%2520container%2520component%2520used%2520in%2520this%2520file.module_.html">@mui/x-date-pickers/internals/demoDemo container component used in this file.</a></li><li><a href="@react-sigma_core_lib_react-sigma.min.module_css.html">css</a></li><li><a href="App.html#.module:css">css</a></li><li><a href="atoms_rooms%250DAtom%2520representing%2520the%2520rooms%2520state.module_.html">atoms/roomsAtom representing the rooms state.</a></li><li><a href="atoms_schedule%250DAtom%2520representing%2520the%2520schedule%2520state.module_.html">atoms/scheduleAtom representing the schedule state.</a></li><li><a href="constants%250DConstants%2520used%2520in%2520this%2520file.module_.html">constantsConstants used in this file.</a></li><li><a href="date-fns%250DDate%2520utility%2520functions%2520used%2520in%2520this%2520file.module_.html">date-fnsDate utility functions used in this file.</a></li><li><a href="dayjs%250DDate%2520library%2520used%2520in%2520this%2520file.module_.html">dayjsDate library used in this file.</a></li><li><a href="index.module_css.html">css</a></li><li><a href="jotai%250DState%2520management%2520library%2520used%2520in%2520this%2520file.module_.html">jotaiState management library used in this file.</a></li><li><a href="module-._atoms_modalSlotsClass.html">./atoms/modalSlotsClass</a></li><li><a href="module-._atoms_rooms.html">/atoms/rooms</a></li><li><a href="module-._atoms_schedule.html">/atoms/schedule</a></li><li><a href="module-._lib_replaceCourse.html">/lib/replaceCourse</a></li><li><a href="module-._slotsModalComponents.html">/slotsModalComponents</a></li><li><a href="module-@mui_icons-material_Add.html">@mui/icons-material/Add</a></li><li><a href="module-@mui_icons-material_Delete.html">@mui/icons-material/Delete</a></li><li><a href="module-@mui_icons-material_FindReplace.html">@mui/icons-material/FindReplace</a></li><li><a href="module-@mui_icons-material_Menu.html">@mui/icons-material/Menu</a></li><li><a href="module-@mui_material.html">@mui/material</a></li><li><a href="module-@mui_material_AppBar.html">@mui/material/AppBar</a></li><li><a href="module-@mui_material_Box.html">@mui/material/Box</a></li><li><a href="module-@mui_material_Button.html">@mui/material/Button</a></li><li><a href="module-@mui_material_Checkbox.html">@mui/material/Checkbox</a></li><li><a href="module-@mui_material_Container.html">@mui/material/Container</a></li><li><a href="module-@mui_material_FormControl.html">@mui/material/FormControl</a></li><li><a href="module-@mui_material_IconButton.html">@mui/material/IconButton</a></li><li><a href="module-@mui_material_InputLabel.html">@mui/material/InputLabel</a></li><li><a href="module-@mui_material_ListItemText.html">@mui/material/ListItemText</a></li><li><a href="module-@mui_material_Menu.html">@mui/material/Menu</a></li><li><a href="module-@mui_material_MenuItem.html">@mui/material/MenuItem</a></li><li><a href="module-@mui_material_Select.html">@mui/material/Select</a></li><li><a href="module-@mui_material_Stack.html">@mui/material/Stack</a></li><li><a href="module-@mui_material_Toolbar.html">@mui/material/Toolbar</a></li><li><a href="module-@mui_material_Tooltip.html">@mui/material/Tooltip</a></li><li><a href="module-@mui_material_Typography.html">@mui/material/Typography</a></li><li><a href="module-@mui_x-data-grid.html">@mui/x-data-grid</a></li><li><a href="module-@mui_x-date-pickers_AdapterDayjs.html">@mui/x-date-pickers/AdapterDayjs</a></li><li><a href="module-@mui_x-date-pickers_DatePicker.html">@mui/x-date-pickers/DatePicker</a></li><li><a href="module-@mui_x-date-pickers_DateTimePicker.html">@mui/x-date-pickers/DateTimePicker</a></li><li><a href="module-@mui_x-date-pickers_LocalizationProvider.html">@mui/x-date-pickers/LocalizationProvider</a></li><li><a href="module-@mui_x-date-pickers_internals_demo.html">@mui/x-date-pickers/internals/demo</a></li><li><a href="module-@react-sigma_core.html">@react-sigma/core</a></li><li><a href="module-AFTERNOON_SHIFT.html">AFTERNOON_SHIFT</a></li><li><a href="module-App.html">App</a></li><li><a href="module-BeginningOfLesson.html">BeginningOfLesson</a></li><li><a href="module-COURSE_END_TIMES.html">COURSE_END_TIMES</a></li><li><a href="module-COURSE_START_TIMES.html">COURSE_START_TIMES</a></li><li><a href="module-CourseSlotsModal.html">CourseSlotsModal</a></li><li><a href="module-CsvReader.html">CsvReader</a></li><li><a href="module-DAY_PERIODS.html">DAY_PERIODS</a></li><li><a href="module-DurationOfLesson.html">DurationOfLesson</a></li><li><a href="module-EndingOfLesson.html">EndingOfLesson</a></li><li><a href="module-Heatmap.html">Heatmap</a></li><li><a href="module-Home.html">Home</a></li><li><a href="module-MORNING_SHIFT.html">MORNING_SHIFT</a></li><li><a href="module-MultipleSelectCheckmarks.html">MultipleSelectCheckmarks</a></li><li><a href="module-NIGHT_SHIFT.html">NIGHT_SHIFT</a></li><li><a href="module-Navbar.html">Navbar</a></li><li><a href="module-NetworkGraph.html">NetworkGraph</a></li><li><a href="module-ROOMS.html">ROOMS</a></li><li><a href="module-ROOM_FEATURES.html">ROOM_FEATURES</a></li><li><a href="module-RemoteFile.html">RemoteFile</a></li><li><a href="module-ReplaceCourse.html">ReplaceCourse</a></li><li><a href="module-RoomFeatures.html">RoomFeatures</a></li><li><a href="module-Rooms_.html">Rooms</a></li><li><a href="module-RoomsTable.html">RoomsTable</a></li><li><a href="module-ScheduleTable.html">ScheduleTable</a></li><li><a href="module-ScheduleTableFilter.html">ScheduleTableFilter</a></li><li><a href="module-Shift.html">Shift</a></li><li><a href="module-SlotsTable.html">SlotsTable</a></li><li><a href="module-TYPE_FILTER_COMPARISON.html">TYPE_FILTER_COMPARISON</a></li><li><a href="module-TargetDate.html">TargetDate</a></li><li><a href="module-TimeOfDay.html">TimeOfDay</a></li><li><a href="module-WEEKDAYS.html">WEEKDAYS</a></li><li><a href="module-WeekDay.html">WeekDay</a></li><li><a href="module-atoms_modalReplaceCourse.html">atoms/modalReplaceCourse</a></li><li><a href="module-atoms_modalSlotsClass.html">atoms/modalSlotsClass</a></li><li><a href="module-atoms_rooms.html">atoms/rooms</a></li><li><a href="module-atoms_schedule.html">atoms/schedule</a></li><li><a href="module-constants.html">constants</a></li><li><a href="module-date-fns.html">date-fns</a></li><li><a href="module-date-fns_isBefore.html">date-fns/isBefore</a></li><li><a href="module-dayjs.html">dayjs</a></li><li><a href="module-graphology.html">graphology</a></li><li><a href="module-jotai.html">jotai</a></li><li><a href="module-jotai_useAtomValue.html">jotai/useAtomValue</a></li><li><a href="module-lib_replaceCourse.html">lib/replaceCourse</a></li><li><a href="module-papaparse.html">papaparse</a></li><li><a href="module-react.html">react</a></li><li><a href="module-react-csv-reader.html">react-csv-reader</a></li><li><a href="module-react-dom.html">react-dom</a></li><li><a href="module-react-dom_client.html">react-dom/client</a></li><li><a href="module-react-router-dom.html">react-router-dom</a></li><li><a href="module-react-tabulator.html">react-tabulator</a></li><li><a href="module-reportWebVitals.html">reportWebVitals</a></li><li><a href="module-roomsAtom.html">roomsAtom</a></li><li><a href="module-scheduleAtom.html">scheduleAtom</a></li><li><a href="module-slotsModalComponents_BeginingOfLesson.html">slotsModalComponents/BeginingOfLesson</a></li><li><a href="module-slotsModalComponents_DurationOfLesson.html">slotsModalComponents/DurationOfLesson</a></li><li><a href="module-slotsModalComponents_EndingOfLesson.html">slotsModalComponents/EndingOfLesson</a></li><li><a href="module-slotsModalComponents_RoomFeatures.html">slotsModalComponents/RoomFeatures</a></li><li><a href="module-slotsModalComponents_Rooms.html">slotsModalComponents/Rooms</a></li><li><a href="module-slotsModalComponents_TargetDate.html">slotsModalComponents/TargetDate</a></li><li><a href="module-slotsModalComponents_TimeOfDay.html">slotsModalComponents/TimeOfDay</a></li><li><a href="module-slotsModalComponents_WeekDay.html">slotsModalComponents/WeekDay</a></li><li><a href="module-utils.html">utils</a></li><li><a href="react-heatmap-grid%250DHeatmap%2520grid%2520component%2520used%2520in%2520this%2520file.module_.html">react-heatmap-gridHeatmap grid component used in this file.</a></li><li><a href="react-tabulator_css_tabulator_bootstrap3.module_css.html">css</a></li><li><a href="react-tabulator_css_tabulator_bootstrap3.module_css%2520-%2520The%2520bootstrap3%2520theme%2520for%2520the%2520tabulator..html">css - The bootstrap3 theme for the tabulator.</a></li><li><a href="react-tabulator_lib_css_tabulator.min.module_css.html">css</a></li><li><a href="react-tabulator_lib_styles.module_css.html">css</a></li><li><a href="utils%250DUtility%2520functions%2520used%2520in%2520this%2520file.module_.html">utilsUtility functions used in this file.</a></li></ul><h3>Externals</h3><ul><li><a href="external-Box.html">Box</a></li><li><a href="external-Button.html">Button</a></li><li><a href="external-Modal.html">Modal</a></li><li><a href="external-React.html">React</a></li><li><a href="external-Typography.html">Typography</a></li><li><a href="external-dayjs.html">dayjs</a></li><li><a href="external-jotai.html">jotai</a></li></ul><h3>Global</h3><ul><li><a href="global.html#reportWebVitals">reportWebVitals</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Apr 03 2024 21:51:48 GMT+0100 (Hora de verão da Europa Ocidental)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Mon May 13 2024 18:14:12 GMT+0100 (Hora de verão da Europa Ocidental)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Heatmap.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Heatmap.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @file Heatmap.js
+ * This is the page with the schedule and rooms.
+ */
+
+/** @module App.css */
+import './App.css'
+/** @module react */
+import React from 'react'
+/**
+ * @module @mui/material
+ * Material UI components used in this file.
+ */
+import {
+    Button,
+    FormControl,
+    InputLabel,
+    ListItemText,
+    MenuItem,
+    Select,
+    Stack,
+    Switch,
+    TextField,
+    Tooltip,
+    Typography,
+} from '@mui/material'
+/**
+ * @module jotai
+ * State management library used in this file.
+ */
+import { useAtomValue } from 'jotai'
+/**
+ * @module atoms/schedule
+ * Atom representing the schedule state.
+ */
+import { atomSchedule } from './atoms/schedule'
+/**
+ * @module atoms/rooms
+ * Atom representing the rooms state.
+ */
+import { atomRooms } from './atoms/rooms'
+/**
+ * @module constants
+ * Constants used in this file.
+ */
+import { COURSE_END_TIMES, COURSE_START_TIMES, ROOM_FEATURES } from './constants'
+/**
+ * @module @mui/x-date-pickers
+ * Date picker components used in this file.
+ */
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
+/**
+ * @module @mui/x-date-pickers/internals/demo
+ * Demo container component used in this file.
+ */
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo'
+/**
+ * @module @mui/x-date-pickers/AdapterDayjs
+ * Adapter for the date picker to use Day.js.
+ */
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+/**
+ * @module dayjs
+ * Date library used in this file.
+ */
+import dayjs from 'dayjs'
+/**
+ * @module react-heatmap-grid
+ * Heatmap grid component used in this file.
+ */
+import HeatMap from 'react-heatmap-grid'
+/**
+ * @module utils
+ * Utility functions used in this file.
+ */
+import { parseDate, parseHour } from './utils'
+/**
+ * @module date-fns
+ * Date utility functions used in this file.
+ */
+import { eachDayOfInterval, format } from 'date-fns'
+
+/**
+ * @constant
+ * @type {string[]}
+ * @name defaultTypeOfFilterComparison
+ * @description An array of strings representing the default types of filter comparisons.
+ */
+const defaultTypeOfFilterComparison = ['=', '&lt;', '>']
+
+/**
+ * @function
+ * @name Heatmap
+ * @description A function component that renders the heatmap.
+ * @returns {JSX.Element} The rendered heatmap.
+ */
+export default function Heatmap() {
+    /**
+     * @constant
+     * @type {Object}
+     * @name schedule
+     * @description The schedule state, retrieved from the atom.
+     */
+    const schedule = useAtomValue(atomSchedule)
+    /**
+     * @constant
+     * @type {Object}
+     * @name rooms
+     * @description The rooms state, retrieved from the atom.
+     */
+    const rooms = useAtomValue(atomRooms)
+    /**
+     * @constant
+     * @type {Array}
+     * @name roomType
+     * @description The room type state and its setter function.
+     */
+    const [roomType, setRoomType] = React.useState('')
+    /**
+     * @constant
+     * @type {Array}
+     * @name startDate
+     * @description The start date state and its setter function.
+     */
+    const [startDate, setStartDate] = React.useState(null)
+    /**
+     * @constant
+     * @type {Array}
+     * @name endDate
+     * @description The end date state and its setter function.
+     */
+    const [endDate, setEndDate] = React.useState(null)
+    /**
+     * @constant
+     * @type {Array}
+     * @name roomCapacity
+     * @description The room capacity state and its setter function.
+     */
+    const [roomCapacity, setRoomCapacity] = React.useState(null)
+    /**
+     * @constant
+     * @type {Array}
+     * @name capacityLogicOperator
+     * @description The capacity logic operator state and its setter function.
+     */
+    const [capacityLogicOperator, setCapacityLogicOperator] = React.useState('>')
+    /**
+     * @constant
+     * @type {Array}
+     * @name isBusy
+     * @description The busy state and its setter function.
+     */
+    const [isBusy, setIsBusy] = React.useState(true)
+    /**
+     * @constant
+     * @type {Array}
+     * @name heatmapData
+     * @description The heatmap data state and its setter function.
+     */
+    const [heatmapData, setHeatmapData] = React.useState([])
+    /**
+     * @constant
+     * @type {Array}
+     * @name xLabels
+     * @description The x-axis labels state and its setter function. It changes according to the selected date range.
+     */
+    const [xLabels, setXLabels] = React.useState([]) // it changes according to the selected date range
+    /**
+     * @constant
+     * @type {Array}
+     * @name formattedXLabels
+     * @description The formatted x-axis labels state and its setter function. It shows only the day in xLabels.
+     */
+    const [formattedXLabels, setFormattedXLabels] = React.useState([]) // show only the day in xLabels
+    /**
+     * @constant
+     * @type {Array}
+     * @name yLabels
+     * @description An array of strings representing the y-axis labels of the heatmap.
+     */
+    const yLabels = [...new Set([...COURSE_START_TIMES, ...COURSE_END_TIMES])]
+    /**
+     * @constant
+     * @type {Array}
+     * @name isWithinRange
+     * @description The within range state and its setter function.
+     */
+    const [isWithinRange, setIsWithinRange] = React.useState(true)
+
+    /**
+     * @function
+     * @name clear
+     * @description A function that clears the state variables.
+     */
+    const clear = () => {
+        setRoomType('')
+        setStartDate(null)
+        setEndDate(null)
+        setRoomCapacity(null)
+        setHeatmapData([])
+        setIsWithinRange(true)
+    }
+
+    /**
+     * @function
+     * @name checkIsWithinRange
+     * @description A function that checks if the selected date range is within 31 days.
+     * @param {Date} start - The start date.
+     * @param {Date} end - The end date.
+     */
+    const checkIsWithinRange = (start, end) => {
+        if (start === null || end === null) return
+        const dates = eachDayOfInterval({ start: parseDate(startDate), end: parseDate(end) })
+        dates.length &lt;= 31 ? setIsWithinRange(true) : setIsWithinRange(false)
+    }
+
+    /**
+     * @function
+     * @name getRoomsByCapacity
+     * @description A function that filters the rooms by their capacity.
+     * @returns {Array} The filtered rooms.
+     */
+    const getRoomsByCapacity = () => {
+        return roomCapacity
+            ? rooms.filter((room) => {
+                  if (capacityLogicOperator === '=') {
+                      return (room['Capacidade Normal'] = roomCapacity)
+                  } else if (capacityLogicOperator === '>') {
+                      return room['Capacidade Normal'] > roomCapacity
+                  } else if (capacityLogicOperator === '&lt;') {
+                      return room['Capacidade Normal'] &lt; roomCapacity
+                  } else {
+                      return false
+                  }
+              })
+            : rooms
+    }
+
+    /**
+     * @function
+     * @name getDataRange
+     * @description A function that gets the date range based on the selected start and end dates, updates the xLabels and returns an array of string dates.
+     * @returns {Array} The date range.
+     */
+    // Get the date range based on the selected start and end dates, updates the xLabels and return an array of strings dates
+    const getDataRange = () => {
+        const dates = eachDayOfInterval({ start: parseDate(startDate), end: parseDate(endDate) })
+        setFormattedXLabels(dates.map((date) => format(date, 'dd')))
+        return dates.map((date) => format(date, 'dd/MM/yyyy'))
+    }
+
+    /**
+     * @function
+     * @name processData
+     * @description A function that processes the data to generate a heatmap.
+     * @param {Array} roomsFilteredByCapacity - The rooms filtered by capacity.
+     * @param {Array} dateRange - The date range.
+     * @returns {Array} The processed data for the heatmap.
+     */
+    function processData(roomsFilteredByCapacity, dateRange) {
+        // Create a matrix of zeros with the same dimensions as the heatmap
+        const data = new Array(yLabels.length).fill(0).map(() => new Array(xLabels.length).fill(0))
+
+        // Filter the ROOMS array to get rooms that have the specified roomType
+        const filteredRoomNames = roomsFilteredByCapacity
+            .filter((room) => room[roomType])
+            .map((room) => room['Nome sala'])
+
+        // Iterate over the schedule to populate the data matrix
+        schedule.forEach((item) => {
+            // Skip entries that don't match the room type filter
+            if (roomType !== '') {
+                if (!filteredRoomNames.includes(item['Sala atribuída à aula'])) return
+            }
+
+            // Skip entries without a date
+            if (!item['Data da aula']) return
+            // cons appointmentDate = parseDate(item['Data da aula'])
+
+            // Skip entries that don't match the date range
+            if (!dateRange.includes(item['Data da aula'])) {
+                // console.log('Skipping due to date mismatch.')
+                return
+            }
+
+            const itemStartTime = parseHour(item['Hora início da aula'])
+            const itemEndTime = parseHour(item['Hora fim da aula'])
+
+            // Find the index of the day in the xLabels array
+            const dayIndex = xLabels.indexOf(item['Data da aula'])
+            if (dayIndex === -1) {
+                return
+            }
+
+            // Iterate over the yLabels to find the time slot that overlaps with the current item
+            yLabels.forEach((time, yIndex) => {
+                const currentHour = parseHour(time)
+                const overlaps = currentHour >= itemStartTime &amp;&amp; currentHour &lt; itemEndTime
+
+                if (overlaps) {
+                    data[yIndex][dayIndex] += 1 // Increment the count of occupied rooms for the cell
+                }
+            })
+        })
+
+        if (isBusy) {
+            return data
+        } else {
+            const totalRooms = roomsFilteredByCapacity.length
+            return data.map((row) => row.map((value) => totalRooms - value))
+        }
+    }
+
+    /**
+     * @function
+     * @name calculateHeatmap
+     * @description A function that generates a heatmap based on the selected filters.
+     * @param {Event} e - The event object.
+     */
+    // Generate heatmap based on the selected filters
+    const calculateHeatmap = (e) => {
+        e.preventDefault()
+        // get xLabels based on the selected date range
+        const dateRange = getDataRange()
+        setXLabels(dateRange)
+        // get rooms that match the room capacity filter
+        const roomsFiltered = getRoomsByCapacity()
+        // process the data to generate the heatmap
+        setHeatmapData(processData(roomsFiltered, dateRange))
+    }
+
+    console.log('heatmapData', heatmapData)
+
+    return (
+        &lt;Tooltip
+            title={schedule.length === 0 || rooms.length === 0 ? 'Por favor carregue os ficheiros horário e salas' : ''}
+        >
+            &lt;Stack sx={{ mt: 8, mb: 8 }}>
+                &lt;form onSubmit={(e) => calculateHeatmap(e)}>
+                    &lt;Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2, mb: 2 }}>
+                        &lt;Typography>Disponível&lt;/Typography>
+                        &lt;Switch
+                            checked={isBusy}
+                            inputProps={{ 'aria-label': 'ant design' }}
+                            onChange={(e, c) => setIsBusy(c)}
+                            disabled={schedule.length === 0 || rooms.length === 0}
+                        />
+                        &lt;Typography>Ocupado&lt;/Typography>
+                    &lt;/Stack>
+                    &lt;FormControl sx={{ width: 850, marginBottom: '8px' }}>
+                        &lt;InputLabel id="label2">Tipo de sala&lt;/InputLabel>
+                        &lt;Select
+                            labelId="label1"
+                            id="label1"
+                            label="Tipo de sala *"
+                            sx={{ height: 57 }}
+                            value={roomType}
+                            disabled={schedule.length === 0 || rooms.length === 0}
+                            onChange={(event) => {
+                                setRoomType(event.target.value)
+                            }}
+                        >
+                            {ROOM_FEATURES.map((col) => (
+                                &lt;MenuItem key={col} value={col}>
+                                    &lt;ListItemText primary={col} />
+                                &lt;/MenuItem>
+                            ))}
+                        &lt;/Select>
+                    &lt;/FormControl>
+                    &lt;Tooltip title={!isWithinRange ? 'Selecione um intervalo de datas inferior a 31 dias' : ''}>
+                        &lt;Stack direction="row" sx={{ marginBottom: '10px' }}>
+                            &lt;LocalizationProvider dateAdapter={AdapterDayjs}>
+                                &lt;DemoContainer components={['DatePicker']} sx={{ marginRight: '8px' }}>
+                                    &lt;DatePicker
+                                        label="Data de início *"
+                                        format="DD-MM-YYYY"
+                                        views={['day', 'month', 'year']}
+                                        value={startDate ? dayjs(startDate, 'DD/MM/YYYY') : null}
+                                        disabled={schedule.length === 0 || rooms.length === 0}
+                                        onChange={(newValue) => {
+                                            const dateString = newValue.format('DD/MM/YYYY')
+                                            checkIsWithinRange(dateString, endDate)
+                                            setStartDate(dateString)
+                                        }}
+                                        sx={{ width: '420px' }}
+                                    />
+                                &lt;/DemoContainer>
+                            &lt;/LocalizationProvider>
+                            &lt;LocalizationProvider dateAdapter={AdapterDayjs}>
+                                &lt;DemoContainer components={['DatePicker']}>
+                                    &lt;DatePicker
+                                        label="Data de fim *"
+                                        format="DD-MM-YYYY"
+                                        views={['day', 'month', 'year']}
+                                        value={endDate ? dayjs(endDate, 'DD/MM/YYYY') : null}
+                                        disabled={schedule.length === 0 || rooms.length === 0}
+                                        onChange={(newValue) => {
+                                            const dateString = newValue.format('DD/MM/YYYY')
+                                            checkIsWithinRange(startDate, dateString)
+                                            setEndDate(dateString)
+                                        }}
+                                        sx={{ width: '420px' }}
+                                        minDate={startDate ? dayjs(startDate, 'DD/MM/YYYY') : null}
+                                        maxDate={startDate ? dayjs(startDate, 'DD/MM/YYYY').add(1, 'month') : null}
+                                    />
+                                &lt;/DemoContainer>
+                            &lt;/LocalizationProvider>
+                        &lt;/Stack>
+                    &lt;/Tooltip>
+                    &lt;Stack direction="row">
+                        &lt;FormControl sx={{ marginRight: '8px', width: '150px' }}>
+                            &lt;Select
+                                labelId="simple-select-label2"
+                                id="simple-select2"
+                                value={capacityLogicOperator}
+                                onChange={(event) => setCapacityLogicOperator(event.target.value)}
+                                disabled={schedule.length === 0 || rooms.length === 0}
+                            >
+                                {defaultTypeOfFilterComparison.map((t, index) => {
+                                    return (
+                                        &lt;MenuItem key={index} value={t}>
+                                            {t}
+                                        &lt;/MenuItem>
+                                    )
+                                })}
+                            &lt;/Select>
+                        &lt;/FormControl>
+                        &lt;FormControl sx={{ width: '690px' }}>
+                            &lt;TextField
+                                type="number"
+                                id="label4"
+                                placeholder="Capacidade da sala"
+                                label="Capacidade da sala"
+                                variant="outlined"
+                                disabled={schedule.length === 0 || rooms.length === 0}
+                                onChange={(event) => {
+                                    if (event.target.value === '') {
+                                        setRoomCapacity(null)
+                                    } else {
+                                        setRoomCapacity(event.target.value)
+                                    }
+                                }}
+                                InputProps={{ inputProps: { step: 1 } }}
+                            />
+                        &lt;/FormControl>
+                    &lt;/Stack>
+                    &lt;Stack direction="row" alignContent={'center'} sx={{ marginTop: '30px' }}>
+                        &lt;Button
+                            variant="contained"
+                            type="submit"
+                            disabled={
+                                schedule.length === 0 ||
+                                rooms.length === 0 ||
+                                startDate === null ||
+                                endDate === null ||
+                                startDate === 'Invalid Date' ||
+                                endDate === 'Invalid Date' ||
+                                !isWithinRange // monthly view of the heatmap
+                            }
+                        >
+                            Desenhar heatmap
+                        &lt;/Button>
+                        &lt;Button
+                            onClick={clear}
+                            sx={{ marginLeft: '8px' }}
+                            variant="text"
+                            disabled={schedule.length === 0 || rooms.length === 0}
+                        >
+                            Limpar campos
+                        &lt;/Button>
+                    &lt;/Stack>
+                &lt;/form>
+                &lt;Stack mt={6}>
+                    &lt;LoadHeatmap heatmapData={heatmapData} formattedXLabels={formattedXLabels} yLabels={yLabels} />
+                &lt;/Stack>
+            &lt;/Stack>
+        &lt;/Tooltip>
+    )
+}
+
+/**
+ * @function
+ * @name LoadHeatmap
+ * @description A function component that renders a HeatMap component with the provided data, labels, and styling.
+ * @param {Object} props - The properties passed to the component.
+ * @param {Array} props.heatmapData - The data for the heatmap.
+ * @param {Array} props.formattedXLabels - The labels for the x-axis.
+ * @param {Array} props.yLabels - The labels for the y-axis.
+ * @returns {JSX.Element} The HeatMap component.
+ */
+const LoadHeatmap = ({ heatmapData, formattedXLabels, yLabels }) => {
+    return (
+        &lt;HeatMap
+            xLabels={formattedXLabels}
+            yLabels={yLabels}
+            data={heatmapData}
+            squares
+            yLabelWidth={80}
+            cellStyle={(background, value, min, max, data, x, y) => ({
+                background: `rgb(32, 95, 200, ${1 - (max - value) / (max - min)})`,
+                fontSize: '12px',
+                color: `${value === 0 ? 'white' : 'black'}`,
+                borderRadius: '2px',
+            })}
+            cellRender={(value) => value &amp;&amp; &lt;div>{value}&lt;/div>}
+        />
+    )
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="@fontsource_roboto_300.module_css.html">css</a></li><li><a href="@fontsource_roboto_400.module_css.html">css</a></li><li><a href="@fontsource_roboto_500.module_css.html">css</a></li><li><a href="@fontsource_roboto_700.module_css.html">css</a></li><li><a href="@mui_material%250DMaterial%2520UI%2520components%2520used%2520in%2520this%2520file.module_.html">@mui/materialMaterial UI components used in this file.</a></li><li><a href="@mui_x-date-pickers%250DDate%2520picker%2520components%2520used%2520in%2520this%2520file.module_.html">@mui/x-date-pickersDate picker components used in this file.</a></li><li><a href="@mui_x-date-pickers_AdapterDayjs%250DAdapter%2520for%2520the%2520date%2520picker%2520to%2520use%2520Day.js.module_.html">@mui/x-date-pickers/AdapterDayjsAdapter for the date picker to use Day.js.</a></li><li><a href="@mui_x-date-pickers_internals_demo%250DDemo%2520container%2520component%2520used%2520in%2520this%2520file.module_.html">@mui/x-date-pickers/internals/demoDemo container component used in this file.</a></li><li><a href="@react-sigma_core_lib_react-sigma.min.module_css.html">css</a></li><li><a href="App.html#.module:css">css</a></li><li><a href="atoms_rooms%250DAtom%2520representing%2520the%2520rooms%2520state.module_.html">atoms/roomsAtom representing the rooms state.</a></li><li><a href="atoms_schedule%250DAtom%2520representing%2520the%2520schedule%2520state.module_.html">atoms/scheduleAtom representing the schedule state.</a></li><li><a href="constants%250DConstants%2520used%2520in%2520this%2520file.module_.html">constantsConstants used in this file.</a></li><li><a href="date-fns%250DDate%2520utility%2520functions%2520used%2520in%2520this%2520file.module_.html">date-fnsDate utility functions used in this file.</a></li><li><a href="dayjs%250DDate%2520library%2520used%2520in%2520this%2520file.module_.html">dayjsDate library used in this file.</a></li><li><a href="index.module_css.html">css</a></li><li><a href="jotai%250DState%2520management%2520library%2520used%2520in%2520this%2520file.module_.html">jotaiState management library used in this file.</a></li><li><a href="module-._atoms_modalSlotsClass.html">./atoms/modalSlotsClass</a></li><li><a href="module-._atoms_rooms.html">/atoms/rooms</a></li><li><a href="module-._atoms_schedule.html">/atoms/schedule</a></li><li><a href="module-._lib_replaceCourse.html">/lib/replaceCourse</a></li><li><a href="module-._slotsModalComponents.html">/slotsModalComponents</a></li><li><a href="module-@mui_icons-material_Add.html">@mui/icons-material/Add</a></li><li><a href="module-@mui_icons-material_Delete.html">@mui/icons-material/Delete</a></li><li><a href="module-@mui_icons-material_FindReplace.html">@mui/icons-material/FindReplace</a></li><li><a href="module-@mui_icons-material_Menu.html">@mui/icons-material/Menu</a></li><li><a href="module-@mui_material.html">@mui/material</a></li><li><a href="module-@mui_material_AppBar.html">@mui/material/AppBar</a></li><li><a href="module-@mui_material_Box.html">@mui/material/Box</a></li><li><a href="module-@mui_material_Button.html">@mui/material/Button</a></li><li><a href="module-@mui_material_Checkbox.html">@mui/material/Checkbox</a></li><li><a href="module-@mui_material_Container.html">@mui/material/Container</a></li><li><a href="module-@mui_material_FormControl.html">@mui/material/FormControl</a></li><li><a href="module-@mui_material_IconButton.html">@mui/material/IconButton</a></li><li><a href="module-@mui_material_InputLabel.html">@mui/material/InputLabel</a></li><li><a href="module-@mui_material_ListItemText.html">@mui/material/ListItemText</a></li><li><a href="module-@mui_material_Menu.html">@mui/material/Menu</a></li><li><a href="module-@mui_material_MenuItem.html">@mui/material/MenuItem</a></li><li><a href="module-@mui_material_Select.html">@mui/material/Select</a></li><li><a href="module-@mui_material_Stack.html">@mui/material/Stack</a></li><li><a href="module-@mui_material_Toolbar.html">@mui/material/Toolbar</a></li><li><a href="module-@mui_material_Tooltip.html">@mui/material/Tooltip</a></li><li><a href="module-@mui_material_Typography.html">@mui/material/Typography</a></li><li><a href="module-@mui_x-data-grid.html">@mui/x-data-grid</a></li><li><a href="module-@mui_x-date-pickers_AdapterDayjs.html">@mui/x-date-pickers/AdapterDayjs</a></li><li><a href="module-@mui_x-date-pickers_DatePicker.html">@mui/x-date-pickers/DatePicker</a></li><li><a href="module-@mui_x-date-pickers_DateTimePicker.html">@mui/x-date-pickers/DateTimePicker</a></li><li><a href="module-@mui_x-date-pickers_LocalizationProvider.html">@mui/x-date-pickers/LocalizationProvider</a></li><li><a href="module-@mui_x-date-pickers_internals_demo.html">@mui/x-date-pickers/internals/demo</a></li><li><a href="module-@react-sigma_core.html">@react-sigma/core</a></li><li><a href="module-AFTERNOON_SHIFT.html">AFTERNOON_SHIFT</a></li><li><a href="module-App.html">App</a></li><li><a href="module-BeginningOfLesson.html">BeginningOfLesson</a></li><li><a href="module-COURSE_END_TIMES.html">COURSE_END_TIMES</a></li><li><a href="module-COURSE_START_TIMES.html">COURSE_START_TIMES</a></li><li><a href="module-CourseSlotsModal.html">CourseSlotsModal</a></li><li><a href="module-CsvReader.html">CsvReader</a></li><li><a href="module-DAY_PERIODS.html">DAY_PERIODS</a></li><li><a href="module-DurationOfLesson.html">DurationOfLesson</a></li><li><a href="module-EndingOfLesson.html">EndingOfLesson</a></li><li><a href="module-Heatmap.html">Heatmap</a></li><li><a href="module-Home.html">Home</a></li><li><a href="module-MORNING_SHIFT.html">MORNING_SHIFT</a></li><li><a href="module-MultipleSelectCheckmarks.html">MultipleSelectCheckmarks</a></li><li><a href="module-NIGHT_SHIFT.html">NIGHT_SHIFT</a></li><li><a href="module-Navbar.html">Navbar</a></li><li><a href="module-NetworkGraph.html">NetworkGraph</a></li><li><a href="module-ROOMS.html">ROOMS</a></li><li><a href="module-ROOM_FEATURES.html">ROOM_FEATURES</a></li><li><a href="module-RemoteFile.html">RemoteFile</a></li><li><a href="module-ReplaceCourse.html">ReplaceCourse</a></li><li><a href="module-RoomFeatures.html">RoomFeatures</a></li><li><a href="module-Rooms_.html">Rooms</a></li><li><a href="module-RoomsTable.html">RoomsTable</a></li><li><a href="module-ScheduleTable.html">ScheduleTable</a></li><li><a href="module-ScheduleTableFilter.html">ScheduleTableFilter</a></li><li><a href="module-Shift.html">Shift</a></li><li><a href="module-SlotsTable.html">SlotsTable</a></li><li><a href="module-TYPE_FILTER_COMPARISON.html">TYPE_FILTER_COMPARISON</a></li><li><a href="module-TargetDate.html">TargetDate</a></li><li><a href="module-TimeOfDay.html">TimeOfDay</a></li><li><a href="module-WEEKDAYS.html">WEEKDAYS</a></li><li><a href="module-WeekDay.html">WeekDay</a></li><li><a href="module-atoms_modalReplaceCourse.html">atoms/modalReplaceCourse</a></li><li><a href="module-atoms_modalSlotsClass.html">atoms/modalSlotsClass</a></li><li><a href="module-atoms_rooms.html">atoms/rooms</a></li><li><a href="module-atoms_schedule.html">atoms/schedule</a></li><li><a href="module-constants.html">constants</a></li><li><a href="module-date-fns.html">date-fns</a></li><li><a href="module-date-fns_isBefore.html">date-fns/isBefore</a></li><li><a href="module-dayjs.html">dayjs</a></li><li><a href="module-graphology.html">graphology</a></li><li><a href="module-jotai.html">jotai</a></li><li><a href="module-jotai_useAtomValue.html">jotai/useAtomValue</a></li><li><a href="module-lib_replaceCourse.html">lib/replaceCourse</a></li><li><a href="module-papaparse.html">papaparse</a></li><li><a href="module-react.html">react</a></li><li><a href="module-react-csv-reader.html">react-csv-reader</a></li><li><a href="module-react-dom.html">react-dom</a></li><li><a href="module-react-dom_client.html">react-dom/client</a></li><li><a href="module-react-router-dom.html">react-router-dom</a></li><li><a href="module-react-tabulator.html">react-tabulator</a></li><li><a href="module-reportWebVitals.html">reportWebVitals</a></li><li><a href="module-roomsAtom.html">roomsAtom</a></li><li><a href="module-scheduleAtom.html">scheduleAtom</a></li><li><a href="module-slotsModalComponents_BeginingOfLesson.html">slotsModalComponents/BeginingOfLesson</a></li><li><a href="module-slotsModalComponents_DurationOfLesson.html">slotsModalComponents/DurationOfLesson</a></li><li><a href="module-slotsModalComponents_EndingOfLesson.html">slotsModalComponents/EndingOfLesson</a></li><li><a href="module-slotsModalComponents_RoomFeatures.html">slotsModalComponents/RoomFeatures</a></li><li><a href="module-slotsModalComponents_Rooms.html">slotsModalComponents/Rooms</a></li><li><a href="module-slotsModalComponents_TargetDate.html">slotsModalComponents/TargetDate</a></li><li><a href="module-slotsModalComponents_TimeOfDay.html">slotsModalComponents/TimeOfDay</a></li><li><a href="module-slotsModalComponents_WeekDay.html">slotsModalComponents/WeekDay</a></li><li><a href="module-utils.html">utils</a></li><li><a href="react-heatmap-grid%250DHeatmap%2520grid%2520component%2520used%2520in%2520this%2520file.module_.html">react-heatmap-gridHeatmap grid component used in this file.</a></li><li><a href="react-tabulator_css_tabulator_bootstrap3.module_css.html">css</a></li><li><a href="react-tabulator_css_tabulator_bootstrap3.module_css%2520-%2520The%2520bootstrap3%2520theme%2520for%2520the%2520tabulator..html">css - The bootstrap3 theme for the tabulator.</a></li><li><a href="react-tabulator_lib_css_tabulator.min.module_css.html">css</a></li><li><a href="react-tabulator_lib_styles.module_css.html">css</a></li><li><a href="utils%250DUtility%2520functions%2520used%2520in%2520this%2520file.module_.html">utilsUtility functions used in this file.</a></li></ul><h3>Externals</h3><ul><li><a href="external-Box.html">Box</a></li><li><a href="external-Button.html">Button</a></li><li><a href="external-Modal.html">Modal</a></li><li><a href="external-React.html">React</a></li><li><a href="external-Typography.html">Typography</a></li><li><a href="external-dayjs.html">dayjs</a></li><li><a href="external-jotai.html">jotai</a></li></ul><h3>Global</h3><ul><li><a href="global.html#reportWebVitals">reportWebVitals</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Mon May 13 2024 18:14:12 GMT+0100 (Hora de verão da Europa Ocidental)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

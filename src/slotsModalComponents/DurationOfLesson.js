@@ -1,4 +1,17 @@
 /**
+ * @file
+ * @module DurationOfLesson
+ * @description This file contains the `DurationOfLesson` component.
+ * @requires module:@mui/material
+ * @requires module:react
+ * @requires module:../constants
+ */
+
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
+import React from 'react'
+import { COURSE_DURATION } from '../constants'
+
+/**
  * `DurationOfLesson` is a React functional component that renders a form control for selecting the duration of a course.
  *
  * @component
@@ -11,11 +24,6 @@
  *
  * @returns {React.Element} The rendered form control.
  */
-
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
-import React from 'react'
-import { COURSE_DURATION } from '../constants'
-
 const DurationOfLesson = ({ rules, setRules }) => {
     return (
         <FormControl sx={{ minWidth: 180, marginLeft: 2 }}>

@@ -1,19 +1,21 @@
 /**
- * @file This is the CsvReader component of the application.
+ * @file CsvReader.js
+ * This file defines the CsvReader component used for managing the loading of CSV files.
  */
 
 /** @module react */
 import React from 'react'
 /** @module react-csv-reader */
 import CSVReader from 'react-csv-reader'
+/** @module jotai */
 import { useSetAtom } from 'jotai'
+/** @module scheduleAtom */
 import { atomSchedule } from './atoms/schedule'
+/** @module roomsAtom */
 import { atomRooms } from './atoms/rooms'
 
 /**
- * This is the CsvReader component of the application.
- * It manages the loading of CSV files and passes the data to the parent component.
- *
+ * CsvReader component for managing the loading of CSV files.
  * @function
  * @name CsvReader
  * @param {Object} props - The properties passed to the component.
@@ -22,11 +24,16 @@ import { atomRooms } from './atoms/rooms'
  * @returns {JSX.Element} The rendered CsvReader component.
  */
 export default function CsvReader({ id }) {
-    const setData = useSetAtom(id === 'scheduleReader' ? atomSchedule : atomRooms)
     /**
-     * This function is called when a file is loaded.
-     * It calls the setData function with the data from the file.
-     *
+     * Function to set data into the appropriate atom based on the provided ID.
+     * @constant {Function} setData
+     * @param {Object[]} data - The data to set.
+     */
+    const setData = useSetAtom(id === 'scheduleReader' ? atomSchedule : atomRooms)
+
+    /**
+     * Function to handle the data loaded from a CSV file.
+     * @constant {Function} handleFileLoaded
      * @param {Object[]} data - The data from the CSV file.
      * @param {Object} fileInfo - Information about the loaded file.
      */
