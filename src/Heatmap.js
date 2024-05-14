@@ -217,7 +217,7 @@ export default function Heatmap() {
         return roomCapacity
             ? rooms.filter((room) => {
                   if (capacityLogicOperator === '=') {
-                      return (room['Capacidade Normal'] = roomCapacity)
+                      return room['Capacidade Normal'] === parseInt(roomCapacity)
                   } else if (capacityLogicOperator === '>') {
                       return room['Capacidade Normal'] > roomCapacity
                   } else if (capacityLogicOperator === '<') {
@@ -272,7 +272,6 @@ export default function Heatmap() {
 
             // Skip entries that don't match the date range
             if (!dateRange.includes(item['Data da aula'])) {
-                // console.log('Skipping due to date mismatch.')
                 return
             }
 
@@ -312,6 +311,7 @@ export default function Heatmap() {
      */
     // Generate heatmap based on the selected filters
     const calculateHeatmap = (e) => {
+        setHeatmapData([]) // clear the heatmap data before calculating a new one
         e.preventDefault()
         // get an array of string dates based on the selected date range
         const dateRange = getDataRange()
